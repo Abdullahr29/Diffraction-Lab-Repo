@@ -25,10 +25,10 @@ using System.IO;
 public class DetectorMeasurementControl_LOCKED : MonoBehaviour
 
 {
-    public Camera cam;
     public GameObject markerPrefab;
     public DetectorDisplayScript display;
     public Transform screenOrigin;
+    Camera cam;
 
     GameObject markerOne; //Simple objects to mark the start and end of lines under construction
     GameObject markerTwo;
@@ -55,10 +55,11 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
     float screenResolution;
     float[,] matrix;
     bool horizontal; //true = horizontal measurement, false = vertical measurement
-    [SerializeField] string file = "Assets/FRONTEND/DetectorScreen/img.txt";
+    [SerializeField] string file = "Assets/FRONTEND/DetectorScreen/img_reduced.txt";
 
     private void Start()
     {
+        cam = Camera.main;
         clicks = 0;
         modeActive = false;
         line = GetComponent<LineRenderer>();
@@ -86,7 +87,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
         {
             Ray ray = cam.ScreenPointToRay(Input.mousePosition); //Get user input based on click from camera in game view
             RaycastHit hit;                                    //Currently calling this every frame for debugging purposes
-            Debug.DrawRay(ray.origin, ray.direction * 20, Color.yellow);
+            //Debug.DrawRay(ray.origin, ray.direction * 20, Color.yellow);
 
             if (Physics.Raycast(ray, out hit))
             {
@@ -110,8 +111,10 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
 
                     case 1:
                         // second marker
-                        // for the detector - the second point must be horizontal/vertical relative to the first point
                         endPoint = RoundVector(hit.point, digits);
+
+
+                        // for the detector - the second point must be horizontal/vertical relative to the first point
 
                         // direction from first point to current mouse position
                         Vector3 dir = endPoint - startPoint;
@@ -307,7 +310,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
         //line.material.color = Color.red;
         line.receiveShadows = false;
         line.shadowBias = 100f;
-        Debug.Log(line.endWidth);
+        //Debug.Log(line.endWidth);
     }
 
     public void OnLayerChange(int newLayer)
@@ -365,7 +368,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
             if (item.Layer == currentLayer)
             {
                 DrawLine(item);
-                Debug.Log(GetDistance(item));
+                //Debug.Log(GetDistance(item));
             }
         }
     }

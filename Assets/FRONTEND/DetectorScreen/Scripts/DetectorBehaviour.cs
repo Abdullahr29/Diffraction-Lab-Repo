@@ -8,15 +8,26 @@ using UnityEngine;
 
 public class DetectorBehaviour : MonoBehaviour
 {
-    DetectorDisplayScript display;
+    [Header("EXTRERNAL REFERENCES")]
+    public IntensityCalcFloat grating;
 
+    DetectorDisplayScript display;
+    
     private void Start()
     {
         display = GetComponent<DetectorDisplayScript>();
+    }
+
+    public void LoadScreen()
+    {
+        float[,] inputMatrix = grating.GetMatrix();
+        DisplayInterferencePattern(inputMatrix);
     }
 
     public void DisplayInterferencePattern(float[,] inputMatrix)
     {   
         display.Fill(inputMatrix);
     }
+
+
 }

@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class IntensityCalcFloat : MonoBehaviour
 {
-    public DetectorBehaviour detector;
     [SerializeField] string file = "Assets/FRONTEND/DetectorScreen/img.txt";
 
     private GameObject gratCentre = null;
@@ -30,21 +29,20 @@ public class IntensityCalcFloat : MonoBehaviour
     void Start()
     {
         resolution = Mathf.RoundToInt(Mathf.Pow(2, resolutionPower));  //QUICK FIX: Only currently works if resolution is a power of 2, due to fft algorithm
-        positionObject();
+        //positionObject();
         bitmap = new int[resolution, resolution];
         //buildGrating();
         fill();
     }
 
-
-    public void OnButtonPress()
+    public float[,] GetMatrix()
     {
         // when user pressed the display button, generate the FFT and display on screen
         FFT bitMapFFT = new FFT(bitmap);
         bitMapFFT.ForwardFFT();
         output = bitMapFFT.FFTLog;
-        print(output);
-        detector.DisplayInterferencePattern(output);
+        //print(output);
+        return output;
     }
 
 
@@ -55,8 +53,9 @@ public class IntensityCalcFloat : MonoBehaviour
     //to create a temporary gameobject in the centre of the grating 
     private void positionObject() {
 
-        Vector3 temp = transform.parent.position;
-        temp.y = temp.y + 1;
+        Vector3 temp = transform.position;
+        //Vector3 temp = transform.parent.position;
+        //temp.y = temp.y + 1;
 
         gratCentre = Instantiate(
             gratCentre = new GameObject(),
@@ -79,14 +78,13 @@ public class IntensityCalcFloat : MonoBehaviour
         beginSlitHeight = ((maxSlitDim - slitHeight) / 2) * (resolution / maxSlitDim) - 1;
         endSlitHeight = beginSlitHeight + (slitHeight * (resolution / maxSlitDim)) + 1;
 
-        Debug.Log((int)beginSlitWidth);
+        //Debug.Log((int)beginSlitWidth);
 
-        Debug.Log((int)endSlitWidth);
+        //Debug.Log((int)endSlitWidth);
 
-        Debug.Log((int)beginSlitHeight);
+        //Debug.Log((int)beginSlitHeight);
 
-        Debug.Log((int)endSlitHeight);
-
+        //Debug.Log((int)endSlitHeight);
 
 
         for (int i = (int)beginSlitHeight; i < (int)endSlitHeight; i++)
