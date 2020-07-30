@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -6,20 +7,18 @@ using UnityEngine.UI;
 
 public class MoveTool : Tool
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    GameObject moveController, confirmObject, denyObject;
+    MoveFunction moveFunction;
+    bool isBeingUsed = false;
     public override void ButtonInteract()
     {
-        //Call initialisation method for the relevant tool
+        isBeingUsed = !isBeingUsed;
+        if (moveController == null)
+        {
+            moveController = new GameObject("moveController");
+            moveFunction = moveController.AddComponent<MoveFunction>();
+        }        
+        moveFunction.enabled = isBeingUsed; //if button is active then enable MoveFunction to listen for input
+        Debug.Log(moveFunction.enabled);
     }
-}
+ }
