@@ -18,7 +18,7 @@ public class MoveTool : Tool
             moveController = new GameObject("moveController");
             moveFunction = moveController.AddComponent<MoveFunction>();
         }        
-        moveFunction.enabled = isBeingUsed; //if button is active then enable MoveFunction to listen for input
+        moveController.SetActive(isBeingUsed); //if button is active then enable MoveFunction to listen for input
         Debug.Log(moveFunction.enabled);
     }
  }

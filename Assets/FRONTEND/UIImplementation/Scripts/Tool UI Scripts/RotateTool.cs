@@ -6,20 +6,18 @@ using UnityEngine.UI;
 
 public class RotateTool : Tool
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
+    GameObject rotateController, confirmObject, denyObject;
+    RotateFunction rotateFunction;
+    bool isBeingUsed = false;
     public override void ButtonInteract()
     {
-        //Call initialisation method for the relevant tool
+        isBeingUsed = !isBeingUsed;
+        if (rotateController == null)
+        {
+            rotateController = new GameObject("rotateController");
+            rotateFunction = rotateController.AddComponent<RotateFunction>();
+        }
+        rotateController.SetActive(isBeingUsed); //if button is active then enable MoveFunction to listen for input
+        Debug.Log(rotateFunction.enabled);
     }
 }
