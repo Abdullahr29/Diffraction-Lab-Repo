@@ -26,7 +26,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
 
 {
     public GameObject markerPrefab;
-    public DetectorDisplayScript display;
+    public DetectorBehaviour detector;
     public Transform screenOrigin;
     Camera cam;
 
@@ -49,12 +49,9 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
     Dictionary<string, Vector3> positionCache = new Dictionary<string, Vector3>(); //GameObjects are found by name for their global position and rotations
     Dictionary<string, Quaternion> rotationCache = new Dictionary<string, Quaternion>(); //These caches store them temporarily if they have been previously requested.
 
-    // detector Parameters for the data-taking
-    float screenHeight;
-    float screenWidth;
-    float screenResolution;
-    float[,] matrix;
-    bool horizontal; //true = horizontal measurement, false = vertical measurement
+    //screen parameters + data
+    private float screenWidth, screenHeight, screenResolution, matrixResolution, offset;
+    private float[,] matrix;
     [SerializeField] string file = "Assets/FRONTEND/DetectorScreen/img_reduced.txt";
 
     private void Start()
@@ -105,7 +102,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                         if (Input.GetMouseButtonDown(0)) //if left click whilst over mesh collided
                         {
                             clicks += 1;
-                            //Debug.Log("start point: " + startPoint);
+                            Debug.Log("LINE START: " + startPoint);
                         }
                         break;
 
@@ -128,14 +125,12 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                             //greater projection along the horizontal axis - so lock horizontally
                             endPoint.x = x_proj + startPoint.x;
                             endPoint.y = startPoint.y;
-                            horizontal = true;
                         }
                         else
                         {
                             //greater projection along the vertical axis - so lock vertically
                             endPoint.x = startPoint.x;
                             endPoint.y = y_proj + startPoint.y;
-                            horizontal = false;
                         }
 
 
@@ -150,7 +145,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                         if (Input.GetMouseButtonDown(0))
                         {                            
                             clicks += 1;
-                            //Debug.Log("end point: " + endPoint);
+                            Debug.Log("LINE END: " + endPoint);
                         }
                         break;
 
@@ -167,7 +162,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                             clicks = 0;
                             DrawLine(lineData[lineData.Count - 1]); //Local variables are cleared so reload line from storage without markers
                             
-                            //Debug.Log(GetDistance(lineData[lineData.Count - 1])); //Distance output - feel free to hook up to UI
+                            Debug.Log("DISTANCE: " + GetDistance(lineData[lineData.Count - 1])); //Distance output - feel free to hook up to UI
                         }
                         break;
 
@@ -195,14 +190,11 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
     // this function selects a subset of points from the Intensity matrix depending on the line drawn by the user - and writes this to the text file.
     private void GenerateData()
     {
-        // 1. Fetch the screen parameters and the input matrix
-        FetchScreenParameters();
-
-        // 2. Generate copies of the start / end position but in LOCAL coordinates
+        // 1. Transform start/end to LOCAL coordinates
         Vector3 localStartPoint = startPoint - screenOrigin.position;
         Vector3 localEndPoint = endPoint - screenOrigin.position;
 
-        // 3. From the screen parameters, and the local start/end points - calculate the appropriate row/column bounds
+        // 2. From the start/end points - calculate the local row/col bounds
         float x1 = localStartPoint.x; // horizontal bound 1
         float x2 = localEndPoint.x; // horizontal bound 1
         float y1 = localStartPoint.y; // vertical bound 1
@@ -213,11 +205,48 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
         float y_bottom = Mathf.Min(y1, y2); // lowest vertical bound
         float y_top = Mathf.Max(y1, y2); // highest vertical bound
 
-        // 4. transform these bounds from local coordinate space to matrix space
+        // 3. fetch the parameters
+        screenHeight = detector.ScreenHeight;
+        screenWidth = detector.ScreenWidth;
+        screenResolution = detector.Resolution;
+        matrix = detector.Matrix;
+        matrixResolution = matrix.GetLength(0);
+        
+        Debug.Log("----------------");
+        Debug.Log("screenHeight: " + screenHeight);
+        Debug.Log("screenWidth: " + screenWidth);
+        Debug.Log("screenResolution: " + screenResolution);
+        Debug.Log("matrixResolution: " + matrixResolution);
+
+        // 4. transform the above bounds from local coordinates to matrix space
+        bool oversampling = matrixResolution < screenResolution;
+
+        
         x_left = x_left * screenResolution / screenWidth;
         x_right = x_right * screenResolution / screenWidth;
         y_bottom = y_bottom * screenResolution / screenHeight;
         y_top = y_top * screenResolution / screenHeight;
+
+        Debug.Log("-------------------");
+        Debug.Log("x left rounded: " + (int)x_left);
+        Debug.Log("x_right rounded: " + (int)x_right);
+        Debug.Log("y_bottom rounded: " + (int)y_bottom);
+        Debug.Log("y_top rounded: " + (int)y_top);
+        Debug.Log("-----------------");
+
+        if (oversampling) //less pixels available than needed
+        {
+            // screen size is larger than the matrix size
+            // need to generate black values beyond the bounds
+            offset = (screenResolution - matrixResolution) / 2;
+        }
+        else // screen size the same as matrix size
+        {
+            offset = 0;
+        }
+
+        Debug.Log("Offset: " + offset);
+
 
         // 5. loop through all the data within the bounds and export to a text file
         FetchUserData((int)x_left, (int)x_right, (int)y_bottom, (int)y_top);
@@ -236,24 +265,28 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                 {
                     float position_x = (i - x_left) * screenWidth / screenResolution;
                     float position_y = (j - y_bottom) * screenHeight / screenResolution;
-                    float intensity = matrix[i, j];
-                    tw.Write(position_x.ToString("#.000") + "\t" + position_y.ToString("#.000") + "\t" +  intensity.ToString("#.000"));
+
+                    int i_transformed = (int) (i - offset);
+                    int j_transformed = (int) (j - offset);
+
+                    float intensity;
+
+                    if (i_transformed < 0 || j_transformed <0 || i_transformed >= matrixResolution || j_transformed >= matrixResolution)
+                    {
+                        intensity = 0f;
+                    }
+                    else
+                    {
+                        intensity = matrix[j_transformed, i_transformed]; //flipped i,j
+                    }
+
+                    tw.Write(position_x.ToString("#.00000") + "\t" + position_y.ToString("#.00000") + "\t" +  intensity.ToString("#.00000"));
                     tw.WriteLine();
                 }
             }
         }
         Debug.Log("File Saved: " + file);
     }
-
-    private void FetchScreenParameters()
-    {
-        //sets the parameters which will be used by the measurement tool
-        screenHeight = display.ScreenHeight;
-        screenWidth = display.ScreenWidth;
-        screenResolution = display.Resolution;
-        matrix = display.Matrix;
-    }
-
 
     Vector3 RoundVector(Vector3 objectPosition, int digits) //Method to handle rounding of transform components
     {
