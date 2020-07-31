@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class TooltrayController : MonoBehaviour
 {
-    public Button helpButton, labScriptButton;
     public List<GameObject> dynamicButtons;
 
     public GameObject buttonPrefab;
@@ -37,9 +36,6 @@ public class TooltrayController : MonoBehaviour
         }
         
         tooltrayRect = gameObject.GetComponent<RectTransform>();            
-
-        helpButton.onClick.AddListener(startHelp);       
-        labScriptButton.onClick.AddListener(startLabScript);
     }
 
     public void SetTrayContents(Mode desiredMode)
@@ -106,16 +102,6 @@ public class TooltrayController : MonoBehaviour
         tool.enabled = true;
         rootObject.SetActive(true);
         activeTools.Add(tool);
-    }
-
-    void startHelp()
-    {
-        Debug.Log("Help button pressed");
-    }
-
-    void startLabScript()
-    {
-        Debug.Log("Lab script button pressed");
     }
 
 }

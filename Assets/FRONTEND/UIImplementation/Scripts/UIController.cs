@@ -14,6 +14,23 @@ public enum Mode
 
 public class UIController : MonoBehaviour
 {
+    private static UIController _instance;
+    public static UIController Instance
+    {   get
+    {
+            if (_instance == null)
+                Debug.LogError("UIController is NULL.");
+
+            return _instance;
+
+        }
+    }
+    
+    private void Awake()
+    {
+        _instance = this; 
+    }
+    
     public TooltrayController tooltray;
     public Button calibrate, measure, explore, data;
     public Camera cam;

@@ -6,20 +6,8 @@ using UnityEngine.UI;
 
 public class InventoryTool : Tool
 {
-    // Start is called before the first frame update
-    void Start()
+       public override void ButtonInteract()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-    public override void ButtonInteract()
-    {
-        //Call initialisation method for the relevant tool
+        ModalManager.Instance.ActivateInventory();
     }
 }
