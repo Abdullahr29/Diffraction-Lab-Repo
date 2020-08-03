@@ -18,6 +18,6 @@ public class RotateTool : Tool
             rotateFunction = rotateController.AddComponent<RotateFunction>();
         }
         rotateController.SetActive(isBeingUsed); //if button is active then enable MoveFunction to listen for input
-        Debug.Log(rotateFunction.enabled);
+        Debug.Log(isBeingUsed);
     }
 }
