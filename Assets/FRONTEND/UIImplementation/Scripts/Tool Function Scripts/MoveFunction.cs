@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class MoveFunction : MonoBehaviour
@@ -11,14 +12,14 @@ public class MoveFunction : MonoBehaviour
     IMovable tempObject;        
     Vector3 mOffset,startPos, endPos, expectedPos;
     string ID;
-    bool isSelected, mouseDown = false;
+    bool isSelected, isCursorOverButton = false;
     public float force = 1000f;
     Rigidbody rb;
 
 
     Camera mainCam;
     float cameraDist;
-    float maxSpeed = 1000f;
+    public float maxSpeed = 32f;
 
     GameObject confirmHolder, denyHolder;
     Button confirmButton, denyButton;    
@@ -52,25 +53,41 @@ public class MoveFunction : MonoBehaviour
 
     private void Update()
     {
+       
+
         if (Input.GetMouseButtonDown(0))
-        {            
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); //Get user input based on click from camera in game view
+        {
+
+            isCursorOverButton = EventSystem.current.IsPointerOverGameObject();
+
+            Ray ray = mainCam.ScreenPointToRay(Input.mousePosition); //Get user input based on click from camera in game view
             RaycastHit hit;
-            if (Physics.Raycast(ray, out hit))
+            if (Physics.Raycast(ray, out hit) && !isCursorOverButton)
             {
-                tempObject = hit.collider.gameObject.GetComponent<IMovable>();
-                if (!isSelected & tempObject != null)
-                {
-                    movableObject = tempObject;
-                    startPos = movableObject.pos;
-                    ID = movableObject.ID;
-                    rb = movableObject.rigidBody;
-                    rb.isKinematic = false;
-                    rb.freezeRotation = true;
-                    isSelected = true;
+                tempObject = hit.collider.gameObject.GetComponentInParent<IMovable>();
+                
+                if (tempObject != null)
+                {               
+                    if (!isSelected)
+                    {
+                        movableObject = tempObject;
+                        startPos = movableObject.pos;
+                        ID = movableObject.ID;
+                        rb = movableObject.rigidBody;                        
+                        rb.freezeRotation = true;
+                        isSelected = true;
+                    }
+
+                    if (tempObject == movableObject)
+                    {
+                        rb.isKinematic = false;
+                    }
+
+
                 }
-                cameraDist = Camera.main.WorldToScreenPoint(movableObject.pos).z;
-                mOffset = movableObject.pos - GetMouseAsWorldPoint();                
+                cameraDist = mainCam.WorldToScreenPoint(movableObject.pos).z;
+                mOffset = movableObject.pos - GetMouseAsWorldPoint();
+                
             }
             else
             {
@@ -98,11 +115,11 @@ public class MoveFunction : MonoBehaviour
                 
                 confirmHolder.SetActive(true);
                 denyHolder.SetActive(true);
-                rb.velocity = Vector3.zero;
+                movableObject.rigidBody.isKinematic = true;
             }
         }
 
-        if (movableObject != null && !mouseDown)
+        if (movableObject != null)
         {
             confirmButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) + new Vector3(50, 0, 0);
             denyButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) - new Vector3(50, 0, 0);

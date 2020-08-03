@@ -108,6 +108,15 @@ public class InventoryModal : Modal
         thisClick.interactable = false;
     }
 
+    private void SelectAndPlaceTwo(Button thisClick, MeshID item1, MeshID item2)
+    {
+        // Functionality for instantiating prefabs, closing the inventory as it is 
+        // introduced onto the scene
+        MeshesInventory.Instance.InstantiateTwo(item1, item2);
+        CloseModal(_inventoryModal);
+        thisClick.interactable = false;
+    }
+
     private void PlaceBoard()
     {
         // Placing the board onto the scene unlocks all categories
@@ -154,11 +163,12 @@ public class InventoryModal : Modal
             case Category.SourcesBoards:
 
                 tabSource.SetActive (true);
+
                 CardFromKey(MeshID.board).SetActive (true);
                 CardFromKey(MeshID.laser).SetActive (true);
                 ButtonFromKey(MeshID.laser).onClick.AddListener(delegate
                 {
-                    SelectAndPlaceItem(ButtonFromKey(MeshID.laser), MeshID.laser);
+                    SelectAndPlaceTwo(ButtonFromKey(MeshID.laser), MeshID.laser, MeshID.propagationSystem);
                 });
 
             break;
@@ -166,6 +176,7 @@ public class InventoryModal : Modal
             case Category.Lenses:
 
                 tabLenses.SetActive (true);
+
                 CardFromKey(MeshID.lens).SetActive (true);
                 ButtonFromKey(MeshID.lens).onClick.AddListener(delegate
                 {
@@ -175,11 +186,31 @@ public class InventoryModal : Modal
             break;
 
             case Category.SlitsGratings:
+
                 tabSlit.SetActive (true);
+
+                CardFromKey(MeshID.grating).SetActive (true);
+                ButtonFromKey(MeshID.grating).onClick.AddListener(delegate
+                {
+                    SelectAndPlaceItem(ButtonFromKey(MeshID.grating), MeshID.grating);
+                });
             break;
 
             case Category.Detectors:
+
                 tabDet.SetActive (true);
+
+                CardFromKey(MeshID.screen).SetActive (true);
+                ButtonFromKey(MeshID.screen).onClick.AddListener(delegate
+                {
+                    SelectAndPlaceTwo(ButtonFromKey(MeshID.screen), MeshID.screen, MeshID.emailManager);
+                });
+
+                CardFromKey(MeshID.cmosCamera).SetActive (true);
+                ButtonFromKey(MeshID.cmosCamera).onClick.AddListener(delegate
+                {
+                    SelectAndPlaceItem(ButtonFromKey(MeshID.cmosCamera), MeshID.cmosCamera);
+                });
             break;
         }
 

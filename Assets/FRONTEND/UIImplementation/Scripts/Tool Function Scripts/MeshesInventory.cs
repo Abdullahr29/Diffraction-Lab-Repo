@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEditor;
 
 [System.Serializable]
 public enum MeshID
 {
     board,
     laser,
+    propagationSystem,
     lens,
-    slit,
     grating,
     screen,
-    cmosCamera
+    cmosCamera,
+    emailManager
 }
 [System.Serializable]
 public class Mesh
@@ -84,6 +86,20 @@ public class MeshesInventory : MonoBehaviour
             GameObject newMesh = Instantiate(prefab);
             newMesh.transform.SetParent(_labMeshes, false);
             instantiatedMeshes.Add(item);
+        }
+    }
+    public void InstantiateTwo(MeshID item1, MeshID item2)
+    {
+        if (instantiatedMeshes.Contains(item1) == false && instantiatedMeshes.Contains(item2) == false)
+        {
+            GameObject prefab1 = returnPrefabFromKey(item1);
+            GameObject newMesh1 = Instantiate(prefab1);
+            newMesh1.transform.SetParent(_labMeshes, false);
+            instantiatedMeshes.Add(item1);
+
+            GameObject prefab2 = returnPrefabFromKey(item2);
+            GameObject newMesh2 = Instantiate(prefab2);
+            instantiatedMeshes.Add(item2);
         }
     }
 

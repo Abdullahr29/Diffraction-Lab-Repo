@@ -32,10 +32,22 @@ public class UIController : MonoBehaviour
     }
     
     public TooltrayController tooltray;
-    public Button calibrate, measure, explore, data;
-    public Camera cam;
-
     public Mode currentMode;
+    [Header("Mode Buttons")]
+    public Button calibrate;
+    public Button measure;
+    public Button explore;
+    public Button data;
+
+    [Header("Mode Tabs")]
+    [SerializeField]
+    private GameObject calibrateTab;
+    [SerializeField]
+    private GameObject measureTab;
+    [SerializeField]
+    private GameObject exploreTab;
+    [SerializeField]
+    private GameObject dataTab;
 
     void Start()
     {
@@ -49,6 +61,8 @@ public class UIController : MonoBehaviour
 
     public void calibrateClick()
     {
+        DeactivateTabs();
+        calibrateTab.SetActive(true);
         currentMode = Mode.Calibrate;
         tooltray.SetTrayContents(currentMode);
         Debug.Log("calibrate");
@@ -56,6 +70,8 @@ public class UIController : MonoBehaviour
 
     public void measureClick()
     {
+        DeactivateTabs();
+        measureTab.SetActive(true);
         currentMode = Mode.Measure;
         tooltray.SetTrayContents(currentMode);
         Debug.Log("Measure");
@@ -63,6 +79,8 @@ public class UIController : MonoBehaviour
 
     public void exploreClick()
     {
+        DeactivateTabs();
+        exploreTab.SetActive(true);
         currentMode = Mode.Explore;
         tooltray.SetTrayContents(currentMode);
         Debug.Log("Explore");
@@ -70,16 +88,18 @@ public class UIController : MonoBehaviour
 
     public void dataClick()
     {
+        DeactivateTabs();
+        dataTab.SetActive(true);
         currentMode = Mode.DataTake;
         tooltray.SetTrayContents(currentMode);
         Debug.Log("Data");
     }
-
-
-    // Update is called once per frame
-    void Update()
+    private void DeactivateTabs()
     {
-        
+        calibrateTab.SetActive(false);
+        measureTab.SetActive(false);
+        exploreTab.SetActive(false);
+        dataTab.SetActive(false);
     }
 
 }
