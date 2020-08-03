@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEditor;
 
 [System.Serializable]
 public enum MeshID
@@ -82,6 +83,8 @@ public class MeshesInventory : MonoBehaviour
         {
             GameObject prefab = returnPrefabFromKey(item);
             GameObject newMesh = Instantiate(prefab);
+            PrefabUtility.UnpackPrefabInstance(newMesh, PrefabUnpackMode.Completely, InteractionMode.UserAction);
+            Debug.Log(newMesh);
             newMesh.transform.SetParent(_labMeshes, false);
             instantiatedMeshes.Add(item);
         }

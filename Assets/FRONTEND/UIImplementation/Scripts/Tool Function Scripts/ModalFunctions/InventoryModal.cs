@@ -154,6 +154,7 @@ public class InventoryModal : Modal
             case Category.SourcesBoards:
 
                 tabSource.SetActive (true);
+
                 CardFromKey(MeshID.board).SetActive (true);
                 CardFromKey(MeshID.laser).SetActive (true);
                 ButtonFromKey(MeshID.laser).onClick.AddListener(delegate
@@ -166,6 +167,7 @@ public class InventoryModal : Modal
             case Category.Lenses:
 
                 tabLenses.SetActive (true);
+
                 CardFromKey(MeshID.lens).SetActive (true);
                 ButtonFromKey(MeshID.lens).onClick.AddListener(delegate
                 {
@@ -175,11 +177,31 @@ public class InventoryModal : Modal
             break;
 
             case Category.SlitsGratings:
+
                 tabSlit.SetActive (true);
+
+                CardFromKey(MeshID.slit).SetActive (true);
+                ButtonFromKey(MeshID.slit).onClick.AddListener(delegate
+                {
+                    SelectAndPlaceItem(ButtonFromKey(MeshID.slit), MeshID.slit);
+                });
             break;
 
             case Category.Detectors:
+
                 tabDet.SetActive (true);
+
+                CardFromKey(MeshID.screen).SetActive (true);
+                ButtonFromKey(MeshID.screen).onClick.AddListener(delegate
+                {
+                    SelectAndPlaceItem(ButtonFromKey(MeshID.screen), MeshID.screen);
+                });
+
+                CardFromKey(MeshID.cmosCamera).SetActive (true);
+                ButtonFromKey(MeshID.cmosCamera).onClick.AddListener(delegate
+                {
+                    SelectAndPlaceItem(ButtonFromKey(MeshID.cmosCamera), MeshID.cmosCamera);
+                });
             break;
         }
 

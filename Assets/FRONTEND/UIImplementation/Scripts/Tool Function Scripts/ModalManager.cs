@@ -22,6 +22,7 @@ public class ModalManager : MonoBehaviour
         _instance = this; 
     }
 
+    [Header("Parent Transforms")]
     // Parent objects in hirearchy
     [SerializeField]
     private Transform _helpLabModals;
@@ -29,11 +30,18 @@ public class ModalManager : MonoBehaviour
     private Transform _inventoryParent;
 
 
+    [Header("Modal Prefabs")]
     // Find prefabs to instantiate
     [SerializeField]
-    private GameObject _helpCalPrefab, _helpMesPrefab, _helpExplPrefab, _helpDataPrefab;
+    private GameObject _helpCalPrefab;
     [SerializeField]
     private GameObject _labScriptPrefab;
+    [SerializeField]
+    private GameObject _helpMesPrefab;
+    [SerializeField]
+    private GameObject _helpExplPrefab;
+    [SerializeField]
+    private GameObject _helpDataPrefab;
     [SerializeField]
     private GameObject _inventoryPrefab;
 
