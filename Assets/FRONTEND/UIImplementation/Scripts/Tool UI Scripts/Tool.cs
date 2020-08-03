@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /* Class to provide the default behaviour for buttons. Implements IButtonInteraction allowing
  * for a shared way to set listeners when these tools are created at runtime when needed. */
 
-public class Tool : MonoBehaviour, IButtonInteraction
+public abstract class Tool : MonoBehaviour, IButtonInteraction
 {
     public Sprite imageSource;
 
