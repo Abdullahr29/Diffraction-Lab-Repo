@@ -19,7 +19,7 @@ public class MoveFunction : MonoBehaviour
 
     Camera mainCam;
     float cameraDist;
-    public float maxSpeed = 500f;
+    public float maxSpeed = 32f;
 
     GameObject confirmHolder, denyHolder;
     Button confirmButton, denyButton;    
@@ -53,27 +53,41 @@ public class MoveFunction : MonoBehaviour
 
     private void Update()
     {
+       
+
         if (Input.GetMouseButtonDown(0))
         {
+
             isCursorOverButton = EventSystem.current.IsPointerOverGameObject();
 
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); //Get user input based on click from camera in game view
+            Ray ray = mainCam.ScreenPointToRay(Input.mousePosition); //Get user input based on click from camera in game view
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit) && !isCursorOverButton)
             {
-                tempObject = hit.collider.gameObject.GetComponent<IMovable>();
-                if (!isSelected & tempObject != null)
-                {
-                    movableObject = tempObject;
-                    startPos = movableObject.pos;
-                    ID = movableObject.ID;
-                    rb = movableObject.rigidBody;
-                    rb.isKinematic = false;
-                    rb.freezeRotation = true;
-                    isSelected = true;
+                tempObject = hit.collider.gameObject.GetComponentInParent<IMovable>();
+                
+                if (tempObject != null)
+                {               
+                    if (!isSelected)
+                    {
+                        movableObject = tempObject;
+                        startPos = movableObject.pos;
+                        ID = movableObject.ID;
+                        rb = movableObject.rigidBody;                        
+                        rb.freezeRotation = true;
+                        isSelected = true;
+                    }
+
+                    if (tempObject == movableObject)
+                    {
+                        rb.isKinematic = false;
+                    }
+
+
                 }
-                cameraDist = Camera.main.WorldToScreenPoint(movableObject.pos).z;
-                mOffset = movableObject.pos - GetMouseAsWorldPoint();                
+                cameraDist = mainCam.WorldToScreenPoint(movableObject.pos).z;
+                mOffset = movableObject.pos - GetMouseAsWorldPoint();
+                
             }
             else
             {
@@ -101,7 +115,7 @@ public class MoveFunction : MonoBehaviour
                 
                 confirmHolder.SetActive(true);
                 denyHolder.SetActive(true);
-                rb.velocity = Vector3.zero;
+                movableObject.rigidBody.isKinematic = true;
             }
         }
 
