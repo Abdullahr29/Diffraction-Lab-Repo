@@ -45,6 +45,7 @@ public class TooltrayController : MonoBehaviour
             foreach (var tool in activeTools)
             {
                 tool.enabled = false;
+                tool.GameObject.GetComponent<Button>().onClick.RemoveListener(tool.ButtonInteract);
             }
             activeTools.Clear();
         }        
@@ -102,6 +103,7 @@ public class TooltrayController : MonoBehaviour
         tool.enabled = true;
         rootObject.SetActive(true);
         activeTools.Add(tool);
+        rootObject.GetComponent<Button>().onClick.AddListener(tool.ButtonInteract);
     }
 
 }

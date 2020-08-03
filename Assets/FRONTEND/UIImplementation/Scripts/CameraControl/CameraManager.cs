@@ -17,7 +17,8 @@ public class CameraManager : MonoBehaviour
     */
 
     [Header("Camera Positioning")]
-    public Vector2 cameraOffset = new Vector2(30f, 1.2f);
+    public Vector2 cameraOffset = new Vector2(10f, -3f);
+    public float lookAtOffset = -1f;
 
     [Header("Move Controls")]
     public float upDownSpeed = 5f;
@@ -28,9 +29,9 @@ public class CameraManager : MonoBehaviour
     public Vector2 minBounds, maxBounds;
     [Header("Zoom Controls")]
     public float zoomSpeed = 4f;
-    public float nearZoomLimit = 2f;
-    public float farZoomLimit = 40f;
-    public float startingZoom = 20f;
+    public float nearZoomLimit = 0.5f;
+    public float farZoomLimit = 30f;
+    public float startingZoom = 5f;
 
     IZoom zoom;
     Vector3 frameMove;
@@ -45,6 +46,7 @@ public class CameraManager : MonoBehaviour
         cam = GetComponentInChildren<Camera>();
         cam.transform.localPosition = new Vector3(0f, Mathf.Abs(cameraOffset.y), -Mathf.Abs(cameraOffset.x));
         zoom = new OrhtographicZoom(cam, startingZoom);
+        cam.transform.LookAt(transform.position + Vector3.up * lookAtOffset);
     }
     
     private void OnEnable()

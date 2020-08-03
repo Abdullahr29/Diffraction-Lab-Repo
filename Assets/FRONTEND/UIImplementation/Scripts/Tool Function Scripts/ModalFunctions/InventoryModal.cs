@@ -108,6 +108,15 @@ public class InventoryModal : Modal
         thisClick.interactable = false;
     }
 
+    private void SelectAndPlaceTwo(Button thisClick, MeshID mesh, MeshID manager)
+    {
+        // Functionality for instantiating prefabs, closing the inventory as it is 
+        // introduced onto the scene
+        MeshesInventory.Instance.InstantiateTwo(mesh, manager);
+        CloseModal(_inventoryModal);
+        thisClick.interactable = false;
+    }
+
     private void PlaceBoard()
     {
         // Placing the board onto the scene unlocks all categories
@@ -159,7 +168,7 @@ public class InventoryModal : Modal
                 CardFromKey(MeshID.laser).SetActive (true);
                 ButtonFromKey(MeshID.laser).onClick.AddListener(delegate
                 {
-                    SelectAndPlaceItem(ButtonFromKey(MeshID.laser), MeshID.laser);
+                    SelectAndPlaceTwo(ButtonFromKey(MeshID.laser), MeshID.laser, MeshID.propagationSystem);
                 });
 
             break;
@@ -180,10 +189,10 @@ public class InventoryModal : Modal
 
                 tabSlit.SetActive (true);
 
-                CardFromKey(MeshID.slit).SetActive (true);
-                ButtonFromKey(MeshID.slit).onClick.AddListener(delegate
+                CardFromKey(MeshID.grating).SetActive (true);
+                ButtonFromKey(MeshID.grating).onClick.AddListener(delegate
                 {
-                    SelectAndPlaceItem(ButtonFromKey(MeshID.slit), MeshID.slit);
+                    SelectAndPlaceItem(ButtonFromKey(MeshID.grating), MeshID.grating);
                 });
             break;
 
@@ -194,7 +203,7 @@ public class InventoryModal : Modal
                 CardFromKey(MeshID.screen).SetActive (true);
                 ButtonFromKey(MeshID.screen).onClick.AddListener(delegate
                 {
-                    SelectAndPlaceItem(ButtonFromKey(MeshID.screen), MeshID.screen);
+                    SelectAndPlaceTwo(ButtonFromKey(MeshID.screen), MeshID.screen, MeshID.emailManager);
                 });
 
                 CardFromKey(MeshID.cmosCamera).SetActive (true);

@@ -10,12 +10,14 @@ public enum MeshID
 {
     board,
     laser,
+    propagationSystem,
     lens,
-    slit,
     grating,
     screen,
-    cmosCamera
+    cmosCamera,
+    emailManager
 }
+
 [System.Serializable]
 public class Mesh
 {
@@ -83,11 +85,22 @@ public class MeshesInventory : MonoBehaviour
         {
             GameObject prefab = returnPrefabFromKey(item);
             GameObject newMesh = Instantiate(prefab);
-            PrefabUtility.UnpackPrefabInstance(newMesh, PrefabUnpackMode.Completely, InteractionMode.UserAction);
-            Debug.Log(newMesh);
             newMesh.transform.SetParent(_labMeshes, false);
             instantiatedMeshes.Add(item);
         }
+    }
+
+    public void InstantiateTwo(MeshID mesh, MeshID manager)
+    {
+        InstantiateItem(mesh);
+
+        if (instantiatedMeshes.Contains(manager) == false)
+        {
+            GameObject managerPrefab = returnPrefabFromKey(manager);
+            GameObject newManager = Instantiate(managerPrefab);
+            instantiatedMeshes.Add(manager);
+        }
+
     }
 
 }
