@@ -1,13 +1,9 @@
 fileFormatVersion: 2
-<<<<<<< HEAD
 <<<<<<< HEAD:Assets/FRONTEND/UIImplementation/Scripts/CameraControl/Input.meta
-guid: bbb2b6993527a4b10a62e1a40b412f3f
+guid: da3683dd7dd1d487c999eeae5866b8e3
 =======
 guid: 908dbf01f152e4940bb39fe7b96dba9e
 >>>>>>> efac58d011628665a3ac3baee12b730d5f683e2c:Assets/MASTER/Checkpoint2/Prefabs/CMOS CAMERA.meta
-=======
-guid: bbb2b6993527a4b10a62e1a40b412f3f
->>>>>>> efac58d011628665a3ac3baee12b730d5f683e2c
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
