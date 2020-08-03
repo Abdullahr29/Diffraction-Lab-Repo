@@ -84,6 +84,8 @@ public class MeshesInventory : MonoBehaviour
         {
             GameObject prefab = returnPrefabFromKey(item);
             GameObject newMesh = Instantiate(prefab);
+            PrefabUtility.UnpackPrefabInstance(newMesh, PrefabUnpackMode.Completely, InteractionMode.UserAction);
+            Debug.Log(newMesh);
             newMesh.transform.SetParent(_labMeshes, false);
             instantiatedMeshes.Add(item);
         }
