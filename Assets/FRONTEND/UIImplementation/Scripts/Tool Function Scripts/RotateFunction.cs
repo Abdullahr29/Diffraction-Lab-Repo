@@ -17,7 +17,7 @@ public class RotateFunction : MonoBehaviour
 	Camera mainCam;
 	float targetRot;   
 
-	public float force = 10f;
+	public float force = 0.2f;
 	public float maxSpeed = 360f;
 
 	GameObject confirmHolder, denyHolder;
@@ -70,7 +70,7 @@ public class RotateFunction : MonoBehaviour
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit) && !isCursorOverButton) //if we have clicked on an object
 			{
-				tempObject = hit.collider.gameObject.GetComponent<IMovable>();
+				tempObject = hit.collider.gameObject.GetComponentInParent<IMovable>();
 				if (!isSelected & tempObject != null)
 				{
 					movableObject = tempObject;
@@ -129,7 +129,7 @@ public class RotateFunction : MonoBehaviour
 		{
 			if (enableMotion) //This was always on before if we had an object selected, what was changing was targetrotation
 			{
-				rb.AddRelativeTorque(0, mouseVel * force * Time.deltaTime, 0);
+				rb.AddTorque(0, mouseVel * force * Time.deltaTime, 0);
 			}
 			else
 			{
