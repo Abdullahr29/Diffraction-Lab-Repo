@@ -45,7 +45,7 @@ public class TooltrayController : MonoBehaviour
             foreach (var tool in activeTools)
             {
                 tool.enabled = false;
-                tool.GameObject.GetComponent<Button>().onClick.RemoveListener(tool.ButtonInteract);
+                tool.gameObject.GetComponent<Button>().onClick.RemoveListener(tool.ButtonInteract);
             }
             activeTools.Clear();
         }        
