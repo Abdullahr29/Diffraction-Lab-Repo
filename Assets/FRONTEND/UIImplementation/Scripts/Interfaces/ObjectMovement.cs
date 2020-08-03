@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-public class ExampleScript : MonoBehaviour, IMovable
+public class ObjectMovement : MonoBehaviour, IMovable
 {
     //An example script to be attached to an optical component to show how to implement IMovable
 
