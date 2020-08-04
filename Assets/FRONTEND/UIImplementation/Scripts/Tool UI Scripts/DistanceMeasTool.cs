@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class DistanceMeasTool : Tool
 {
+    void Start()
+    {
+        gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._measureSprite;
+    }
+
     GameObject measurementController;
     MeasurementControl measurementControl;
     bool isBeingUsed = false;

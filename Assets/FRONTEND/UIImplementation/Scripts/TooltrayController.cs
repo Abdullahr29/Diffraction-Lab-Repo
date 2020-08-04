@@ -6,13 +6,15 @@ using UnityEngine.UI;
 
 public class TooltrayController : MonoBehaviour
 {
-    private static TooltrayController _instance;
-
-    public List<GameObject> dynamicButtons;
-
     public GameObject buttonPrefab;
+    public List<GameObject> dynamicButtons;
     public GameObject dynamicTray;
     RectTransform tooltrayRect;
+    public Tool newTool;
+
+    [Header("Dynamic Tool Sprites")]
+    public Sprite _inventorySprite;
+    public Sprite _moveSprite, _rotateSprite, _measureSprite, _angleSprite, _investigateSprite, _takeDataSprite;
 
     float minheight = 215f;
     float buttonUnitheight = 76f;
@@ -20,9 +22,11 @@ public class TooltrayController : MonoBehaviour
     int extraButtons;
     int maxDynamicButtons = 3;
 
-    public Tool newTool;
     List<Tool> toolsInMode;
     public List<Tool> activeTools;
+
+
+    private static TooltrayController _instance;
     public static TooltrayController Instance
     {
         get

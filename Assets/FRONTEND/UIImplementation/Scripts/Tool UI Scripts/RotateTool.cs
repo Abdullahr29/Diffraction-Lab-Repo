@@ -7,6 +7,12 @@ using UnityEngine.UI;
 
 public class RotateTool : Tool
 {
+    private SpriteRenderer spriteRenderer;
+    void Start()
+    {
+        gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._rotateSprite;
+    }
+
     GameObject rotateController, confirmObject, denyObject;
     RotateFunction rotateFunction;
     bool isBeingUsed = false;

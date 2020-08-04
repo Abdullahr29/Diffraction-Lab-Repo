@@ -51,6 +51,7 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
+        ModalManager.Instance.ActivateIntroductorySpiel();
         calibrateClick();        //by default launch into this mode (change this for intro mode in the future)
 
         calibrate.onClick.AddListener(calibrateClick);
@@ -93,13 +94,6 @@ public class UIController : MonoBehaviour
         currentMode = Mode.DataTake;
         tooltray.SetTrayContents(currentMode);
         Debug.Log("Data");
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     private void DeactivateTabs()

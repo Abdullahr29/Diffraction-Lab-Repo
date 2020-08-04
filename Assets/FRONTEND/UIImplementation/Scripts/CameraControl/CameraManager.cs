@@ -17,21 +17,22 @@ public class CameraManager : MonoBehaviour
     */
 
     [Header("Camera Positioning")]
-    public Vector2 cameraOffset = new Vector2(10f, -3f);
-    public float lookAtOffset = -1f;
+    public Vector2 cameraOffset = new Vector2(3f, 1.2f);
+    public float lookAtOffset = 0f;
 
     [Header("Move Controls")]
-    public float upDownSpeed = 5f;
-    public float leftRightSpeed = 5f;
+    public float upDownSpeed = 1f;
+    public float leftRightSpeed = 1f;
     public float rotateSpeed = 45f;
 
     [Header("Move Bounds (Set to OpticalBoard Mesh")]
-    public Vector2 minBounds, maxBounds;
+    public Vector2 minBounds = new Vector2(-50,-50);
+    public Vector2 maxBounds = new Vector2(50,50);
     [Header("Zoom Controls")]
-    public float zoomSpeed = 4f;
-    public float nearZoomLimit = 0.5f;
-    public float farZoomLimit = 30f;
-    public float startingZoom = 5f;
+    public float zoomSpeed = 1f;
+    public float nearZoomLimit = 0.05f;
+    public float farZoomLimit = 5f;
+    public float startingZoom = 1f;
 
     IZoom zoom;
     Vector3 frameMove;

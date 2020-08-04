@@ -7,6 +7,11 @@ using UnityEngine.UI;
 
 public class MoveTool : Tool
 {
+     void Start()
+    {
+        gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._moveSprite;
+    }
+
     GameObject moveController, confirmObject, denyObject;
     MoveFunction moveFunction;
     bool isBeingUsed = false;

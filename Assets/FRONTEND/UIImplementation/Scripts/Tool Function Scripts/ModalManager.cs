@@ -28,6 +28,8 @@ public class ModalManager : MonoBehaviour
     private Transform _helpLabModals;
     [SerializeField]
     private Transform _inventoryParent;
+    [SerializeField]
+    private Transform _introSpielParent;
 
 
     [Header("Modal Prefabs")]
@@ -44,12 +46,12 @@ public class ModalManager : MonoBehaviour
     private GameObject _helpDataPrefab;
     [SerializeField]
     private GameObject _inventoryPrefab;
+    [SerializeField]
+    private GameObject _introSpielPrefab;
 
     // Empty game objects to instantiate the prefabs into
     public static GameObject helpCal, helpMes, helpExpl, helpData;
-    public static GameObject labScript;
-    public static GameObject inventory;
-    
+    public static GameObject labScript, inventory, introSpiel;
 
     // These help check if prefabs already instantiated
     private List<string> createdModals = new List<string>();
@@ -107,6 +109,11 @@ public class ModalManager : MonoBehaviour
     public void ActivateInventory()
     {
         ActivateModal(createdModalsDict, "inventory", _inventoryPrefab, inventory, _inventoryParent);
+    }
+
+    public void ActivateIntroductorySpiel()
+    {
+        ActivateModal(createdModalsDict, "introSpiel", _introSpielPrefab, introSpiel, _introSpielParent);
     }
     
 }

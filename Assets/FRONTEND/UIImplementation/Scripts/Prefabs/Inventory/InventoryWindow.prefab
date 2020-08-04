@@ -1988,9 +1988,9 @@ MonoBehaviour:
     meshCard: {fileID: 8459594321599697796}
   - item: 1
     meshCard: {fileID: 8459594321213070520}
-  - item: 2
-    meshCard: {fileID: 4735097293441793200}
   - item: 3
+    meshCard: {fileID: 4735097293441793200}
+  - item: 4
     meshCard: {fileID: 264858666576731638}
   - item: 6
     meshCard: {fileID: 2196703331427310108}

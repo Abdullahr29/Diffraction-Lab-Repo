@@ -9,7 +9,7 @@ public class AngleMeasTool : Tool
     // Start is called before the first frame update
     void Start()
     {
-
+        gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._angleSprite;
     }
 
     // Update is called once per frame

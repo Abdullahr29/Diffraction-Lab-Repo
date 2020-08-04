@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class InventoryTool : Tool
 {
+     void Start()
+    {
+        gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._inventorySprite;
+    }
+
     bool isBeingUsed = false;
        public override void ButtonInteract()
     {
