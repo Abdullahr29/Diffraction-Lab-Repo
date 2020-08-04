@@ -233,8 +233,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4360543841240068415}
-  - component: {fileID: 1816999406704574727}
-  - component: {fileID: 341133453}
+  - component: {fileID: 1832085140378358153}
+  - component: {fileID: 1421100300870015882}
   m_Layer: 0
   m_Name: v2 CAMERA
   m_TagString: Untagged
@@ -258,7 +258,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &1816999406704574727
+--- !u!54 &1832085140378358153
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -274,7 +274,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &341133453
+--- !u!114 &1421100300870015882
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -283,7 +283,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4019483737028946821}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 208468e5157467545bfebb4c13757fdb, type: 3}
+  m_Script: {fileID: 11500000, guid: 31aa9f493c42b6b428d27d5103e60403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &4180156964583246621

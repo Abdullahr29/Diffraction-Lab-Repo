@@ -117,8 +117,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3460458700728214599}
   - component: {fileID: 44201363973267719}
-  - component: {fileID: 1575430054}
-  - component: {fileID: 1575430053}
+  - component: {fileID: 8877687822942197086}
+  - component: {fileID: 1856431144830299819}
   m_Layer: 0
   m_Name: v2 GRATING
   m_TagString: Untagged
@@ -161,7 +161,7 @@ MonoBehaviour:
   slitWidth: 0.00006
   slitHeight: 0.00006
   resolutionPower: 10
---- !u!54 &1575430054
+--- !u!54 &8877687822942197086
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -177,7 +177,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1575430053
+--- !u!114 &1856431144830299819
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -186,7 +186,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 3460458700728214598}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 208468e5157467545bfebb4c13757fdb, type: 3}
+  m_Script: {fileID: 11500000, guid: 31aa9f493c42b6b428d27d5103e60403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!64 &1527079684

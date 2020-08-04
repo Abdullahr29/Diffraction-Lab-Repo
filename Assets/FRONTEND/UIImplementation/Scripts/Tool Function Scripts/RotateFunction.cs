@@ -129,31 +129,19 @@ public class RotateFunction : MonoBehaviour
 		{
 			if (enableMotion) //This was always on before if we had an object selected, what was changing was targetrotation
 			{
-				rb.AddTorque(0, mouseVel * force * Time.deltaTime, 0);
-			}
+                //rb.AddTorque(0, mouseVel * force * Time.deltaTime, 0);
+                rb.centerOfMass = new Vector3(0, 0, 0);
+                rb.AddTorque(0, mouseVel * force * Time.deltaTime, 0);
+                rb.inertiaTensorRotation = Quaternion.identity;
+                //movableObject.transform.localEulerAngles = new Vector3(0, 0, transform.localEulerAngles.z);
+
+            }
 			else
 			{
 				rb.angularVelocity = Vector3.zero;
 			}
 		}
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	void RecordRotation()
 	{
