@@ -785,11 +785,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac13df0044516294399660e043ce6192, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dynamicButtons: []
   buttonPrefab: {fileID: 9164850315061693927, guid: 641e0f281df8cbf4e82a581d05822b78,
     type: 3}
+  dynamicButtons: []
   dynamicTray: {fileID: 765014439}
   newTool: {fileID: 0}
+  _inventorySprite: {fileID: 21300000, guid: f26d6703a9daf482a9f94c594f9e44d6, type: 3}
+  _moveSprite: {fileID: 21300000, guid: f65b5f47a25d54a3ba51f7d4b9f2fcfb, type: 3}
+  _rotateSprite: {fileID: 21300000, guid: 8b0c65debbf78411f94e5374578361d4, type: 3}
+  _measureSprite: {fileID: 21300000, guid: 949b2d80659e04fb0a3a7db58b6c3a7c, type: 3}
+  _angleSprite: {fileID: 21300000, guid: a0e28504b24dc4e4fa55355e7602785f, type: 3}
+  _investigateSprite: {fileID: 21300000, guid: 648cf8e30a7834914a2e2bd5cbed33b8, type: 3}
+  _takeDataSprite: {fileID: 21300000, guid: 06d2380467ba3425d9bb6e7aa706c3fd, type: 3}
   activeTools: []
 --- !u!1 &491686952
 GameObject:
