@@ -20,9 +20,9 @@ public class BeamGeneratorScript : MonoBehaviour
     void Start()
     {
         Id = Guid.NewGuid();
-        GameObject.Find("PropagationSystem(Clone)").GetComponent<PropagationSystem>().AddLaser(laser);
+        GameObject.Find("PropagationSystem").GetComponent<PropagationSystem>().AddLaser(laser);
         DescreateBeamCreator();
-        GameObject.Find("PropagationSystem(Clone)").GetComponent<PropagationSystem>().AddNewBeams(_descreteBeams);
+        GameObject.Find("PropagationSystem").GetComponent<PropagationSystem>().AddNewBeams(_descreteBeams);
         
     }
 

@@ -6,19 +6,19 @@ using UnityEngine.UI;
 
 public class InventoryTool : Tool
 {
-     void Start()
+     void OnEnable()
     {
         gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._inventorySprite;
     }
 
     bool isBeingUsed = false;
-       public override void ButtonInteract()
+    public override void ButtonInteract()
     {
         isBeingUsed = !isBeingUsed;
         if (isBeingUsed)
         {
             ModalManager.Instance.ActivateInventory();
-        }        
+        }
 
         if (isBeingUsed)
         {
@@ -27,4 +27,10 @@ public class InventoryTool : Tool
             TooltrayController.Instance.activeTools.Add(this);
         }
     }
+
+     public override void DeactivateButton()
+    {
+        
+    }
 }
+

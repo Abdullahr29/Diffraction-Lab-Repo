@@ -8,7 +8,7 @@ using UnityEngine.UI;
 public class RotateTool : Tool
 {
     private SpriteRenderer spriteRenderer;
-    void Start()
+    void OnEnable()
     {
         gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._rotateSprite;
     }
@@ -37,9 +37,12 @@ public class RotateTool : Tool
 
     public override void DeactivateButton()
     {
-        rotateFunction.AbruptEnd();
-        rotateController.SetActive(false);
-        isBeingUsed = false;
+        if (rotateController != null)
+        {
+            rotateFunction.AbruptEnd();
+            rotateController.SetActive(false);
+            isBeingUsed = false;
+        }        
     }
 }
 

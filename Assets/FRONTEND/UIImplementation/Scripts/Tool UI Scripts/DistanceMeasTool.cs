@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class DistanceMeasTool : Tool
 {
-    void Start()
+    void OnEnable()
     {
         gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._measureSprite;
     }

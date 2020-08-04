@@ -85,6 +85,7 @@ public class MeshesInventory : MonoBehaviour
         {
             GameObject prefab = returnPrefabFromKey(item);
             GameObject newMesh = Instantiate(prefab);
+            newMesh.name = prefab.name;
             newMesh.transform.SetParent(_labMeshes, false);
             instantiatedMeshes.Add(item);
         }
@@ -98,6 +99,7 @@ public class MeshesInventory : MonoBehaviour
         {
             GameObject managerPrefab = returnPrefabFromKey(manager);
             GameObject newManager = Instantiate(managerPrefab);
+            newManager.name = managerPrefab.name;
             instantiatedMeshes.Add(manager);
         }
 

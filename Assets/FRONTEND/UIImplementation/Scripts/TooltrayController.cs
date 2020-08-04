@@ -135,7 +135,6 @@ public class TooltrayController : MonoBehaviour
     {        
         if (activeTools != null)
         {
-            Debug.Log(activeTools);
             foreach (var tool in activeTools)
             {
                 if (tool != newTool)

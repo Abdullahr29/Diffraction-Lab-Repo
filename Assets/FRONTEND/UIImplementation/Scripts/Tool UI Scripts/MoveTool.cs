@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class MoveTool : Tool
 {
-     void Start()
+     void OnEnable()
     {
         gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._moveSprite;
     }
@@ -36,8 +36,12 @@ public class MoveTool : Tool
 
     public override void DeactivateButton()
     {
-        moveFunction.AbruptEnd();
-        moveController.SetActive(false);
-        isBeingUsed = false;
+        if (moveController != null)
+        {
+            moveFunction.AbruptEnd();
+            moveController.SetActive(false);
+            isBeingUsed = false;
+        }
+        
     }
 }

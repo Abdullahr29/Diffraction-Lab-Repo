@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class AngleMeasTool : Tool
 {
     // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
         gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._angleSprite;
     }
