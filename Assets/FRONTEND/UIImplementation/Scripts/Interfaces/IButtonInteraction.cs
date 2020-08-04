@@ -5,4 +5,6 @@ using UnityEngine;
 interface IButtonInteraction
 {
     void ButtonInteract();
+
+    void DeactivateButton();
 }

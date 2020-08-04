@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class TooltrayController : MonoBehaviour
 {
+    private static TooltrayController _instance;
+
     public List<GameObject> dynamicButtons;
 
     public GameObject buttonPrefab;
@@ -18,13 +20,32 @@ public class TooltrayController : MonoBehaviour
     int extraButtons;
     int maxDynamicButtons = 3;
 
+    public Tool newTool;
+    List<Tool> toolsInMode;
     public List<Tool> activeTools;
-    
+    public static TooltrayController Instance
+    {
+        get
+        {
+            if (_instance == null)
+                Debug.LogError("UIController is NULL.");
+
+            return _instance;
+
+        }
+    }
+
+    private void Awake()
+    {
+        _instance = this;
+    }
+
     void Start()
     {
         //Creates the blank buttons before we apply tools to them, held in dynamicTools
 
 
+        toolsInMode = new List<Tool>();
         activeTools = new List<Tool>();
         dynamicButtons = new List<GameObject>();
         for (int i = 0; i < maxDynamicButtons; i++)
@@ -40,14 +61,15 @@ public class TooltrayController : MonoBehaviour
 
     public void SetTrayContents(Mode desiredMode)
     {
-        if (activeTools != null)
+        if (toolsInMode != null)
         {
-            foreach (var tool in activeTools)
-            {
+            foreach (var tool in toolsInMode) //tool here refers to the specific Tool script
+            {                
+                tool.DeactivateButton();
+                tool.gameObject.GetComponent<Button>().onClick.RemoveAllListeners();
                 tool.enabled = false;
-         //       tool.gameObject.GetComponent<Button>().onClick.RemoveListener(tool.ButtonInteract);
             }
-            activeTools.Clear();
+            toolsInMode.Clear();
         }        
 
         switch (desiredMode)
@@ -101,8 +123,25 @@ public class TooltrayController : MonoBehaviour
         }
         tool.enabled = true;
         rootObject.SetActive(true);
-        activeTools.Add(tool);
+        toolsInMode.Add(tool);
         rootObject.GetComponent<Button>().onClick.AddListener(tool.ButtonInteract);
     }
+
+    public void SwitchTool()
+    {        
+        if (activeTools != null)
+        {
+            Debug.Log(activeTools);
+            foreach (var tool in activeTools)
+            {
+                if (tool != newTool)
+                {
+                    tool.DeactivateButton();
+                }
+            }
+            activeTools.Clear();
+        }                          
+    }
+
 
 }

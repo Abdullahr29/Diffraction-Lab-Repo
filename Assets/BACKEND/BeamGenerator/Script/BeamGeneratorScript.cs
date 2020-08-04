@@ -28,7 +28,7 @@ public class BeamGeneratorScript : MonoBehaviour
 
     private void DescreateBeamCreator()
     {
-        var radius = laser.transform.Find("BeamOrientationController").transform.localScale.x * 10;
+        var radius = laser.transform.Find("BeamOrientationController").transform.localScale.x * 0.5f;
         float delta = Convert.ToSingle(radius / (resolution + 0.5));
 
         var positions = new List<Vector3>();

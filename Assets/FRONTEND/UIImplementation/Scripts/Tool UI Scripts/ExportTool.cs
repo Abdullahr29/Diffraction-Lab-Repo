@@ -6,21 +6,17 @@ using UnityEngine.UI;
 
 public class ExportTool : Tool
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
+    bool isBeingUsed = false;
 
     public override void ButtonInteract()
     {
-        //Call initialisation method for the relevant tool
+        isBeingUsed = !isBeingUsed;
+
+        if (isBeingUsed)
+        {
+            TooltrayController.Instance.newTool = this;
+            TooltrayController.Instance.SwitchTool();
+            TooltrayController.Instance.activeTools.Add(this);
+        }
     }
 }

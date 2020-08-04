@@ -19,7 +19,7 @@ public class MoveFunction : MonoBehaviour
 
     Camera mainCam;
     float cameraDist;
-    public float maxSpeed = 32f;
+    public float maxSpeed = 80f;
 
     GameObject confirmHolder, denyHolder;
     Button confirmButton, denyButton;    
@@ -194,6 +194,18 @@ public class MoveFunction : MonoBehaviour
         confirmHolder.SetActive(false);
         denyHolder.SetActive(false);
         movableObject.rigidBody.isKinematic = true;
+    }
+
+
+    public void AbruptEnd()
+    {
+        if (isSelected)
+        {
+            Debug.Log("starting");
+            ConfirmPlacement();  //Save current half completed movement
+            isSelected = false;
+            Debug.Log("finished");
+        }
     }
     
 

@@ -30,6 +30,11 @@ public class Tool : MonoBehaviour, IButtonInteraction
 
     }
 
+    public virtual void DeactivateButton()
+    {
+
+    }
+
 
 
 }

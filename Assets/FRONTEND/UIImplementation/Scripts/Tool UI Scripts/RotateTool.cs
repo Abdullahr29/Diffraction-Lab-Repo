@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,5 +20,20 @@ public class RotateTool : Tool
         }
         rotateController.SetActive(isBeingUsed); //if button is active then enable MoveFunction to listen for input
         Debug.Log(isBeingUsed);
+
+        if (isBeingUsed)
+        {
+            TooltrayController.Instance.newTool = this;
+            TooltrayController.Instance.SwitchTool();
+            TooltrayController.Instance.activeTools.Add(this);
+        }
+    }
+
+    public override void DeactivateButton()
+    {
+        rotateFunction.AbruptEnd();
+        rotateController.SetActive(false);
+        isBeingUsed = false;
     }
 }
+

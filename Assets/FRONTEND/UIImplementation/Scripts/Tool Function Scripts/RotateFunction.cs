@@ -17,7 +17,7 @@ public class RotateFunction : MonoBehaviour
 	Camera mainCam;
 	float targetRot;   
 
-	public float force = 0.2f;
+	public float force = 10f;
 	public float maxSpeed = 360f;
 
 	GameObject confirmHolder, denyHolder;
@@ -131,8 +131,8 @@ public class RotateFunction : MonoBehaviour
 			{
                 //rb.AddTorque(0, mouseVel * force * Time.deltaTime, 0);
                 rb.centerOfMass = new Vector3(0, 0, 0);
-                rb.AddTorque(0, mouseVel * force * Time.deltaTime, 0);
-                rb.inertiaTensorRotation = Quaternion.identity;
+				rb.inertiaTensorRotation = Quaternion.identity;
+				rb.AddTorque(0, mouseVel * force * Time.deltaTime, 0);                
                 //movableObject.transform.localEulerAngles = new Vector3(0, 0, transform.localEulerAngles.z);
 
             }
@@ -206,4 +206,15 @@ public class RotateFunction : MonoBehaviour
 		}
 		
     }
+
+	public void AbruptEnd()
+	{
+		if (isSelected)
+		{
+			Debug.Log("starting");
+			ConfirmPlacement();  //Save current half completed movement
+			isSelected = false;
+			Debug.Log("finished");
+		}
+	}
 }

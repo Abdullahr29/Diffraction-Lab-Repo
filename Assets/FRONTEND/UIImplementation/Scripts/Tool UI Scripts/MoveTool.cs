@@ -19,6 +19,20 @@ public class MoveTool : Tool
             moveFunction = moveController.AddComponent<MoveFunction>();
         }        
         moveController.SetActive(isBeingUsed); //if button is active then enable MoveFunction to listen for input
-        Debug.Log(moveFunction.enabled);
+        Debug.Log(isBeingUsed);
+
+        if (isBeingUsed)
+        {
+            TooltrayController.Instance.newTool = this;
+            TooltrayController.Instance.SwitchTool();
+            TooltrayController.Instance.activeTools.Add(this);
+        }        
     }
- }
+
+    public override void DeactivateButton()
+    {
+        moveFunction.AbruptEnd();
+        moveController.SetActive(false);
+        isBeingUsed = false;
+    }
+}
