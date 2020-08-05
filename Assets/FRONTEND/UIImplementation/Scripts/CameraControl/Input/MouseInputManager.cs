@@ -5,9 +5,11 @@ using UnityEngine;
 public class MouseInputManager : InputManager
 {
     Vector2Int screen;
-    float mousePositionOnRotateStart;
+    float mouseXStart;
+    float mouseYStart;
     public static event MoveInputHandler OnMoveInput;
     public static event RotateXInputHandler OnRotateXInput;
+    public static event RotateYInputHandler OnRotateYInput;
     public static event ZoomInputHandler OnZoomInput;
 
     private void Awake()
@@ -17,7 +19,43 @@ public class MouseInputManager : InputManager
 
     private void Update()
     {
-        Vector3 mp = Input.mousePosition;
-        //bool mouseValid = mp.y <= screen.y * 1.05f && mp.y >= screen.y * -0.05f && mp.x <= screen.x * 1.05f && mp.x >= screen.x * -0.05f);
+        float mouseX = Input.GetAxis("Mouse X");
+        float mouseY = Input.GetAxis("Mouse Y");
+
+        // rotation
+        /*if (Input.GetMouseButtonDown(0)) {
+            mouseXStart = mouseX;
+            mouseYStart = mouseY;
+        }
+        else if (Input.GetMouseButton(0))
+        {
+            if (mouseX < mouseXStart)
+            {
+                OnRotateXInput?.Invoke(-1f);
+            }
+            else if (mouseX > mouseXStart)
+            {
+                OnRotateXInput?.Invoke(1f);
+            }
+
+            if (mouseY < mouseYStart)
+            {
+                OnRotateYInput?.Invoke(1f);
+            }
+            else if (mouseY > mouseYStart)
+            {
+                OnRotateYInput?.Invoke(-1f);
+            }
+        }*/
+
+        // zoom
+        if (Input.mouseScrollDelta.y > 0)
+        {
+            OnZoomInput?.Invoke(-3f);
+        }
+        else if (Input.mouseScrollDelta.y < 0)
+        {
+            OnZoomInput?.Invoke(3f);
+        }
     }
 }

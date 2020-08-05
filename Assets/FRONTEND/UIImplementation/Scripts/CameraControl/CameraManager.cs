@@ -9,45 +9,52 @@ public class CameraManager : MonoBehaviour
     Camera Manager.
     Keyboard shortcuts:
     • Arrows for translational movement along XY axis
-    • AD for X rotation
-    • SW for Y rotation
-    • QE for Zoom
-    • IO for max zoom in - max zoom out
+    • AD for rotation about Y
+    • SW for rotation about X
+    • QE for max Zoom in - max Zoom out
+    • H for resetting the initial position and zoom
+
+    • Mouse control for zoom
+    • Mouse control for rotate functions but affects move and rotate tool,
+      so it is commented out in the MouseInputManager for now
 
     */
 
     [Header("Camera Positioning")]
-    public Vector2 cameraOffset = new Vector2(3f, 1.2f);
-    public float lookAtOffset = 0f;
+    public Vector2 cameraOffset = new Vector2(3f, 0f);
 
     [Header("Move Controls")]
     public float upDownSpeed = 1f;
     public float leftRightSpeed = 1f;
     public float rotateSpeed = 45f;
 
-    [Header("Move Bounds (Set to OpticalBoard Mesh")]
-    public Vector2 minBounds = new Vector2(-50,-50);
-    public Vector2 maxBounds = new Vector2(50,50);
+    [Header("Bounds")]
+    public Vector2 minMoveBounds = new Vector2(-50,-50);
+    public Vector2 maxMoveBounds = new Vector2(50, 50);
+    public float minRotate = -15f;
+    public float maxRotate = 90.0f;
+
     [Header("Zoom Controls")]
     public float zoomSpeed = 1f;
-    public float nearZoomLimit = 0.05f;
+    public float nearZoomLimit = 0.8f;
     public float farZoomLimit = 5f;
-    public float startingZoom = 1f;
+    public float startingZoom = 2f;
 
     IZoom zoom;
     Vector3 frameMove;
     float frameRotateX;
     float frameRotateY;
     float frameZoom;
-    //bool home;
+    float homeClick;
+    Vector3 initialPosition;
+    IZoom initialZoom;
     Camera cam;
 
     private void Awake()
     {
         cam = GetComponentInChildren<Camera>();
         cam.transform.localPosition = new Vector3(0f, Mathf.Abs(cameraOffset.y), -Mathf.Abs(cameraOffset.x));
-        zoom = new OrhtographicZoom(cam, startingZoom);
-        cam.transform.LookAt(transform.position + Vector3.up * lookAtOffset);
+        zoom = (IZoom)new PerspectiveZoom(cam, cameraOffset, startingZoom);
     }
     
     private void OnEnable()
@@ -56,9 +63,10 @@ public class CameraManager : MonoBehaviour
         KeyboardInputManager.OnRotateXInput += UpdateFrameRotateX;
         KeyboardInputManager.OnRotateYInput += UpdateFrameRotateY;
         KeyboardInputManager.OnZoomInput += UpdateFrameZoom;
-        //MouseInputManager.OnMoveInput += UpdateFrameMove;
-        //MouseInputManager.OnRotateInput += UpdateFrameRotate;
-        //MouseInputManager.OnZoomInput += UpdateFrameZoom;
+        KeyboardInputManager.OnHomeInput += UpdateFrameHome;
+        MouseInputManager.OnRotateXInput += UpdateFrameRotateX;
+        MouseInputManager.OnRotateYInput += UpdateFrameRotateY;
+        MouseInputManager.OnZoomInput += UpdateFrameZoom;
 
     }
     private void OnDisable()
@@ -67,9 +75,10 @@ public class CameraManager : MonoBehaviour
         KeyboardInputManager.OnRotateXInput -= UpdateFrameRotateX;
         KeyboardInputManager.OnRotateYInput -= UpdateFrameRotateY;
         KeyboardInputManager.OnZoomInput -= UpdateFrameZoom;
-        //MouseInputManager.OnMoveInput -= UpdateFrameMove;
-        //MouseInputManager.OnRotateInput -= UpdateFrameRotate;
-        //MouseInputManager.OnZoomInput -= UpdateFrameZoom;
+        KeyboardInputManager.OnHomeInput -= UpdateFrameHome;
+        MouseInputManager.OnRotateXInput -= UpdateFrameRotateX;
+        MouseInputManager.OnRotateYInput -= UpdateFrameRotateY;
+        MouseInputManager.OnZoomInput -= UpdateFrameZoom;
 
     }
 
@@ -89,18 +98,22 @@ public class CameraManager : MonoBehaviour
     {
         frameZoom += zoomAmount;
     }
+    private void UpdateFrameHome(float home)
+    {
+        homeClick += home;
+    }
 
     private void LateUpdate()
     {
-        /*if (home == true)
+        if (homeClick != 0f)
         {
-            cam = GetComponentInChildren<Camera>();
-            cam.transform.localPosition = new Vector3(0f, Mathf.Abs(cameraOffset.y), -Mathf.Abs(cameraOffset.x));
-            zoom = new OrhtographicZoom(cam, startingZoom);
-        }*/
+            ResetCamera();
+            homeClick = 0f;
+        }
+
         if (frameMove != Vector3.zero)
         {
-            Vector3 speedModFrameMove = new Vector3(frameMove.x * leftRightSpeed, frameMove.y * upDownSpeed, frameMove.z);
+            Vector3 speedModFrameMove = new Vector3(frameMove.x * leftRightSpeed, frameMove.y, frameMove.z);
             transform.position += transform.TransformDirection(speedModFrameMove) * Time.deltaTime;
             LockPositionInBounds();
             frameMove = Vector3.zero;
@@ -108,13 +121,17 @@ public class CameraManager : MonoBehaviour
 
         if (frameRotateX != 0f)
         {
+            Debug.Log("rotatedX");
             transform.Rotate(Vector3.up, frameRotateX * Time.deltaTime * rotateSpeed);
+            LockYRotationInBounds();
             frameRotateX = 0f;
         }
 
         if (frameRotateY != 0f)
         {
             transform.Rotate(Vector3.right, frameRotateY * Time.deltaTime * rotateSpeed);
+            Quaternion q = transform.rotation;
+            LockYRotationInBounds();
             frameRotateY = 0f;
         }
 
@@ -128,10 +145,10 @@ public class CameraManager : MonoBehaviour
             frameZoom = 0f;
         } else if (frameZoom == -100f)
         {
-            zoom = new OrhtographicZoom(cam, nearZoomLimit);
+            zoom.ZoomInMax(cam, nearZoomLimit);
         } else if (frameZoom == -100f)
         {
-            zoom = new OrhtographicZoom(cam, farZoomLimit);
+            zoom.ZoomOutMax(cam, farZoomLimit);
         }
 
     }
@@ -139,9 +156,34 @@ public class CameraManager : MonoBehaviour
     private void LockPositionInBounds()
     {
         transform.position = new Vector3(
-            Mathf.Clamp(transform.position.x, minBounds.x, maxBounds.x),
+            Mathf.Clamp(transform.position.x, -50, 50),
             transform.position.y,
-            Mathf.Clamp(transform.position.z, minBounds.y, maxBounds.y)
+            transform.position.z
         );
+
+    }
+
+    private void LockYRotationInBounds()
+    {
+        Vector3 rot = transform.rotation.eulerAngles;
+        rot.x = ClampAngle(rot.x, minRotate, maxRotate);
+        rot.z = ClampAngle(rot.z, 0, 0);
+        transform.eulerAngles = rot;
+    }
+
+    float ClampAngle(float angle, float from, float to)
+    {
+        // accepts e.g. -80, 80
+        if (angle < 0f) angle = 360 + angle;
+        if (angle > 180f) return Mathf.Max(angle, 360+from);
+        return Mathf.Min(angle, to);
+    }
+
+    private void ResetCamera()
+    {
+        transform.position = new Vector3(0f, 0f, 0f);
+        transform.rotation = Quaternion.identity;
+        cam.transform.localPosition = new Vector3(0f, Mathf.Abs(cameraOffset.y), -Mathf.Abs(cameraOffset.x));
+        zoom = (IZoom)new PerspectiveZoom(cam, cameraOffset, startingZoom);
     }
 }
