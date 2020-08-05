@@ -126,6 +126,11 @@ public class UIController : MonoBehaviour
     {
         mainCam.enabled = !screenOn;
         screenCam.enabled = screenOn;
+
+        if (!screenOn)
+        {
+            mainCam.GetComponentInParent<CameraManager>().ResetCamera();
+        }
     }
 
     public void QuitApplication()
@@ -133,7 +138,7 @@ public class UIController : MonoBehaviour
         Debug.Log("Quit");
 
         // Closes Game in Editor
-        UnityEditor.EditorApplication.isPlaying = false;
+        //---->>>  UnityEditor.EditorApplication.isPlaying = false;
         // Quits app
         Application.Quit();
     }

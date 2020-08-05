@@ -15,6 +15,8 @@ public class TooltrayController : MonoBehaviour
     [Header("Dynamic Tool Sprites")]
     public Sprite _inventorySprite;
     public Sprite _moveSprite, _rotateSprite, _measureSprite, _angleSprite, _investigateSprite, _takeDataSprite;
+    public Sprite _inventorySpriteActive;
+    public Sprite _moveSpriteActive, _rotateSpriteActive, _measureSpriteActive, _angleSpriteActive, _investigateSpriteActive, _takeDataSpriteActive;
 
     float minheight = 215f;
     float buttonUnitheight = 76f;
@@ -24,6 +26,7 @@ public class TooltrayController : MonoBehaviour
 
     List<Tool> toolsInMode;
     public List<Tool> activeTools;
+    //public GameObject _activeBckgPrefab;  ----Too complex for now with dynamic tools, review later
 
 
     private static TooltrayController _instance;
@@ -145,6 +148,12 @@ public class TooltrayController : MonoBehaviour
             activeTools.Clear();
         }                          
     }
+
+    /*public void InstantiateActiveToolBckg()
+    {
+        //GameObject activeBckg = Instantiate(_activeBckgPrefab);
+
+    }*/
 
 
 }

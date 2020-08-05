@@ -179,7 +179,7 @@ public class CameraManager : MonoBehaviour
         return Mathf.Min(angle, to);
     }
 
-    private void ResetCamera()
+    public void ResetCamera()
     {
         transform.position = new Vector3(0f, 0f, 0f);
         transform.rotation = Quaternion.identity;

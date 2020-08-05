@@ -19,7 +19,8 @@ public class TakeDataTool : Tool
 
     public override void ButtonInteract()
     {
-        isBeingUsed = !isBeingUsed;        
+        isBeingUsed = !isBeingUsed; 
+        gameObject.GetComponent<Image>().color = new Color32(82, 187, 0,100);  
 
         if (isBeingUsed)
         {
@@ -37,7 +38,6 @@ public class TakeDataTool : Tool
 
     public override void DeactivateButton()
     {
-        GameObject.Find("CameraFocus").transform.position = new Vector3(0, 10f, -40f);
         GameObject.Find("CameraFocus").GetComponent<CameraManager>().enabled = true;
         UIController.Instance.emailManager.SetActive(false);
         detectorMeasure.OnChange(false);

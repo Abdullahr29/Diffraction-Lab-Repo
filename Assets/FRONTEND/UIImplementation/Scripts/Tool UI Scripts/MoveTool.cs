@@ -7,9 +7,9 @@ using UnityEngine.UI;
 
 public class MoveTool : Tool
 {
-     void OnEnable()
+    void OnEnable()
     {
-        gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._moveSprite;
+        this.GetComponent<Image>().sprite = TooltrayController.Instance._moveSprite;
     }
 
     GameObject moveController, confirmObject, denyObject;
@@ -18,6 +18,8 @@ public class MoveTool : Tool
     public override void ButtonInteract()
     {
         isBeingUsed = !isBeingUsed;
+        this.GetComponent<Image>().sprite = TooltrayController.Instance._moveSpriteActive;
+
         if (moveController == null)
         {
             moveController = new GameObject("moveController");
@@ -31,7 +33,9 @@ public class MoveTool : Tool
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
             TooltrayController.Instance.activeTools.Add(this);
-        }        
+            SetActiveSprite(TooltrayController.Instance.newTool, true);
+        }
+        SetActiveSprite(TooltrayController.Instance.newTool, false);      
     }
 
     public override void DeactivateButton()
@@ -42,6 +46,15 @@ public class MoveTool : Tool
             moveController.SetActive(false);
             isBeingUsed = false;
         }
-        
+    }
+
+    public void SetActiveSprite(Tool tool, bool active)
+    {
+        if (active == true)
+        {
+            Debug.Log("changeSprite");
+            tool.GetComponent<Image>().sprite = TooltrayController.Instance._moveSpriteActive;
+        }
+        tool.GetComponent<Image>().sprite = TooltrayController.Instance._moveSprite;
     }
 }
