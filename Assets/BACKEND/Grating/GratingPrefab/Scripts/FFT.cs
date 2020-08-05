@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+//Credits to: Cooley-Tukey for the FFT algorithm, and Paul Bourke and Dr. Vinayak Bharadi for their implementation
+using System;
 
 public class FFT
 {
-
+    //need to get skew data at run time
     public struct COMPLEX {
         public double real, imag;
         public COMPLEX(double x, double y) {
@@ -17,7 +15,8 @@ public class FFT
         }
     }
 
-    public int[,] GreyImage;         
+    public float[,] GreyImage;
+    public float[,] ConvImage;
     public float[,] FourierMagnitude;
     public int[,] FFTNormalized;
 
@@ -31,7 +30,7 @@ public class FFT
     public COMPLEX[,] Output;        
     public COMPLEX[,] FFTNormal;
 
-    public FFT(int[,] grating) {
+    public FFT(float[,] grating) {
         GreyImage = grating;
         Width = nx = grating.GetLength(0);
         Height = ny = grating.GetLength(1);
@@ -41,7 +40,6 @@ public class FFT
         //Initializing Fourier Transform Array
 
         int i, j;
-        float max;
 
         Fourier = new COMPLEX[Width, Height];
         Output = new COMPLEX[Width, Height];
@@ -54,51 +52,12 @@ public class FFT
         //Calling Forward Fourier Transform
         Output = FFT2D(Fourier, nx, ny, 1);
 
-        //Frequency Shifting
-        FFTShifted = new COMPLEX[nx, ny];
+        FTShift();
 
-        for (i = 0; i <= (nx / 2) - 1; i++)
-            for (j = 0; j <= (ny / 2) - 1; j++) {
-                FFTShifted[i + (nx / 2), j + (ny / 2)] = Output[i, j];
-                FFTShifted[i, j] = Output[i + (nx / 2), j + (ny / 2)];
-                FFTShifted[i + (nx / 2), j] = Output[i, j + (ny / 2)];
-                FFTShifted[i, j + (nx / 2)] = Output[i + (nx / 2), j];
-            }
-
-        //raising to log to normalise between 0-1
-        FFTLog = new float[nx, ny];
-
-        FourierMagnitude = new float[nx, ny];
-
-        FFTNormalized = new int[nx, ny];
-
-        for (i = 0; i <= Width - 1; i++)
-            for (j = 0; j <= Height - 1; j++) {
-                FourierMagnitude[i, j] = FFTShifted[i, j].Magnitude();
-                FFTLog[i, j] = (float)Math.Log(1 + FourierMagnitude[i, j]);
-            }
-
-        max = FFTLog[0, 0];
-        for (i = 0; i <= Width - 1; i++)
-            for (j = 0; j <= Height - 1; j++) {
-                if (FFTLog[i, j] > max)
-                    max = FFTLog[i, j];
-            }
-        for (i = 0; i <= Width - 1; i++)
-            for (j = 0; j <= Height - 1; j++) {
-                FFTLog[i, j] = FFTLog[i, j] / max;
-            }
-
-        //normalising between desired value
-        for (i = 0; i <= Width - 1; i++)
-            for (j = 0; j <= Height - 1; j++) {
-                FFTNormalized[i, j] = (int)(2000 * FFTLog[i, j]);
-            }
-
-        return;
+        FTLog();
     }
 
-    public COMPLEX[,] FFT2D(COMPLEX[,] c, int nx, int ny, int dir) {
+    private COMPLEX[,] FFT2D(COMPLEX[,] c, int nx, int ny, int dir) {
         int i, j;
         int m;//Power of 2 for current number of points
         double[] real;
@@ -220,5 +179,84 @@ public class FFT
         return;
     }
 
+    public void InverseFFT(COMPLEX[,] Fourier) {
+        //Initializing Fourier Transform Array
+        int i, j;
+
+        //Calling Forward Fourier Transform
+        Output = new COMPLEX[nx, ny];
+        Output = FFT2D(Fourier, nx, ny, -1);
+
+        ConvImage = new float[nx, ny];
+        //Copying Real Image Back to Greyscale
+        //Copy Image Data to the Complex Array
+        for (i = 0; i <= Width - 1; i++)
+            for (j = 0; j <= Height - 1; j++) {
+                ConvImage[i, j] = Output[i, j].Magnitude()*10000;
+
+            }
+        
+
+        FTShift();
+
+        FTLog();
+
+        return;
+    }
+
+    private void FTShift() {
+        //Frequency Shifting
+        int i, j;
+
+        FFTShifted = new COMPLEX[nx, ny];
+
+        for (i = 0; i <= (nx / 2) - 1; i++)
+            for (j = 0; j <= (ny / 2) - 1; j++) {
+                FFTShifted[i + (nx / 2), j + (ny / 2)] = Output[i, j];
+                FFTShifted[i, j] = Output[i + (nx / 2), j + (ny / 2)];
+                FFTShifted[i + (nx / 2), j] = Output[i, j + (ny / 2)];
+                FFTShifted[i, j + (nx / 2)] = Output[i + (nx / 2), j];
+            }
+
+    }
+
+    private void FTLog() {
+        int i, j;
+        float max;
+
+        //raising to log to normalise between 0-1
+        FFTLog = new float[nx, ny];
+
+        FourierMagnitude = new float[nx, ny];
+
+        FFTNormalized = new int[nx, ny];
+
+        for (i = 0; i <= Width - 1; i++)
+            for (j = 0; j <= Height - 1; j++) {
+                FourierMagnitude[i, j] = FFTShifted[i, j].Magnitude();//need to add the multiplicative skew factor here
+                FFTLog[i, j] = (float)Math.Log(1 + FourierMagnitude[i, j]);
+            }
+
+        max = FFTLog[0, 0];
+        for (i = 0; i <= Width - 1; i++)
+            for (j = 0; j <= Height - 1; j++) {
+                if (FFTLog[i, j] > max)
+                    max = FFTLog[i, j];
+            }
+        for (i = 0; i <= Width - 1; i++)
+            for (j = 0; j <= Height - 1; j++) {
+                FFTLog[i, j] = FFTLog[i, j] / max;
+            }
+
+
+
+        //normalising between desired value
+        for (i = 0; i <= Width - 1; i++)
+            for (j = 0; j <= Height - 1; j++) {
+                FFTNormalized[i, j] = (int)(2000 * FFTLog[i, j]);
+            }
+
+        return;
+    }
 
 }

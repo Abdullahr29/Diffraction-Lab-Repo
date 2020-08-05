@@ -1,9 +1,12 @@
-using JetBrains.Annotations;
+using System;
 using System.IO;
 using UnityEngine;
 
 public class GratingBehaviour : MonoBehaviour
 {
+
+    public DetectorBehaviour detector;
+
     [Header("Internal References")]
     public Transform anchor;
 
@@ -22,11 +25,19 @@ public class GratingBehaviour : MonoBehaviour
     //public float slitWOffset;
     //public float slitHOffset;
 
+    public int resolution;
     [Range(0, 13)] public int resolutionPower;
 
-    private int resolution;
+    float distanceLensScreen;//need to get
+    float focalLength;//need to get 
+    [Range(-30, 30)] public float angle;//need to get and fit  from -30 to 30
+    [Range(0, 5)] public int slits;//need to get
+
     private int[,] bitmap;
     private float[,] output;//matrix with 2DFFT
+    public float[,] temp;
+
+
     private Vector3 pos;
     public Vector3 Pos { get { return pos; } }
 
@@ -37,23 +48,106 @@ public class GratingBehaviour : MonoBehaviour
         resolution = Mathf.RoundToInt(Mathf.Pow(2, resolutionPower));  //QUICK FIX: Only currently works if resolution is a power of 2, due to fft algorithm
         //positionObject();
         bitmap = new int[resolution, resolution];
-        //buildGrating();
-        fill();
     }
 
     public float[,] GetMatrix()
     {
-        // when user pressed the display button, generate the FFT and display on screen
-        FFT bitMapFFT = new FFT(bitmap);
+        //make slit bitmap
+        //convolve with n slit dirac-delta
+        //do FFT
+        //lens orientation skew
+        //focal length noise + background noise
+        //normalise 
+        //output data 
+        //inverse square 
+        //display on screen
+
+        //slit bitmap
+        fillSlit();
+
+        //convolve with dirac delta
+        slits = 2;
+        FFT bitMapFFT = new FFT(MatrixCalc.convertToFloat(bitmap));
+        bitMapFFT.ForwardFFT();
+        output = Convolve.convFFT(bitMapFFT.FFTShifted, MatrixCalc.convertToFloat(Convolve.genNSlits(slits, resolution)));
+
+        //doing FFT
+        bitMapFFT = new FFT(output);
         bitMapFFT.ForwardFFT();
         output = bitMapFFT.FFTLog;
-        //print(output);
+
+        //lens skew 
+        angle = 15;
+        output = Convolve.biasSkew(output, angle, resolution);
+
+        //noise
+        focalLength = 0.5f;
+        distanceLensScreen = 0.5f;
+        noiseLoops();
+
+        //normalise 
+        output = normalise(output);
+
+        //output data
+        print(output);
+
+        //inverse square
+        distanceLensScreen = 1 + distanceLensScreen;
+        output = Convolve.inverseSquare(output, distanceLensScreen, resolution);
+
         return output;
     }
 
+    private float[,] normalise(float[,] mat) {
 
-    private void buildGrating() {
-        //populate with code for grating and slit mesh if necessary
+        //float[,] result = new float[mat.GetLength(0), mat.GetLength(1)];
+
+        int Width = mat.GetLength(0);
+        int Height = mat.GetLength(1);
+        int i, j;
+        float max;
+
+
+        /*for (i = 0; i <= Width - 1; i++)
+            for (j = 0; j <= Height - 1; j++) {
+                result[i, j] = (float)Math.Log(1 + mat[i, j]);
+            }*/
+
+        max = mat[0, 0];
+        for (i = 0; i <= Width - 1; i++)
+            for (j = 0; j <= Height - 1; j++) {
+                if (mat[i, j] > max)
+                    max = mat[i, j];
+            }
+        for (i = 0; i <= Width - 1; i++)
+            for (j = 0; j <= Height - 1; j++) {
+                mat[i, j] = mat[i, j] / max;
+            }
+
+        return mat;
+    }
+
+    private void fillSlit() {
+        //so 1/34th of the bitmap should be 0s
+        //multiply that by the resolution 
+        //divide by 2 
+        //gives how many rows should be 0s
+
+        float temp = 1024 / 500;
+        int zeroCols = (int)(((1 / temp) * resolution) / 2);
+        int sW = (int)(slitWidth / maxSlitDim * resolution) / 2;
+        int bSW = (resolution / 2) - sW / 2;
+        int eSW = bSW + sW;
+        for (int i = zeroCols; i < resolution - zeroCols; i++) {
+            for (int j = 0; j < resolution; j++) {
+                if (j >= bSW && j <= eSW) {
+                    bitmap[i, j] = 1;
+                }
+                else {
+                    bitmap[i, j] = 0;
+                }
+            }
+        }
     }
 
     //to create a temporary gameobject in the centre of the grating 
@@ -92,6 +186,15 @@ public class GratingBehaviour : MonoBehaviour
         }
     }
 
+    public void noiseLoops() {
+        float distance2 = Math.Abs(distanceLensScreen - focalLength);
+        int loops = (int)Math.Round((distance2 / focalLength) * 5);
+
+        for (int i = 0; i < loops + 1; i++) {
+            output = Convolve.genNoise(normalise(output), distanceLensScreen, focalLength);
+        }
+    }
+
     //text outputs
 
     private void print(float[,] output)
@@ -109,60 +212,6 @@ public class GratingBehaviour : MonoBehaviour
             }
         }
         Debug.Log("File saved: " + file);
-    }
-
-    //private void print(double[,] output) {
-    //    using (TextWriter tw = new StreamWriter("file")) {
-    //        for(int i = 0; i < output.GetLength(0); i++) {
-    //            for(int j = 0; j < output.GetLength(1); j++) {
-    //                tw.Write(output[i, j].ToString("#.000") + "\t");
-    //            }
-    //            tw.WriteLine();
-    //        }
-    //    }
-    //}
-
-    //private void print(int[,] output) {
-    //    using (TextWriter tw = new StreamWriter("file")) {
-    //        for (int i = 0; i < output.GetLength(0); i++) {
-    //            for (int j = 0; j < output.GetLength(1); j++) {
-    //                tw.Write(output[i, j] + "\t");
-    //            }
-    //            tw.WriteLine();
-    //        }
-    //    }
-    //}
-
-
-    //converters for arrays, not currently necessary
-    private double[,] convertToDouble(FFT.COMPLEX[,] input) {
-        double[,] temp = new double[input.GetLength(0), input.GetLength(1)];
-        for (int i = 0; i < temp.GetLength(0); i++) {
-            for (int j = 0; j < temp.GetLength(1); j++) {
-                temp[i, j] = input[i, j].Magnitude();
-            }
-        }
-        return temp;
-    }
-
-    private double[,] convertToDouble(int[,] input) {
-        double[,] temp = new double[input.GetLength(0), input.GetLength(1)];
-        for (int i = 0; i < temp.GetLength(0); i++) {
-            for (int j = 0; j < temp.GetLength(1); j++) {
-                temp[i, j] = input[i, j];
-            }
-        }
-        return temp;
-    }
-
-    private double[,] convertToDouble(float[,] input) {
-        double[,] temp = new double[input.GetLength(0), input.GetLength(1)];
-        for (int i = 0; i < temp.GetLength(0); i++) {
-            for (int j = 0; j < temp.GetLength(1); j++) {
-                temp[i, j] = input[i, j];
-            }
-        }
-        return temp;
     }
 
 

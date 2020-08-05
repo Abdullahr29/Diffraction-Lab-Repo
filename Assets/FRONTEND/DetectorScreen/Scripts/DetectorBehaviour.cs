@@ -49,7 +49,7 @@ public class DetectorBehaviour : MonoBehaviour
 
     // Function called when the InputMatrix needs to be displayed.
     // Handles the entire flow of information through the detecor.
-    private void Fill(float[,] InputMatrix)
+    public void Fill(float[,] InputMatrix)
     {
         // 1. Fetch screen parameters
         resolution = InputMatrix.GetLength(0);
