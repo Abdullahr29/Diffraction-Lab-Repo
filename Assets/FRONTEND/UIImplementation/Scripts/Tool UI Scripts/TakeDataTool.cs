@@ -22,6 +22,15 @@ public class TakeDataTool : Tool
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
             TooltrayController.Instance.activeTools.Add(this);
+            GameObject.Find("CameraFocus").transform.position = new Vector3(-499.9f, 499f, 9.5f);
+            UIController.Instance.emailManager.SetActive(true);
         }
     }
+
+    public override void DeactivateButton()
+    {
+        GameObject.Find("CameraFocus").transform.position = new Vector3(0, 10f, -40f);
+        UIController.Instance.emailManager.SetActive(false);
+    }
+
 }

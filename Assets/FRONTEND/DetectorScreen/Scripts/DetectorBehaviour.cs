@@ -8,7 +8,7 @@ public class DetectorBehaviour : MonoBehaviour
 {
     [Header("EXTRERNAL REFERENCES")]
     public GratingBehaviour grating;
-    public GameObject emailManager;
+   // public GameObject emailManager;
 
     [Header("INTERNAL REFERENCES")]
     public DetectorDisplayScript display;
@@ -43,7 +43,7 @@ public class DetectorBehaviour : MonoBehaviour
     {
         inputMatrix = grating.GetMatrix();
         Fill(inputMatrix);
-        emailManager.SetActive(true);
+        //emailManager.SetActive(true);
     }
 
     // Function called when the InputMatrix needs to be displayed.
@@ -74,7 +74,7 @@ public class DetectorBehaviour : MonoBehaviour
         float a = grating.SlitWidth;
 
         // -- find distance to screen D
-        Vector3 gratingToScreen = transform.position - grating.Pos;
+        Vector3 gratingToScreen = transform.position - grating.Pos; //CHANGE THIS TRANSFORM TO THAT OF THE CMOS
         gratingToScreen.y = 0;
 
         float D = gratingToScreen.magnitude; //screenDistance
@@ -238,5 +238,12 @@ public class DetectorBehaviour : MonoBehaviour
     {
         //Currently not needed
         return InputMatrix;
+    }
+
+    public void SetExternalRefs()
+        //Used as references to the prefabs were causing errors, instead we shall get the ext references from the current scene
+    {
+        grating = GameObject.Find("v2 GRATING").GetComponent<GratingBehaviour>();
+       // emailManager = GameObject.Find("v1 EmailManager (Initially Disabled)");
     }
 }

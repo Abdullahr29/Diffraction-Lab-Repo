@@ -32,6 +32,7 @@ public class UIController : MonoBehaviour
     }
     
     public TooltrayController tooltray;
+    public GameObject emailManager;
     public Mode currentMode;
     [Header("Mode Buttons")]
     public Button calibrate;
@@ -51,6 +52,9 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
+        emailManager = GameObject.Find("v1 EmailManager");
+        emailManager.SetActive(false);
+
         ModalManager.Instance.ActivateIntroductorySpiel();
         calibrateClick();        //by default launch into this mode (change this for intro mode in the future)
 
@@ -94,6 +98,10 @@ public class UIController : MonoBehaviour
         currentMode = Mode.DataTake;
         tooltray.SetTrayContents(currentMode);
         Debug.Log("Data");
+
+        DetectorBehaviour detectorBehaviour = GameObject.Find("v2 DETECTOR").GetComponent<DetectorBehaviour>();
+        detectorBehaviour.SetExternalRefs();
+        detectorBehaviour.LoadScreen();
     }
 
     private void DeactivateTabs()
