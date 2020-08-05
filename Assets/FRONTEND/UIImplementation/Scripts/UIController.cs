@@ -50,6 +50,8 @@ public class UIController : MonoBehaviour
     private GameObject exploreTab;
     [SerializeField]
     private GameObject dataTab;
+    [SerializeField]
+    private Button closeButton;
 
     void Start()
     {
@@ -65,6 +67,11 @@ public class UIController : MonoBehaviour
         measure.onClick.AddListener(measureClick);
         explore.onClick.AddListener(exploreClick);
         data.onClick.AddListener(dataClick);
+    }
+    
+    void Update()
+    {
+        closeButton.onClick.AddListener(QuitApplication);
     }
 
     public void calibrateClick()
@@ -119,5 +126,15 @@ public class UIController : MonoBehaviour
     {
         mainCam.enabled = !screenOn;
         screenCam.enabled = screenOn;
+    }
+
+    public void QuitApplication()
+    {
+        Debug.Log("Quit");
+
+        // Closes Game in Editor
+        UnityEditor.EditorApplication.isPlaying = false;
+        // Quits app
+        Application.Quit();
     }
 }
