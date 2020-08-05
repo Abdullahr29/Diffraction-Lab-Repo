@@ -39,6 +39,7 @@ public class UIController : MonoBehaviour
     public Button measure;
     public Button explore;
     public Button data;
+    public Camera mainCam, screenCam;
 
     [Header("Mode Tabs")]
     [SerializeField]
@@ -54,6 +55,8 @@ public class UIController : MonoBehaviour
     {
         emailManager = GameObject.Find("v1 EmailManager");
         emailManager.SetActive(false);
+
+        screenCam.enabled = false;
 
         ModalManager.Instance.ActivateIntroductorySpiel();
         calibrateClick();        //by default launch into this mode (change this for intro mode in the future)
@@ -112,4 +115,9 @@ public class UIController : MonoBehaviour
         dataTab.SetActive(false);
     }
 
+    public void SwitchCams(bool screenOn)
+    {
+        mainCam.enabled = !screenOn;
+        screenCam.enabled = screenOn;
+    }
 }

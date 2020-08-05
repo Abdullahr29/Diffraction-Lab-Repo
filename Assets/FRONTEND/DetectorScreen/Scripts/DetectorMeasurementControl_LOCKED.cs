@@ -56,7 +56,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
 
     private void Start()
     {
-        cam = Camera.main;
+        cam = UIController.Instance.screenCam;
         clicks = 0;
         modeActive = false;
         line = GetComponent<LineRenderer>();
