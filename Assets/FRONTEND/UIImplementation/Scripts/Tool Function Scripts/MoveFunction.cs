@@ -18,6 +18,8 @@ public class MoveFunction : MonoBehaviour
 
 
     Camera mainCam;
+    Transform camManager;
+    Vector3 camManagerOffset;
     float cameraDist;
     public float maxSpeed = 80f;
 
@@ -32,6 +34,8 @@ public class MoveFunction : MonoBehaviour
     {
         positionHistory = new List<Tuple<string, Vector3>>();
         mainCam = Camera.main;
+        camManager = mainCam.transform.parent;
+        camManagerOffset = camManager.position;
 
         confirmHolder = new GameObject();
         denyHolder = new GameObject();
@@ -60,7 +64,7 @@ public class MoveFunction : MonoBehaviour
 
             isCursorOverButton = EventSystem.current.IsPointerOverGameObject();
 
-            Ray ray = mainCam.ScreenPointToRay(Input.mousePosition); //Get user input based on click from camera in game view
+            Ray ray = mainCam.ScreenPointToRay(Input.mousePosition + camManagerOffset); //Get user input based on click from camera in game view
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit) && !isCursorOverButton)
             {
@@ -85,7 +89,7 @@ public class MoveFunction : MonoBehaviour
 
 
                 }
-                cameraDist = mainCam.WorldToScreenPoint(movableObject.pos).z;
+                cameraDist = mainCam.WorldToScreenPoint(movableObject.pos).z + camManagerOffset.z;
                 mOffset = movableObject.pos - GetMouseAsWorldPoint();
                 
             }

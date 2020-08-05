@@ -15,6 +15,8 @@ public class RotateFunction : MonoBehaviour
 	string ID;
 	bool isSelected = false;
 	Camera mainCam;
+	Transform camManager;
+    Vector3 camManagerOffset;
 	float targetRot;   
 
 	public float force = 10f;
@@ -38,6 +40,8 @@ public class RotateFunction : MonoBehaviour
 
 		rotationHistory = new List<Tuple<string, Quaternion>>();
 		mainCam = Camera.main;
+		camManager = mainCam.transform.parent;
+        camManagerOffset = camManager.position;
 
 		confirmHolder = new GameObject();
 		denyHolder = new GameObject();
@@ -66,7 +70,7 @@ public class RotateFunction : MonoBehaviour
 		{
 			isCursorOverButton = EventSystem.current.IsPointerOverGameObject();			
 
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition); //Get user input based on click from camera in game view
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition + camManagerOffset); //Get user input based on click from camera in game view
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit) && !isCursorOverButton) //if we have clicked on an object
 			{
@@ -97,7 +101,7 @@ public class RotateFunction : MonoBehaviour
 			{			
 				confirmHolder.SetActive(false);
 				denyHolder.SetActive(false);
-				targetRot =  Input.mousePosition.x - mainCam.WorldToScreenPoint(movableObject.pos).x;
+				targetRot =  Input.mousePosition.x - mainCam.WorldToScreenPoint(movableObject.pos).x - camManagerOffset.x;
 				enableMotion = true;
 				Debug.Log("moving");
                
@@ -115,8 +119,8 @@ public class RotateFunction : MonoBehaviour
 
 		if (isSelected)  //constantly updating this position for now
 		{
-			confirmButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) + new Vector3(50, 0, 0);
-			denyButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) - new Vector3(50, 0, 0);
+			confirmButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) + camManagerOffset + new Vector3(50, 0, 0);
+			denyButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) + camManagerOffset - new Vector3(50, 0, 0);
 			GetMouseVelocity();
 		}
 	}

@@ -31,12 +31,12 @@ public class CameraManager : MonoBehaviour
     [Header("Bounds")]
     public Vector2 minMoveBounds = new Vector2(-50,-50);
     public Vector2 maxMoveBounds = new Vector2(50, 50);
-    public float minRotate = -15f;
+    public float minRotate = 0f;
     public float maxRotate = 90.0f;
 
     [Header("Zoom Controls")]
     public float zoomSpeed = 1f;
-    public float nearZoomLimit = 0.8f;
+    public float nearZoomLimit = 0.7f;
     public float farZoomLimit = 5f;
     public float startingZoom = 2f;
 
