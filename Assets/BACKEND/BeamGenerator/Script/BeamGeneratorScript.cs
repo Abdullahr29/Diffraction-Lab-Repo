@@ -8,22 +8,30 @@ using UnityEngine;
 //[ExecuteInEditMode]
 public class BeamGeneratorScript : MonoBehaviour
 {
-    private List<DiscreteBeam> _descreteBeams = new List<DiscreteBeam>();
+
+    [Header("Internal References")]
+    public PropagationSystem propagation;
+
+
+    private List<DiscreteBeam> _descreteBeams; // = new List<DiscreteBeam>();
     private int resolution = 10;
 
     public GameObject laser;
     public double intensity;
     public Guid Id;
 
-
-    // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
+        _descreteBeams = new List<DiscreteBeam>();
         Id = Guid.NewGuid();
-        GameObject.Find("PropagationSystem").GetComponent<PropagationSystem>().AddLaser(laser);
+        propagation.AddLaser(laser);
         DescreateBeamCreator();
-        GameObject.Find("PropagationSystem").GetComponent<PropagationSystem>().AddNewBeams(_descreteBeams);
-        
+        propagation.AddNewBeams(_descreteBeams);
+    }
+
+    void OnDisable()
+    {
+        DeleteAllDiscreteBeams();
     }
 
     private void DescreateBeamCreator()
@@ -70,6 +78,7 @@ public class BeamGeneratorScript : MonoBehaviour
             ;
             _descreteBeams.Add(new DiscreteBeam(Id, ParentType.Laser , laser.transform.Find("BeamOrientationController").transform.TransformPoint( positions[i]), laser.transform.Find("BeamOrientationController").transform.TransformDirection(-Vector3.up), endingPositions[i], intensity, 10, 0));
         }
+
     }
 
 
@@ -80,11 +89,27 @@ public class BeamGeneratorScript : MonoBehaviour
 
     private void DeleteAllDiscreteBeams()
     {
-        foreach( Transform child in laser.transform.Find("ProjectorGlass").transform)
+        List<Transform> beams = new List<Transform>();
+
+
+        foreach (Transform child in transform)
         {
-            Destroy(child.gameObject);
+            if (child.name == "DescreteBeamPrefab(Clone)")
+            {
+                beams.Add(child);
+            }
+        }
+
+        Debug.Log("---------------------------------");
+        Debug.Log("CHILD BEAMS FOUND: " + beams.Count);
+
+        foreach ( Transform beam in beams)
+        {
+            Destroy(beam.gameObject);
         }
     }
 
     
 }
+
+

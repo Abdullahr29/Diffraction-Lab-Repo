@@ -21,7 +21,8 @@ public class PropagationSystem : MonoBehaviour
     private float _delta = 0.00000001f;
     private int _NumberOfBeamsInPropagation { 
         get { return __numberOfBeamsInPropagation; } 
-        set { 
+        set {
+            //Debug.Log("ITERATING BEAMS IN PROPAGATION - FROM: " + _NumberOfBeamsInPropagation + " TO: " + value);
             if (value > _discreteBeams.Count) 
             {
                 throw new ArgumentOutOfRangeException("The propagation beams are more than the actual. They are given to be : " + value + "Actual size is : " + _discreteBeams.Count);

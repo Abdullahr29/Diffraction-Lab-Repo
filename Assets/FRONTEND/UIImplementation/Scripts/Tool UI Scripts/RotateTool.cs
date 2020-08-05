@@ -16,11 +16,14 @@ public class RotateTool : Tool
     GameObject rotateController, confirmObject, denyObject;
     RotateFunction rotateFunction;
     bool isBeingUsed = false;
+
     public override void ButtonInteract()
     {
         isBeingUsed = !isBeingUsed;
+
         if (rotateController == null)
         {
+            Debug.Log("ROTATE CONTROLLER NULL");
             rotateController = new GameObject("rotateController");
             rotateFunction = rotateController.AddComponent<RotateFunction>();
         }
@@ -29,9 +32,16 @@ public class RotateTool : Tool
 
         if (isBeingUsed)
         {
+            Debug.Log("IS BEING USED");
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
             TooltrayController.Instance.activeTools.Add(this);
+        }
+        else
+        {
+            Debug.Log("IS NOT BEING USED");
+            Destroy(rotateController);
+            DeactivateButton();
         }
     }
 
@@ -44,5 +54,6 @@ public class RotateTool : Tool
             isBeingUsed = false;
         }        
     }
+
 }
 
