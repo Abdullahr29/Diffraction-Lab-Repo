@@ -16,8 +16,7 @@ public class DetectorBehaviour : MonoBehaviour
     public GameObject screen;
     public Image IMG;
 
-    [Header("PARAMETERS")]
-    public float Wavelength = 670e-9f;
+    
 
     private float[,] inputMatrix;
     private int resolution;
@@ -33,6 +32,7 @@ public class DetectorBehaviour : MonoBehaviour
     public float[,] Matrix { get { return convertedMatrix; } }
 
 
+
     private void Start()
     {
         //fetch the screenWidth / screenHeight from the current gameobject
@@ -42,14 +42,17 @@ public class DetectorBehaviour : MonoBehaviour
 
     public void LoadScreen()
     {
-        inputMatrix = grating.GetMatrix();
-        Fill(inputMatrix);
+        Debug.Log("Load Button pressed");
+        float projectedScreenSize;
+        float[,] matrix;
+        grating.GetMatrix(out projectedScreenSize, out matrix);  //Need to split GetMatrix into GetClean, then after we locate maxima can call GetDirty
+        Fill(matrix, projectedScreenSize);
         //emailManager.SetActive(true);
     }
 
     // Function called when the InputMatrix needs to be displayed.
     // Handles the entire flow of information through the detecor.
-    public void Fill(float[,] InputMatrix)
+    public void Fill(float[,] InputMatrix, float projectedScreenSize)
     {
         // 1. Fetch screen parameters
         resolution = InputMatrix.GetLength(0);
@@ -57,51 +60,23 @@ public class DetectorBehaviour : MonoBehaviour
         // 2. Convert the inputMatrix to RGB
         // currently not needed
         //rgbMatrix = ConvertToRGB(inputMatrix);
-
-        convertedMatrix = ConvertToRealSpace(inputMatrix);
+        Debug.Log(InputMatrix.GetLength(0));
+        convertedMatrix = ConvertToRealSpace(InputMatrix, projectedScreenSize);
+        //convertedMatrix = inputMatrix;
 
         // 3. Display the rgbMatrix to the screen
         display.Display(convertedMatrix, IMG);
     }
 
     // Function that takes the Input Matrix and outputs a subset depending on the screen parameters
-    private float[,] ConvertToRealSpace(float[,] InputMatrix)
+    private float[,] ConvertToRealSpace(float[,] InputMatrix, float projectedScreenSize)
     {
-        // 1. From known wavelength, slit parameters + screen distance, calculate theoretical position of first maximum
-
-        // -- to be fetched from backend
-        float wavelength = Wavelength;
-        //float a = (float)60e-06;
-        float a = grating.SlitWidth;
-
-        // -- find distance to screen D
-        Vector3 gratingToScreen = CMOS.transform.position - grating.Pos; //CHANGE THIS TRANSFORM TO THAT OF THE CMOS
-        gratingToScreen.y = 0;
-
-        float D = gratingToScreen.magnitude; //screenDistance
-        Debug.Log("Distance to Screen: " + D);
-
-        // -- find predicted displacement to 1st maximum (n=1)
-        float X = DistanceToNthMaxima(1f, wavelength, a, D);
-        Debug.Log("distance to 1st maximum: " + X);
-
-        // 2. From the InputMatrix, calculate the pixel count between the central maximum and first maximum
-        int pixelCount = PixelCountToFirstMaxima(InputMatrix);
-        Debug.Log("pixel count to 1st maximum: " + pixelCount);
-
-        // 3. The theoretical distance should correspond to said pixel count.
-        float distancePerPixel = X / (float)pixelCount;
-        Debug.Log("Distance per pixel: " + distancePerPixel);
-
-        float projectedScreenSize = distancePerPixel * resolution;
-        Debug.Log("Projected Screen Size: " + projectedScreenSize);
-        Debug.Log("Actual Screen Size: " + screenWidth);
-
+        //put in the grating script from here
+        
+        //up to here
         // -- declare the outputMatrix array
         float[,] outputMatrix;
-
-        outputMatrix = inputMatrix;
-
+        
         // BRANCH -- Check if the matrix fits in the screen
         if (projectedScreenSize > screenWidth)
         {
@@ -110,7 +85,7 @@ public class DetectorBehaviour : MonoBehaviour
             Debug.Log("PROJECTION > SCREEN SIZE - TAKING SUBSET OF MATRIX");
 
             // -- From the screen size, and the distance Per pixel, calculate how many pixels should be displayed
-            float pixelsToDisplayFLOAT = screenWidth / distancePerPixel;
+            float pixelsToDisplayFLOAT = screenWidth / (projectedScreenSize/inputMatrix.GetLength(0));
             Debug.Log("Pixels to display (FLOAT): " + pixelsToDisplayFLOAT);
             int pixelsToDisplay = (int)pixelsToDisplayFLOAT;
             Debug.Log("Pixels to display (ROUNDED): " + pixelsToDisplay);
@@ -155,6 +130,7 @@ public class DetectorBehaviour : MonoBehaviour
 
             //screenWidth = screen.transform.localScale.x * screenWidth;
             //screenHeight = screen.transform.localScale.y * screenHeight;
+            
             resolution = (int)(InputMatrix.GetLength(0) * screenWidth / projectedScreenSize);
 
             // -- If the output is not even, round it to an even value so that the loop is centered
@@ -172,31 +148,6 @@ public class DetectorBehaviour : MonoBehaviour
         return outputMatrix;
     }
 
-    // Function that counts the number of pixels between the center of the matrix and the first maximum
-    private int PixelCountToFirstMaxima(float[,] InputMatrix)
-    {
-        // 1. from the matrix properties - find x/y values to scan
-        // 2. Scan from the centre of the matrix to the edge until first maxima found
-        // 3. return the number of pixels from the center to this first maximum
-
-        int centerPixel = resolution / 2;
-        int pixelCount = 0;
-
-        //loop through central row, starting from slightly off center all the way to the edge
-        for (int i = centerPixel - 1; i > 0; i--)
-        {
-            //if (InputMatrix[i, centerPixel] > InputMatrix[i + 1, centerPixel] && InputMatrix[i, centerPixel] > InputMatrix[i - 1, centerPixel])
-            if (InputMatrix[centerPixel, i] > InputMatrix[centerPixel, i + 1] && InputMatrix[centerPixel, i] > InputMatrix[centerPixel, i - 1])
-            {
-                // if current pixel is brighter than the two neighbouring pixels
-                Debug.Log("local maximum found: i=" + i);
-
-                pixelCount = centerPixel - i;
-                break;
-            }
-        }
-        return pixelCount;
-    }
 
 
     // Function that takes the input matrix, and the dimensions of the matrix to be displayed
@@ -222,24 +173,7 @@ public class DetectorBehaviour : MonoBehaviour
         return outputMatrix;
     }
 
-    // Function that returns the distance between the central and nth maximum
-    // necessary parameters: n - order of maximum, wavelength, a - slit separation, D - screenDistance;
-    private float DistanceToNthMaxima(float n, float wavelength, float a, float D)
-    {
-        // general diffraction grating formula
-        // tan(theta) = X / D
-        // --> X ~ D * tan(theta)
-        // (where, for small angle, tan(theta) ~ sin(theta) ~ theta = n * wavelength / a
-        return D * n * wavelength / a;
-    }
-
-    // Function that takes the intensity matrix and converts it to RGB
-    // currently not being used
-    private float[,] ConvertToRGB(float[,] InputMatrix)
-    {
-        //Currently not needed
-        return InputMatrix;
-    }
+    
 
     public void SetExternalRefs()
         //Used as references to the prefabs were causing errors, instead we shall get the ext references from the current scene

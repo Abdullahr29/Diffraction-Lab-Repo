@@ -84,7 +84,7 @@ public class IntensityCalcFloat : MonoBehaviour {
         output = Convolve.inverseSquare(output, distanceLensScreen, resolution);
         
         //display
-        detector.Fill(output);//need to make sure this method is working correctly 
+        //detector.Fill(output);//need to make sure this method is working correctly 
 
     }
 

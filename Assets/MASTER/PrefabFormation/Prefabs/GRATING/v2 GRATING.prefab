@@ -155,12 +155,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a321516b71e224b46a8850db979efb48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  detector: {fileID: 0}
   anchor: {fileID: 8990188038137447277}
   file: Assets/FRONTEND/DetectorScreen/img.txt
+  Wavelength: 0.00000067
   maxSlitDim: 0.006
   slitWidth: 0.00006
   slitHeight: 0.00006
-  resolutionPower: 10
+  resolution: 0
+  resolutionPower: 9
+  angle: 0
+  slits: 1
+  CMOS: {fileID: 0}
+  detectorObject: {fileID: 0}
 --- !u!54 &8877687822942197086
 Rigidbody:
   m_ObjectHideFlags: 0
