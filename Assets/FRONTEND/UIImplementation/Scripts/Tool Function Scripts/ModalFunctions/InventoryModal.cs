@@ -49,6 +49,19 @@ public class InventoryModal : Modal
     private GameObject tabSource, tabLenses, tabSlit, tabDet;
 
     public Category categorySelected;
+    private GameObject _activeBckg;
+
+    void Start()
+    {
+        // Add close and optical board listeners, lock everything else
+        UIController.Instance.inputManager.SetActive(false);
+        TextMeshProUGUI sourcesText = sourcesBoards.GetComponent<TextMeshProUGUI>();
+        sourcesText.color = new Color32(17, 17, 17, 255);
+        LockCategories();
+        _activeBckg = TooltrayController.Instance.dynamicTray.transform.GetChild(0).GetChild(0).gameObject;
+        CloseListeners(_inventoryModal, _activeBckg);
+        ButtonFromKey(MeshID.board).onClick.AddListener(PlaceBoard);
+    }
 
     private void DictionaryMeshCards()
     {
@@ -78,17 +91,6 @@ public class InventoryModal : Modal
         return CardFromKey(item).GetComponent<Button>();
     }
 
-
-    void Start()
-    {
-        // Add close and optical board listeners, lock everything else
-        TextMeshProUGUI sourcesText = sourcesBoards.GetComponent<TextMeshProUGUI>();
-        sourcesText.color = new Color32(17, 17, 17, 255);
-        LockCategories();
-        CloseListeners(_inventoryModal);
-        ButtonFromKey(MeshID.board).onClick.AddListener(PlaceBoard);
-    }
-
     private void LockCategories()
     {
         // Lock categories by making buttons non interactive for now
@@ -104,7 +106,7 @@ public class InventoryModal : Modal
         // Functionality for instantiating prefabs, closing the inventory as it is 
         // introduced onto the scene
         MeshesInventory.Instance.InstantiateItem(item);
-        CloseModal(_inventoryModal);
+        CloseModal(_inventoryModal, _activeBckg);
         thisClick.interactable = false;
     }
 
@@ -113,7 +115,7 @@ public class InventoryModal : Modal
         // Functionality for instantiating prefabs, closing the inventory as it is 
         // introduced onto the scene
         MeshesInventory.Instance.InstantiateTwo(mesh, manager);
-        CloseModal(_inventoryModal);
+        CloseModal(_inventoryModal, _activeBckg);
         thisClick.interactable = false;
     }
 
@@ -200,12 +202,6 @@ public class InventoryModal : Modal
 
                 tabDet.SetActive (true);
 
-                CardFromKey(MeshID.screen).SetActive (true);
-                ButtonFromKey(MeshID.screen).onClick.AddListener(delegate
-                {
-                    SelectAndPlaceTwo(ButtonFromKey(MeshID.screen), MeshID.screen, MeshID.emailManager);
-                });
-
                 CardFromKey(MeshID.cmosCamera).SetActive (true);
                 ButtonFromKey(MeshID.cmosCamera).onClick.AddListener(delegate
                 {
@@ -263,11 +259,11 @@ public class InventoryModal : Modal
         SetActiveMeshes(categorySelected);
     }
 
-    public override void CloseModal(GameObject _modal)
+    public override void CloseModal(GameObject _modal, GameObject _activeBckg)
     {
         // Override abstract class method to add selection of first category as modal
         // is closed.
-        base.CloseModal(_modal);
+        base.CloseModal(_modal, _activeBckg);
         SelectSourcesBoards();
     }
 

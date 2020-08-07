@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class TakeDataTool : Tool
 {
     public DetectorMeasurementControl_LOCKED detectorMeasure;
+    GameObject _activeBckg;
 
    
     void OnEnable()
@@ -20,13 +21,14 @@ public class TakeDataTool : Tool
     public override void ButtonInteract()
     {
         isBeingUsed = !isBeingUsed; 
-        gameObject.GetComponent<Image>().color = new Color32(82, 187, 0,100);  
 
         if (isBeingUsed)
         {
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
-            TooltrayController.Instance.activeTools.Add(this);            
+            TooltrayController.Instance.activeTools.Add(this);   
+            UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = false;
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, true, UIController.Instance.currentMode);      
             //cam.transform.position = new Vector3(-499.9f, 488.04f, 49.6f);                
         }
 
@@ -39,6 +41,7 @@ public class TakeDataTool : Tool
     public override void DeactivateButton()
     {
         GameObject.Find("CameraFocus").GetComponent<CameraManager>().enabled = true;
+        TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, false, UIController.Instance.currentMode);
         UIController.Instance.emailManager.SetActive(false);
         detectorMeasure.OnChange(false);
         UIController.Instance.SwitchCams(false);      

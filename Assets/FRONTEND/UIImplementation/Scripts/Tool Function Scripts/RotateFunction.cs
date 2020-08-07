@@ -55,8 +55,8 @@ public class RotateFunction : MonoBehaviour
 		confirmButton.onClick.AddListener(ConfirmPlacement);
 		denyButton.onClick.AddListener(DenyPlacement);
 
-		confirmHolder.GetComponent<Image>().color = Color.green;
-		denyHolder.GetComponent<Image>().color = Color.red;
+		confirmHolder.GetComponent<Image>().sprite = TooltrayController.Instance._confirmSprite;
+        denyHolder.GetComponent<Image>().sprite = TooltrayController.Instance._denySprite; 
 	}
 
 
@@ -169,7 +169,7 @@ public class RotateFunction : MonoBehaviour
 
 	void SetUpButton(GameObject rootObject)
 	{
-		rootObject.transform.parent = FindObjectOfType<Canvas>().transform;
+		rootObject.transform.SetParent(TooltrayController.Instance.tempButtonsObject, false);
 		rootObject.AddComponent<RectTransform>().sizeDelta = new Vector2(20, 20);
 		rootObject.AddComponent<Image>();
 		rootObject.SetActive(false);

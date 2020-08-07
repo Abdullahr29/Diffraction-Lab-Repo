@@ -24,8 +24,7 @@ public class MoveFunction : MonoBehaviour
     public float maxSpeed = 80f;
 
     GameObject confirmHolder, denyHolder;
-    Button confirmButton, denyButton;    
-
+    Button confirmButton, denyButton;
     List<Tuple<string, Vector3>> positionHistory;   //stores id of the object moved and the net translation in world space
 
 
@@ -49,8 +48,8 @@ public class MoveFunction : MonoBehaviour
         confirmButton.onClick.AddListener(ConfirmPlacement);
         denyButton.onClick.AddListener(DenyPlacement);
 
-        confirmHolder.GetComponent<Image>().color = Color.green;
-        denyHolder.GetComponent<Image>().color = Color.red;       
+        confirmHolder.GetComponent<Image>().sprite = TooltrayController.Instance._confirmSprite;
+        denyHolder.GetComponent<Image>().sprite = TooltrayController.Instance._denySprite;
     }
 
 
@@ -125,8 +124,8 @@ public class MoveFunction : MonoBehaviour
 
         if (movableObject != null)
         {
-            confirmButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) + new Vector3(50, 0, 0);
-            denyButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) - new Vector3(50, 0, 0);
+            confirmButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) + new Vector3(70, 0, 0);
+            denyButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) - new Vector3(70, 0, 0);
         }
     }
 
@@ -174,7 +173,8 @@ public class MoveFunction : MonoBehaviour
     void SetUpButton(GameObject rootObject)
     {
         rootObject.transform.parent = FindObjectOfType<Canvas>().transform;
-        rootObject.AddComponent<RectTransform>().sizeDelta = new Vector2(20,20);
+        rootObject.transform.SetParent(TooltrayController.Instance.tempButtonsObject, false);
+        rootObject.AddComponent<RectTransform>().sizeDelta = new Vector2(40,40);
         rootObject.AddComponent<Image>();        
         rootObject.SetActive(false);
 

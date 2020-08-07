@@ -15,10 +15,10 @@ public class MoveTool : Tool
     GameObject moveController, confirmObject, denyObject;
     MoveFunction moveFunction;
     bool isBeingUsed = false;
+    GameObject _activeBckg;
     public override void ButtonInteract()
     {
         isBeingUsed = !isBeingUsed;
-        this.GetComponent<Image>().sprite = TooltrayController.Instance._moveSpriteActive;
 
         if (moveController == null)
         {
@@ -33,9 +33,12 @@ public class MoveTool : Tool
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
             TooltrayController.Instance.activeTools.Add(this);
-            SetActiveSprite(TooltrayController.Instance.newTool, true);
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 1, true, UIController.Instance.currentMode);
         }
-        SetActiveSprite(TooltrayController.Instance.newTool, false);      
+        else
+        {
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 1, false, UIController.Instance.currentMode);
+        }
     }
 
     public override void DeactivateButton()
@@ -44,17 +47,8 @@ public class MoveTool : Tool
         {
             moveFunction.AbruptEnd();
             moveController.SetActive(false);
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 1, false, UIController.Instance.currentMode);
             isBeingUsed = false;
         }
-    }
-
-    public void SetActiveSprite(Tool tool, bool active)
-    {
-        if (active == true)
-        {
-            Debug.Log("changeSprite");
-            tool.GetComponent<Image>().sprite = TooltrayController.Instance._moveSpriteActive;
-        }
-        tool.GetComponent<Image>().sprite = TooltrayController.Instance._moveSprite;
     }
 }

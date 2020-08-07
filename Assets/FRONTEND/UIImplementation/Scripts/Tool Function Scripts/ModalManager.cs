@@ -5,6 +5,7 @@ using UnityEditor;
 
 public class ModalManager : MonoBehaviour
 {
+    // Turn modal manager into singleton
     private static ModalManager _instance;
     public static ModalManager Instance
     {   get
@@ -25,11 +26,11 @@ public class ModalManager : MonoBehaviour
     [Header("Parent Transforms")]
     // Parent objects in hirearchy
     [SerializeField]
-    private Transform _helpLabModals;
+    private RectTransform _helpLabModals;
     [SerializeField]
-    private Transform _inventoryParent;
+    private RectTransform _inventoryParent;
     [SerializeField]
-    private Transform _introSpielParent;
+    private RectTransform _introSpielParent;
 
 
     [Header("Modal Prefabs")]
@@ -63,8 +64,7 @@ public class ModalManager : MonoBehaviour
         // If modal not in hirearchy, instantiate prefab
         if (createdModalsDict.ContainsKey(name) == false)
         {
-            modal = Instantiate(prefab);
-            modal.transform.SetParent(parent, false);
+            modal = Instantiate(prefab, parent);
             modal.SetActive(true);
             exists.Add(name, modal);
         }

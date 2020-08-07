@@ -22,6 +22,11 @@ public class ExportTool : Tool
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
             TooltrayController.Instance.activeTools.Add(this);
+            UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = false;
+        }
+        else
+        {
+            UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = true;
         }
     }
 }

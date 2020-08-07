@@ -9,14 +9,20 @@ public class TooltrayController : MonoBehaviour
     public GameObject buttonPrefab;
     public List<GameObject> dynamicButtons;
     public GameObject dynamicTray;
+    public Transform tempButtonsObject;
+    public Transform mainTooltray;
     RectTransform tooltrayRect;
     public Tool newTool;
+
 
     [Header("Dynamic Tool Sprites")]
     public Sprite _inventorySprite;
     public Sprite _moveSprite, _rotateSprite, _measureSprite, _angleSprite, _investigateSprite, _takeDataSprite;
-    public Sprite _inventorySpriteActive;
-    public Sprite _moveSpriteActive, _rotateSpriteActive, _measureSpriteActive, _angleSpriteActive, _investigateSpriteActive, _takeDataSpriteActive;
+    public Sprite _inventorySpriteActive, _moveSpriteActive, _rotateSpriteActive, _measureSpriteActive, _angleSpriteActive, _investigateSpriteActive, _takeDataSpriteActive, _labScriptSpriteActive, _helpSpriteActive;
+
+    [Header("Dynamic Tool Sprites")]
+    public Sprite _confirmSprite;
+    public Sprite _denySprite;
 
     float minheight = 215f;
     float buttonUnitheight = 76f;
@@ -26,7 +32,6 @@ public class TooltrayController : MonoBehaviour
 
     List<Tool> toolsInMode;
     public List<Tool> activeTools;
-    //public GameObject _activeBckgPrefab;  ----Too complex for now with dynamic tools, review later
 
 
     private static TooltrayController _instance;
@@ -35,7 +40,7 @@ public class TooltrayController : MonoBehaviour
         get
         {
             if (_instance == null)
-                Debug.LogError("UIController is NULL.");
+                Debug.LogError("TooltrayController is NULL.");
 
             return _instance;
 
@@ -149,11 +154,114 @@ public class TooltrayController : MonoBehaviour
         }                          
     }
 
-    /*public void InstantiateActiveToolBckg()
+    private void SetUpDynamicActiveTool(GameObject _activeBckg, int n, bool active, Mode desiredMode)
     {
-        //GameObject activeBckg = Instantiate(_activeBckgPrefab);
+        _activeBckg = new GameObject();
+        _activeBckg.transform.SetParent(dynamicTray.transform.GetChild(n), false);
 
-    }*/
+        _activeBckg.AddComponent<RectTransform>().sizeDelta = new Vector2(55, 55);
+        _activeBckg.AddComponent<Image>();   
 
+        switch (desiredMode)
+        {    
 
+            case Mode.Calibrate: 
+                if (n == 0)
+                {
+                    _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._inventorySpriteActive;
+                }
+                else if (n == 1)
+                {
+                    _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._moveSpriteActive;
+                }
+                else if (n == 2)
+                {
+                    _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._rotateSpriteActive;
+                }
+                break;
+
+            case Mode.Measure:
+                if (n == 0)
+                {
+                    _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._measureSpriteActive;
+                }
+                else if (n == 1)
+                {
+                    _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._angleSpriteActive;
+                }
+                break;
+
+            case Mode.Explore: 
+                if (n == 0)
+                {
+                    _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._inventorySpriteActive;
+                }
+                else if (n == 1)
+                {
+                    _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._moveSpriteActive;
+                }
+                else if (n == 2)
+                {
+                    _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._investigateSpriteActive;
+                }
+                break;
+
+            case Mode.DataTake: 
+                if (n == 0)
+                {
+                    _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._takeDataSpriteActive;
+                }
+                break;
+        }
+    }
+
+    public void ActiveToolBckg(GameObject _activeBckg, int n, bool active, Mode desiredMode)
+    {
+        if (active == false)
+        {
+            dynamicTray.transform.GetChild(n).GetChild(0).gameObject.SetActive(false);
+        }
+        else if (active == true)
+        {
+            if (dynamicTray.transform.GetChild(n).childCount > 0)
+            {
+                dynamicTray.transform.GetChild(n).GetChild(0).gameObject.SetActive(true);
+            }
+            else if (dynamicTray.transform.GetChild(n).childCount == 0)
+            {
+                SetUpDynamicActiveTool(_activeBckg, n, active, desiredMode);
+            }
+        }
+    }
+
+    public void ActiveStaticToolBckg(GameObject _activeBckg, int n, bool active)
+    {
+        if (active == false)
+        {
+            mainTooltray.GetChild(n).GetChild(0).gameObject.SetActive(false);
+        }
+
+        if(mainTooltray.GetChild(n).childCount > 0)
+        {
+            mainTooltray.GetChild(n).GetChild(0).gameObject.SetActive(true);
+        }
+        else if(mainTooltray.GetChild(n).childCount == 0)
+        {
+            _activeBckg = new GameObject();
+            _activeBckg.transform.SetParent(mainTooltray.GetChild(n), false);
+
+            _activeBckg.AddComponent<RectTransform>().sizeDelta = new Vector2(55, 55);
+            _activeBckg.AddComponent<Image>();  
+
+            if (n == 0)
+            {
+                _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._labScriptSpriteActive;
+            }
+
+            else if (n == 1)
+            {
+                _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._helpSpriteActive;
+            }
+        }
+    }
 }

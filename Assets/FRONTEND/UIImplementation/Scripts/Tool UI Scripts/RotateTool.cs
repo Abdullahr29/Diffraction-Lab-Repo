@@ -15,6 +15,7 @@ public class RotateTool : Tool
 
     GameObject rotateController, confirmObject, denyObject;
     RotateFunction rotateFunction;
+    GameObject _activeBckg;
     bool isBeingUsed = false;
 
     public override void ButtonInteract()
@@ -36,11 +37,13 @@ public class RotateTool : Tool
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
             TooltrayController.Instance.activeTools.Add(this);
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, true, UIController.Instance.currentMode);
         }
         else
         {
             Debug.Log("IS NOT BEING USED");
             Destroy(rotateController);
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, false, UIController.Instance.currentMode);
             DeactivateButton();
         }
     }
@@ -51,6 +54,7 @@ public class RotateTool : Tool
         {
             rotateFunction.AbruptEnd();
             rotateController.SetActive(false);
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, false, UIController.Instance.currentMode);
             isBeingUsed = false;
         }        
     }

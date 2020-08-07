@@ -33,6 +33,7 @@ public class Mesh
 
 public class MeshesInventory : MonoBehaviour
 {
+    // Turn meshes manager into singleton
     private static MeshesInventory _instance;
     public static MeshesInventory Instance
     {   get

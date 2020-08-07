@@ -40,6 +40,7 @@ public class UIController : MonoBehaviour
     public Button explore;
     public Button data;
     public Camera mainCam, screenCam;
+    public GameObject inputManager;
 
     [Header("Mode Tabs")]
     [SerializeField]

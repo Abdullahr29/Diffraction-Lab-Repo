@@ -14,6 +14,7 @@ public class DistanceMeasTool : Tool
     GameObject measurementController;
     MeasurementControl measurementControl;
     bool isBeingUsed = false;
+    GameObject _activeBckg;
 
     public override void ButtonInteract()
     {
@@ -32,6 +33,11 @@ public class DistanceMeasTool : Tool
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
             TooltrayController.Instance.activeTools.Add(this);
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, true, UIController.Instance.currentMode);
+        }
+        else
+        {
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, false, UIController.Instance.currentMode);
         }
     }
 
