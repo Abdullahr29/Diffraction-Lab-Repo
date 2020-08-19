@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 /* Class to provide the default behaviour for buttons. Implements IButtonInteraction allowing
  * for a shared way to set listeners when these tools are created at runtime when needed. */
 
-public class Tool : MonoBehaviour, IButtonInteraction
+public class Tool : MonoBehaviour, IButtonInteraction, IPointerEnterHandler, IPointerExitHandler
 {
     public Sprite imageSource;
 
@@ -31,6 +32,16 @@ public class Tool : MonoBehaviour, IButtonInteraction
     }
 
     public virtual void DeactivateButton()
+    {
+
+    }
+
+    public virtual void OnPointerEnter(PointerEventData data)
+    {
+
+    }
+
+    public virtual void OnPointerExit(PointerEventData data)
     {
 
     }

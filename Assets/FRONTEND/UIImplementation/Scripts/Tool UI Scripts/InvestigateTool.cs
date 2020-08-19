@@ -6,20 +6,40 @@ using UnityEngine.UI;
 
 public class InvestigateTool : Tool
 {
-    // Start is called before the first frame update
+
+    // Active tool sprite not enabled yet otherwise it would cause bugs.
+    //Only add when script for tool is written
+
+    private GameObject _activeBckg;
+    string activeName = "Investigate Active";
+
+    GameObject _newTooltip, _newTooltipBckg;
+    bool hoverBool;
+    Button investigateButton;
+    string investigateTooltip = "Investigate Tool";
     void OnEnable()
     {
         gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._investigateSprite;
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        investigateButton = this.GetComponent<Button>();
     }
 
     public override void ButtonInteract()
     {
-        //Call initialisation method for the relevant tool
+        //TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, true, activeName);
+    }
+    
+    public override void DeactivateButton()
+    {
+        //TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, false, activeName);
+    }
+
+    public override void OnPointerEnter(PointerEventData data)
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(investigateButton, _newTooltip, _newTooltipBckg, investigateTooltip);
+    }
+
+    public override void OnPointerExit(PointerEventData data)
+    {
+        TooltipManager.Instance.DeactivateTooltip(investigateButton, _newTooltip, _newTooltipBckg, investigateTooltip);
     }
 }

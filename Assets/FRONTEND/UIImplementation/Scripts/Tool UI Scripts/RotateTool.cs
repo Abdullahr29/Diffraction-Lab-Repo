@@ -8,15 +8,22 @@ using UnityEngine.UI;
 public class RotateTool : Tool
 {
     private SpriteRenderer spriteRenderer;
-    void OnEnable()
-    {
-        gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._rotateSprite;
-    }
-
     GameObject rotateController, confirmObject, denyObject;
     RotateFunction rotateFunction;
-    GameObject _activeBckg;
     bool isBeingUsed = false;
+
+    GameObject _activeBckg;
+    string activeName = "Object Rotate Active";
+
+    GameObject _newTooltip, _newTooltipBckg;
+    bool hoverBool;
+    Button rotateButton;
+    string rotateTooltip = "Object Rotate Tool";
+    void OnEnable()
+    {
+        this.GetComponent<Image>().sprite = TooltrayController.Instance._rotateSprite;
+        rotateButton = this.GetComponent<Button>();
+    }
 
     public override void ButtonInteract()
     {
@@ -28,7 +35,7 @@ public class RotateTool : Tool
             rotateController = new GameObject("rotateController");
             rotateFunction = rotateController.AddComponent<RotateFunction>();
         }
-        rotateController.SetActive(isBeingUsed); //if button is active then enable MoveFunction to listen for input
+        rotateController.SetActive(isBeingUsed); //if button is active then enable rotateFunction to listen for input
         Debug.Log(isBeingUsed);
 
         if (isBeingUsed)
@@ -37,13 +44,13 @@ public class RotateTool : Tool
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
             TooltrayController.Instance.activeTools.Add(this);
-            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, true, UIController.Instance.currentMode);
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, true, activeName);
         }
         else
         {
             Debug.Log("IS NOT BEING USED");
             Destroy(rotateController);
-            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, false, UIController.Instance.currentMode);
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, false, activeName);
             DeactivateButton();
         }
     }
@@ -54,9 +61,19 @@ public class RotateTool : Tool
         {
             rotateFunction.AbruptEnd();
             rotateController.SetActive(false);
-            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, false, UIController.Instance.currentMode);
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, false, activeName);
             isBeingUsed = false;
         }        
+    }
+
+    public override void OnPointerEnter(PointerEventData data)
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(rotateButton, _newTooltip, _newTooltipBckg, rotateTooltip);
+    }
+
+    public override void OnPointerExit(PointerEventData data)
+    {
+        TooltipManager.Instance.DeactivateTooltip(rotateButton, _newTooltip, _newTooltipBckg, rotateTooltip);
     }
 
 }

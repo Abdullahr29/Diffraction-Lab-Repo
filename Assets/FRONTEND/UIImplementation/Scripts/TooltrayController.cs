@@ -154,7 +154,7 @@ public class TooltrayController : MonoBehaviour
         }                          
     }
 
-    private void SetUpDynamicActiveTool(GameObject _activeBckg, int n, bool active, Mode desiredMode)
+    private void SetUpDynamicActiveTool(GameObject _activeBckg, int n, string nameActive)
     {
         _activeBckg = new GameObject();
         _activeBckg.transform.SetParent(dynamicTray.transform.GetChild(n), false);
@@ -162,21 +162,25 @@ public class TooltrayController : MonoBehaviour
         _activeBckg.AddComponent<RectTransform>().sizeDelta = new Vector2(55, 55);
         _activeBckg.AddComponent<Image>();   
 
-        switch (desiredMode)
+        switch (UIController.Instance.currentMode)
         {    
 
             case Mode.Calibrate: 
                 if (n == 0)
                 {
+                    Debug.Log("inventorySprite");
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._inventorySpriteActive;
+                    _activeBckg.name = nameActive;
                 }
                 else if (n == 1)
                 {
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._moveSpriteActive;
+                    _activeBckg.name = nameActive;
                 }
                 else if (n == 2)
                 {
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._rotateSpriteActive;
+                    _activeBckg.name = nameActive;
                 }
                 break;
 
@@ -184,25 +188,30 @@ public class TooltrayController : MonoBehaviour
                 if (n == 0)
                 {
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._measureSpriteActive;
+                    _activeBckg.name = nameActive;
                 }
                 else if (n == 1)
                 {
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._angleSpriteActive;
+                    _activeBckg.name = nameActive;
                 }
                 break;
 
-            case Mode.Explore: 
+            case Mode.Explore:
                 if (n == 0)
                 {
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._inventorySpriteActive;
+                    _activeBckg.name = nameActive;
                 }
                 else if (n == 1)
                 {
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._moveSpriteActive;
+                    _activeBckg.name = nameActive;
                 }
                 else if (n == 2)
                 {
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._investigateSpriteActive;
+                    _activeBckg.name = nameActive;
                 }
                 break;
 
@@ -210,27 +219,30 @@ public class TooltrayController : MonoBehaviour
                 if (n == 0)
                 {
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._takeDataSpriteActive;
+                    _activeBckg.name = nameActive;
                 }
                 break;
         }
     }
 
-    public void ActiveToolBckg(GameObject _activeBckg, int n, bool active, Mode desiredMode)
+    public void ActiveToolBckg(GameObject _activeBckg, int n, bool active, string nameActive)
     {
-        if (active == false)
+        Transform activeSprite = dynamicTray.transform.GetChild(n).Find(nameActive);
+
+        if (active == true)
         {
-            dynamicTray.transform.GetChild(n).GetChild(0).gameObject.SetActive(false);
+            if (activeSprite != null)
+            {
+                activeSprite.gameObject.SetActive(true);
+            }
+            else if (activeSprite == null)
+            {
+                SetUpDynamicActiveTool(_activeBckg, n, nameActive);
+            }
         }
-        else if (active == true)
+        else if (active == false)
         {
-            if (dynamicTray.transform.GetChild(n).childCount > 0)
-            {
-                dynamicTray.transform.GetChild(n).GetChild(0).gameObject.SetActive(true);
-            }
-            else if (dynamicTray.transform.GetChild(n).childCount == 0)
-            {
-                SetUpDynamicActiveTool(_activeBckg, n, active, desiredMode);
-            }
+            activeSprite.gameObject.SetActive(false);
         }
     }
 
