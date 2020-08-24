@@ -4,24 +4,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
-[System.Serializable]
-public class Buttons
-{
-    public Button button;
-    public string tooltip;
-
-    public Buttons(Button button, string tooltip)
-    {
-        this.button = button;
-        this.tooltip = tooltip;
-    }
-}
-
 public class TooltipManager : MonoBehaviour
 {
     // Make manager into singleton
     private static TooltipManager _instance;
+    Vector2Int screen;
     public static TooltipManager Instance
     {   get
     {
@@ -35,92 +22,77 @@ public class TooltipManager : MonoBehaviour
     
     private void Awake()
     {
-        _instance = this; 
+        _instance = this;
     }
-
-    public Dictionary<Button, string> buttonsDictTooltips = new Dictionary<Button, string>();
 
     public Transform tooltipsParent;
+    public Sprite tooltipSprite;
 
 
-    public void addNewButton(Button thisButton, string buttonTooltip)
+
+
+    public void OnHoverButtonActivateTooltip(Button _hoveredButton, GameObject _newTooltip, GameObject _newTooltipBckg, string buttonTooltip)
     {
-        buttonsDictTooltips.Add(thisButton, buttonTooltip);
-        Debug.Log(buttonsDictTooltips);
-    }
-
-    private string returnTooltipFromKey(Button button)
-    {
-        return buttonsDictTooltips[button];
-    }
-
-    public void ActivateTooltip(Button _hoveredButton, GameObject _newTooltip, GameObject _newTooltipBckg, bool active)
-    {
-        string tooltipText = returnTooltipFromKey(_hoveredButton);
+        string tooltipText = buttonTooltip;
         string tooltipTextNoSpaces = tooltipText.Replace(" ", string.Empty);
 
-        Transform tooltipChild = tooltipsParent.Find(tooltipTextNoSpaces);
-        if (active == false)
-        {
-            if(tooltipChild == null)
-            {
-                // Create newTooltip background in tooltipsParent object in UI layer
-                _newTooltipBckg = new GameObject();
-                _newTooltipBckg.transform.SetParent(tooltipsParent, false);
-                _newTooltipBckg.name = tooltipTextNoSpaces;
-                RectTransform tooltipBckgRT = _newTooltipBckg.AddComponent<RectTransform>();
-                _newTooltipBckg.AddComponent<Image>().color = new Color(243, 242, 230, 255);
+        Transform _tooltipChild = tooltipsParent.Find(tooltipTextNoSpaces);
 
-                // Create text object with tooltip name in tooltip background, add TMPUGI to it
-                _newTooltip = new GameObject();
-                _newTooltip.transform.SetParent(_newTooltipBckg.transform, false);
-                _newTooltip.name = tooltipTextNoSpaces + "Text";
-                TextMeshProUGUI tooltipTMP = _newTooltip.AddComponent<TextMeshProUGUI>();
-                tooltipTMP.SetText(tooltipText);
-                tooltipTMP.color = new Color(17, 17, 17, 255);
-
-                // Calculate the size of the box depending on the text length
-                tooltipBckgRT.sizeDelta = new Vector2(5, 5) + _newTooltip.GetComponent<RectTransform>().sizeDelta;
-
-            } else {
-                tooltipChild.gameObject.SetActive(false);
-            }
-        }
-        else {
-            tooltipChild.gameObject.SetActive(true);
-        }
-
-    }
-
-    public void onHoverButtonCreateTooltip(Button _hoveredButton, GameObject _newTooltip, GameObject _newTooltipBckg, bool hoverBool)
-    {
         Vector2 mp = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-
-        hoverBool = isMouseOverButton(_hoveredButton);
-
-        if (hoverBool == true)
-        {
-            Debug.Log("Tooltip");
-            ActivateTooltip(_hoveredButton, _newTooltip, _newTooltipBckg, true);
+        if (_tooltipChild != null) {
+            _tooltipChild.gameObject.SetActive(true);
         }
-        else {
-            ActivateTooltip(_hoveredButton, _newTooltip, _newTooltipBckg, false);
+        else
+        {
+            SetUpTooltip(_hoveredButton, _newTooltip, _newTooltipBckg, tooltipText, tooltipTextNoSpaces);
+        }
+    }
+
+    public void DeactivateTooltip(Button _hoveredButton, GameObject _newTooltip, GameObject _newTooltipBckg, string buttonTooltip)
+    {
+        string tooltipTextNoSpaces = buttonTooltip.Replace(" ", string.Empty);
+        
+        Transform tooltipExists = tooltipsParent.Find(tooltipTextNoSpaces);
+        if (tooltipExists != null)
+        {
+            tooltipExists.gameObject.SetActive(false);
         }
     }
 
 
-    public bool isMouseOverButton(Button _hoveredButton)
-    {
-        RectTransform buttonRectTransform = _hoveredButton.gameObject.GetComponent<RectTransform>();
 
-        Vector2 localMousePosition = buttonRectTransform.InverseTransformPoint(Input.mousePosition);
-        if (buttonRectTransform.rect.Contains(localMousePosition))
-        {
-            return true;
-        }
-        else {
-            return false;
-        }
+
+    private void SetUpTooltip(Button _hoveredButton, GameObject _newTooltip, GameObject _newTooltipBckg, string tooltipText, string tooltipTextNoSpaces)
+    {
+        // Create newTooltip background in tooltipsParent object in UI layer
+        _newTooltipBckg = new GameObject();
+        _newTooltipBckg.transform.SetParent(tooltipsParent, false);
+        _newTooltipBckg.name = tooltipTextNoSpaces;
+        RectTransform tooltipBckgRT = _newTooltipBckg.AddComponent<RectTransform>();
+        _newTooltipBckg.AddComponent<Image>().color = new Color(243, 242, 230, 255);
+
+        // Create text object with tooltip name in tooltip background, add TMPUGI to it
+        _newTooltip = new GameObject();
+        _newTooltip.transform.SetParent(_newTooltipBckg.transform, false);
+        RectTransform tooltipRT = _newTooltip.AddComponent<RectTransform>();
+        _newTooltip.name = tooltipTextNoSpaces + "Text";
+
+        TextMeshProUGUI tooltipTMP = _newTooltip.AddComponent<TextMeshProUGUI>();
+        tooltipTMP.text = tooltipText;
+        tooltipTMP.color = new Color32(17, 17, 17, 255);
+        tooltipTMP.font = Resources.Load("RalewayRegular SDF", typeof(TMP_FontAsset)) as TMP_FontAsset;
+        tooltipTMP.fontSize = 16f;
+        tooltipTMP.autoSizeTextContainer = true;
+        Canvas.ForceUpdateCanvases();
+
+
+        // Calculate the size of the box depending on the text length
+        tooltipBckgRT.sizeDelta = new Vector2(15, 15) + tooltipRT.sizeDelta;
+        float mouseX = Input.mousePosition.x;
+        float mouseY = Input.mousePosition.y;
+
+        tooltipBckgRT.position = new Vector3(mouseX + 50, mouseY -50, 0);
+        tooltipBckgRT.gameObject.GetComponent<Image>().sprite = tooltipSprite;
     }
 
 }

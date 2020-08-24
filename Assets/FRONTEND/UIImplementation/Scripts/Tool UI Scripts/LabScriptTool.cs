@@ -6,27 +6,32 @@ using UnityEngine.UI;
 
 public class LabScriptTool : Tool
 {
-    private GameObject _activeBckg;
-    GameObject _newTooltip;
-    GameObject _newTooltipBckg;
+    GameObject _activeBckg;
+
+    GameObject _newTooltip, _newTooltipBckg;
     bool hoverBool;
     Button labScriptButton;
-    /*
+    string labScriptTooltip = "Lab Script Tool";
+    
     void OnEnable()
     {
         labScriptButton = this.GetComponent<Button>();
-        TooltipManager.Instance.addNewButton(labScriptButton, "Lab Script");
     }
-
-    void Update()
-    {
-        TooltipManager.Instance.onHoverButtonCreateTooltip(labScriptButton, _newTooltip, _newTooltipBckg, hoverBool);
-    }
-    */
     
     public override void ButtonInteract()
     {
         TooltrayController.Instance.ActiveStaticToolBckg(_activeBckg, 0, true);
         ModalManager.Instance.ActivateLabScript();
     }
+
+    public override void OnPointerEnter(PointerEventData data)
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(labScriptButton, _newTooltip, _newTooltipBckg, labScriptTooltip);
+    }
+
+    public override void OnPointerExit(PointerEventData data)
+    {
+        TooltipManager.Instance.DeactivateTooltip(labScriptButton, _newTooltip, _newTooltipBckg, labScriptTooltip);
+    }
+
 }

@@ -7,47 +7,48 @@ using UnityEngine.UI;
 public class InventoryTool : Tool
 {
     private GameObject _activeBckg;
-    GameObject _newTooltip;
-    GameObject _newTooltipBckg;
+    string activeName = "Inventory Active";
+
+    GameObject _newTooltip, _newTooltipBckg;
     bool hoverBool;
     Button inventoryButton;
+    string inventoryTooltip = "Inventory";
 
     void OnEnable()
     {
         gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._inventorySprite;
-    }
-        /*
         inventoryButton = this.GetComponent<Button>();
-        TooltipManager.Instance.addNewButton(inventoryButton, "Inventory");
     }
-
-    void Update()
-    {
-        TooltipManager.Instance.onHoverButtonCreateTooltip(inventoryButton, _newTooltip, _newTooltipBckg, hoverBool);
-    }*/
 
     bool isBeingUsed = false;
     public override void ButtonInteract()
     {
         isBeingUsed = !isBeingUsed;
-        if (isBeingUsed)
-        {
-            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, true, UIController.Instance.currentMode);
-            ModalManager.Instance.ActivateInventory();
-        }
 
         if (isBeingUsed)
         {
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, true, activeName);
+            ModalManager.Instance.ActivateInventory();
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
             TooltrayController.Instance.activeTools.Add(this);
             UIController.Instance.inputManager.SetActive(false);
         }
+
+        else
+        {
+            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, false, activeName);
+        }
     }
 
-    public override void DeactivateButton()
+    public override void OnPointerEnter(PointerEventData data)
     {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(inventoryButton, _newTooltip, _newTooltipBckg, inventoryTooltip);
+    }
 
+    public override void OnPointerExit(PointerEventData data)
+    {
+        TooltipManager.Instance.DeactivateTooltip(inventoryButton, _newTooltip, _newTooltipBckg, inventoryTooltip);
     }
 }
 

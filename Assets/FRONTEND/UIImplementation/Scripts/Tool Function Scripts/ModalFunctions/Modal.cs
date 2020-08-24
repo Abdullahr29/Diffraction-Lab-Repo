@@ -19,6 +19,10 @@ public abstract class Modal : MonoBehaviour
     {
         _modalOverlay.onClick.AddListener(delegate{CloseModal(_modal, _activeBckg);});
         _closeModalBtn.onClick.AddListener(delegate{CloseModal(_modal, _activeBckg);});
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            CloseModal(_modal, _activeBckg);
+        }
     }
 
     public virtual void CloseSpielListeners(GameObject _modal)
@@ -31,5 +35,10 @@ public abstract class Modal : MonoBehaviour
             _modal.SetActive (false);
             UIController.Instance.inputManager.SetActive(true);
         });
+        if (Input.GetKeyDown(KeyCode.Return))
+        {
+            _modal.SetActive (false);
+            UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = true;
+        }
     }
 }
