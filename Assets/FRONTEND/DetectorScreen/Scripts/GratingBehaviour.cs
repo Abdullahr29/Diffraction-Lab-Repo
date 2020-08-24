@@ -16,25 +16,26 @@ public class GratingBehaviour : MonoBehaviour
     [Header("PARAMETERS")]
     public float Wavelength = 670e-9f;
 
-    //grating parameters (for no grating)
+    //grating parameters 
     public float maxSlitDim = 0.006f;//assuming a square grating 
-    //slit parameters (so far only single slit)
+
+    //slit parameters 
     public float slitWidth = 0.00006f;
     public float slitHeight = 0.005f;
+    public float slitSeperation = 0.00006f;
 
     public float SlitWidth { get { return slitWidth; } }
 
-    //slit location with respect to centre of grating (not currently used)
-    //public float slitWOffset;
-    //public float slitHOffset;
 
     public int resolution;
     [Range(0, 13)] public int resolutionPower;
 
-    float distanceLensScreen;//need to get
-    float focalLength;//need to get 
-    [Range(-30, 30)] public float angle;//need to get and fit  from -30 to 30
+    [Range(0.3f, 1)] public float distanceLensScreen;// need to get
+    [Range(0.75f, 1)] public float distanceGratingLens;//need to get
+    [Range(0.25f, 0.75f)] public float focalLength;//need to get 
+    [Range(-30, 30)] public float angle;//need to get 
     [Range(0, 5)] public int slits;//need to get
+    float distanceGratingScreen;
 
     private int[,] bitmap;
     private float[,] output;//matrix with 2DFFT
@@ -72,23 +73,22 @@ public class GratingBehaviour : MonoBehaviour
         //display on screen
 
         //slit bitmap
+        slitCalc();
         fill();
 
-        //convolve with dirac delta
-        //slits = 1;
+        //convolve with dirac delta, if necessary
         FFT bitMapFFT = new FFT(MatrixCalc.convertToFloat(bitmap));
         bitMapFFT.ForwardFFT();
-        //output = Convolve.convFFT(bitMapFFT.FFTShifted, MatrixCalc.convertToFloat(Convolve.genNSlits(slits, resolution)));
-
-        //doing FFT
-        //bitMapFFT = new FFT(output);
-        //bitMapFFT.ForwardFFT();
-        
+        if (slits > 1) {
+            output = Convolve.convFFT(bitMapFFT.FFTShifted, MatrixCalc.convertToFloat(Convolve.genNSlits(slits, resolution, slitSeperation, maxSlitDim)));
+            //doing FFT
+            bitMapFFT = new FFT(output);
+            bitMapFFT.ForwardFFT();
+        }
         output = bitMapFFT.FFTLog;
 
         //lens skew 
-        angle = 15;
-        //output = Convolve.biasSkew(output, angle, resolution);
+        output = Convolve.biasSkew(output, angle, resolution, slits);
 
         //detector side stuff here
         // 1. From known wavelength, slit parameters + screen distance, calculate theoretical position of first maximum
@@ -123,18 +123,10 @@ public class GratingBehaviour : MonoBehaviour
         //Debug.Log("Projected Screen Size: " + projectedScreenSize);
 
         //_________________________
-
-
-        Debug.Log("HERRO before output");        
         //noise
-        focalLength = 0.5f;
-        distanceLensScreen = 0.5f;
-        Debug.Log("HERRO after output");
+        ///noiseLoops();
 
-        //noiseLoops();
-        
         //normalise
-
         output = normalise(output);
 
         //output data
@@ -142,10 +134,15 @@ public class GratingBehaviour : MonoBehaviour
 
         //inverse square
         distanceLensScreen = 1 + distanceLensScreen;
-        //output = Convolve.inverseSquare(output, distanceLensScreen, resolution);
+        ///output = Convolve.inverseSquare(output, distanceLensScreen, resolution);
+
+        //display
+        ///amplifyLow(output, resolution);//a method that is used to amplify lower values for 2 slits, to make it visible on display, still needs fixing 
+        ///output = plotIntensity(output, (resolution/2), resolution);
 
     }
 
+    //normalise data between 0-1
     private float[,] normalise(float[,] mat) {
 
         //float[,] result = new float[mat.GetLength(0), mat.GetLength(1)];
@@ -154,7 +151,6 @@ public class GratingBehaviour : MonoBehaviour
         int Height = mat.GetLength(1);
         int i, j;
         float max;
-
 
         /*for (i = 0; i <= Width - 1; i++)
             for (j = 0; j <= Height - 1; j++) {
@@ -169,33 +165,12 @@ public class GratingBehaviour : MonoBehaviour
             }
         for (i = 0; i <= Width - 1; i++)
             for (j = 0; j <= Height - 1; j++) {
+                if (mat[i, j] < 0)//may need to be improved, works for now
+                    mat[i, j] = 0;
                 mat[i, j] = mat[i, j] / max;
             }
 
         return mat;
-    }
-
-    private void fillSlit() {
-        //so 1/34th of the bitmap should be 0s
-        //multiply that by the resolution 
-        //divide by 2 
-        //gives how many rows should be 0s
-
-        float temp = 1024 / 500;
-        int zeroCols = (int)(((1 / temp) * resolution) / 2);
-        int sW = (int)(slitWidth / maxSlitDim * resolution) / 2;
-        int bSW = (resolution / 2) - sW / 2;
-        int eSW = bSW + sW;
-        for (int i = zeroCols; i < resolution - zeroCols; i++) {
-            for (int j = 0; j < resolution; j++) {
-                if (j >= bSW && j <= eSW) {
-                    bitmap[i, j] = 1;
-                }
-                else {
-                    bitmap[i, j] = 0;
-                }
-            }
-        }
     }
 
     //to create a temporary gameobject in the centre of the grating 
@@ -215,14 +190,6 @@ public class GratingBehaviour : MonoBehaviour
         endSlitWidth = beginSlitWidth + (slitWidth * (resolution / maxSlitDim)) + 1;
         beginSlitHeight = ((maxSlitDim - slitHeight) / 2) * (resolution / maxSlitDim) - 1;
         endSlitHeight = beginSlitHeight + (slitHeight * (resolution / maxSlitDim)) + 1;
-
-        //Debug.Log((int)beginSlitWidth);
-
-        //Debug.Log((int)endSlitWidth);
-
-        //Debug.Log((int)beginSlitHeight);
-
-        //Debug.Log((int)endSlitHeight);
 
 
         for (int i = (int)beginSlitHeight; i < (int)endSlitHeight; i++)
@@ -278,17 +245,19 @@ public class GratingBehaviour : MonoBehaviour
         return InputMatrix;
     }
 
-    public void noiseLoops() {
+    //to create noise multiple times
+    public void noiseLoops() {//Can be optimised to not use multiple loops 
+        int factor = (int)Data.param[slits, 4];//also nLoopFac from Data matrix
         float distance2 = Math.Abs(distanceLensScreen - focalLength);
-        int loops = (int)Math.Round((distance2 / focalLength) * 5);
+        int loops = (int)Math.Round((distance2 / focalLength) * factor);
 
         for (int i = 0; i < loops + 1; i++) {
-            output = Convolve.genNoise(normalise(output), distanceLensScreen, focalLength);
+            Debug.Log("nLoop " + (i + 1));
+            output = Convolve.genNoise(normalise(output), distanceLensScreen, focalLength, slits);
         }
     }
 
     //text outputs
-
     private void print(float[,] output)
     {
         using (TextWriter tw = new StreamWriter(file))
@@ -306,5 +275,75 @@ public class GratingBehaviour : MonoBehaviour
         Debug.Log("File saved: " + file);
     }
 
+    //for 2+ slits to distinguish more maxima
+    public void amplifyLow(float[,] mat, int size) {
+        int ampFac = 10;
+        for (int i = 0; i < size; i++) {
+            for (int j = 0; j < size; j++) {
+                //if((mat[i,j] < 0.08) && (mat[i, j] > 0.01)) {
+                mat[i, j] = mat[i, j] * ampFac;
+                //}
+            }
+        }
+    }
 
+    //slit error check
+    public void slitCalc() {
+        if ((slits == 0) && (slitHeight >= slitWidth * 10)) {
+            slits = 1;
+        }
+        if ((slits == 1) && (slitHeight < slitWidth * 10)) {
+            slitHeight = slitWidth * 10;
+            Debug.Log("Slit height has been increased for single slit diffraction");
+        }
+        if ((slits > 1) && (slitHeight < slitWidth * 10)) {
+            slitHeight = slitWidth * 10;
+            Debug.Log("Slit height has been increased for double slit diffraction");
+        }
+    }
+
+    //called to plot the intensity pattern 
+    public float[,] plotIntensity(float[,] mat, int row, int res) {
+        float[,] plot = new float[res, res];
+        float max = 0, min = 100, factor;
+        int rowVal;
+        for (int i = 0; i < res; i++) {
+            if (mat[row, i] > max) {
+                max = mat[row, i];
+            }
+            if (mat[row, i] < min) {
+                min = mat[row, i];
+            }
+        }
+        factor = res / max;//if we want to start at 0 then we have to do res/max, if we want to start at the min value we do res/(max - min)
+        for (int i = 0; i < res; i++) {//plots the intensity pattern using matrix values
+            rowVal = (int)Math.Round(mat[row, i] * factor);
+            //rowVal = res - rowVal;
+            if (rowVal == res) {
+                rowVal--;
+            }
+            for (int j = -1; j < 2; j++) {
+                for (int k = -1; k < 2; k++) {
+                    if ((rowVal + j) > -1 && (rowVal + j) < res && (i + k) > -1 && (i + k) < res) {
+                        plot[rowVal + j, i + k] = 1;
+                    }
+                }
+            }
+        }
+        for (int i = 0; i <= (int)max * 10; i++) {//plots an axis on the left of integers
+            rowVal = (int)(i * factor / 10) + 1;
+            if (rowVal == res) {
+                rowVal--;
+            }
+            if (rowVal > res) {
+                rowVal = rowVal - 2;
+            }
+            for (int j = 1; j < 11; j++) {
+                plot[rowVal, j] = 1;
+                plot[rowVal - 1, j] = 1;
+            }
+        }
+
+        return plot;
+    }
 }

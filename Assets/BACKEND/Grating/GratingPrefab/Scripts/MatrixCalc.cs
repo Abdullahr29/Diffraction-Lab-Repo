@@ -1,7 +1,7 @@
-using COMPLEX = FFT.COMPLEX;
+﻿using COMPLEX = FFT.COMPLEX;
 
 public class MatrixCalc {
-
+    //various functions to perform conversions or calculations on matrices
 
     public static COMPLEX[,] elemMultiply(COMPLEX[,] mat1, COMPLEX[,] mat2) {
         //both matrices have to be the same size
@@ -61,11 +61,6 @@ public class MatrixCalc {
                 arr[j, i] = t;
             }
         }
-    }
-
-        
-    public static void convertToComplex(float[,] mat) {
-
     }
 
     private double[,] convertToDouble(COMPLEX[,] input) {

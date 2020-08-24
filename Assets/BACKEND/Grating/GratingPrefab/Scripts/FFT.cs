@@ -1,9 +1,8 @@
-//Credits to: Cooley-Tukey for the FFT algorithm, and Paul Bourke and Dr. Vinayak Bharadi for their implementation
+﻿//Credits to: Cooley-Tukey for the FFT algorithm, and Paul Bourke and Dr. Vinayak Bharadi for their implementation
 using System;
 
 public class FFT
 {
-    //need to get skew data at run time
     public struct COMPLEX {
         public double real, imag;
         public COMPLEX(double x, double y) {
