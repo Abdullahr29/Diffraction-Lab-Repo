@@ -6,15 +6,20 @@ using UnityEngine.UI;
 
 public class HelpModal : Modal
 {
-    //public Mode currentMode;
-    [SerializeField]
-    private GameObject _helpModal;
-    private GameObject _activeBckg;
+
+    void Awake ()
+    {
+        // Define all of the variables required, inherited from parent Modal class
+        _modal = this.gameObject;
+        _modalOverlay = this.transform.GetChild(0).GetComponentInParent<Button>();
+        _closeModalBtn = this.transform.GetChild(1).GetChild(0).GetChild(1).GetComponentInParent<Button>();
+        _activeBckg = TooltrayController.Instance.mainTooltray.transform.GetChild(1).GetChild(0).gameObject;
+    }
 
     void Start()
-    { 
-        UIController.Instance.inputManager.SetActive(false);
-        _activeBckg = TooltrayController.Instance.mainTooltray.transform.GetChild(1).GetChild(0).gameObject;
-        CloseListeners(_helpModal, _activeBckg);
+    {
+        // Deactivate camera input control listeners and activate close modal listeners
+        DeactivateInputManager();
+        CloseListeners();
     }
 }

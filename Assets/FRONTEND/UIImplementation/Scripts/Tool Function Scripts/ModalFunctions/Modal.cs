@@ -6,39 +6,77 @@ using UnityEngine.UI;
 
 public abstract class Modal : MonoBehaviour
 {   
-    public Button _modalOverlay, _closeModalBtn;
+    // Define all variables to be inherited by Modal children
+    protected GameObject _modal;
+    protected GameObject _activeBckg;
+    protected Button _modalOverlay;
+    protected Button _closeModalBtn;
+    protected Button _previousBtn;
+    protected Button _nextBtn;
 
-    public virtual void CloseModal(GameObject _modal, GameObject _activeBckg)
+    public virtual void CloseModal()
     {
+        // Deactivate modal and active tool cue
         _modal.SetActive (false);
         _activeBckg.SetActive(false);
         UIController.Instance.inputManager.SetActive(true);
     }
 
-    public virtual void CloseListeners(GameObject _modal, GameObject _activeBckg)
+    public virtual void CloseListeners()
     {
-        _modalOverlay.onClick.AddListener(delegate{CloseModal(_modal, _activeBckg);});
-        _closeModalBtn.onClick.AddListener(delegate{CloseModal(_modal, _activeBckg);});
-        if (Input.GetKeyDown(KeyCode.Return))
+        // Add listeners and close modal
+        _modalOverlay.onClick.AddListener(delegate{CloseModal(); });
+        _closeModalBtn.onClick.AddListener(delegate{CloseModal();});
+    }
+
+    public virtual void CloseSpielListeners()
+    {
+        // Same as above but for introductory spiel - only happens at the start, closing it
+        // activates the camera manager for the first time.
+
+        _closeModalBtn.onClick.AddListener(delegate {
+            _modal.SetActive(false);
+            TooltrayController.Instance.dynamicTray.SetActive(true);
+            UIController.Instance.calibrateClick();
+            UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = true;
+        });
+
+        _nextBtn.onClick.AddListener(delegate {
+            ModalManager.Instance.ChangeStep(true, _modal);
+        });
+
+        _modalOverlay.onClick.AddListener(delegate { _nextBtn.onClick.Invoke(); });
+    }
+
+    public virtual void CloseTutorialListeners()
+    {
+        // Same as above but for introductory spiel - only happens at the start, closing it
+        // activates the camera manager for the first time.
+    
+        _closeModalBtn.onClick.AddListener(delegate{
+            _modal.SetActive (false);
+            TooltrayController.Instance.dynamicTray.SetActive(true);
+            UIController.Instance.calibrateClick();
+            UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = true;
+        });
+
+        _previousBtn.onClick.AddListener(delegate { ModalManager.Instance.ChangeStep(false, _modal); });
+
+        if(_modal.name == "TakeDataToolsTutorial(Clone)")
         {
-            CloseModal(_modal, _activeBckg);
+            _modalOverlay.onClick.AddListener(delegate { _closeModalBtn.onClick.Invoke(); });
+        } else
+        {
+            _nextBtn.onClick.AddListener(delegate {
+                ModalManager.Instance.ChangeStep(true, _modal);
+            });
+
+            _modalOverlay.onClick.AddListener(delegate { _nextBtn.onClick.Invoke(); });
         }
     }
 
-    public virtual void CloseSpielListeners(GameObject _modal)
+    public virtual void DeactivateInputManager()
     {
-        _modalOverlay.onClick.AddListener(delegate{
-            _modal.SetActive (false);
-            UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = true;
-            });
-        _closeModalBtn.onClick.AddListener(delegate{
-            _modal.SetActive (false);
-            UIController.Instance.inputManager.SetActive(true);
-        });
-        if (Input.GetKeyDown(KeyCode.Return))
-        {
-            _modal.SetActive (false);
-            UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = true;
-        }
+        UIController.Instance.isActiveInputManager(false);
     }
 }

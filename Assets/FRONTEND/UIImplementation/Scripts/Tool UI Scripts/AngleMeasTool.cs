@@ -17,10 +17,16 @@ public class AngleMeasTool : Tool
     bool hoverBool;
     Button angleButton;
     string angleTooltip = "Plane Orientation Tool";
+
     void OnEnable()
     {
         gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._angleSprite;
         angleButton = this.GetComponent<Button>();
+    }
+
+    void Update()
+    {
+        if (hoverBool) this.OnPointerOver();
     }
 
     public override void ButtonInteract()
@@ -35,11 +41,17 @@ public class AngleMeasTool : Tool
 
     public override void OnPointerEnter(PointerEventData data)
     {
-        TooltipManager.Instance.OnHoverButtonActivateTooltip(angleButton, _newTooltip, _newTooltipBckg, angleTooltip);
+        hoverBool = true;
     }
 
     public override void OnPointerExit(PointerEventData data)
     {
+        hoverBool = false;
         TooltipManager.Instance.DeactivateTooltip(angleButton, _newTooltip, _newTooltipBckg, angleTooltip);
+    }
+
+    void OnPointerOver()
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(angleButton, _newTooltip, _newTooltipBckg, angleTooltip);
     }
 }

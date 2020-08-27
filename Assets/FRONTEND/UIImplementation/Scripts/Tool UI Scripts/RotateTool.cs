@@ -19,10 +19,16 @@ public class RotateTool : Tool
     bool hoverBool;
     Button rotateButton;
     string rotateTooltip = "Object Rotate Tool";
+
     void OnEnable()
     {
         this.GetComponent<Image>().sprite = TooltrayController.Instance._rotateSprite;
         rotateButton = this.GetComponent<Button>();
+    }
+
+    void Update()
+    {
+        if (hoverBool) this.OnPointerOver();
     }
 
     public override void ButtonInteract()
@@ -66,14 +72,21 @@ public class RotateTool : Tool
         }        
     }
 
+
     public override void OnPointerEnter(PointerEventData data)
     {
-        TooltipManager.Instance.OnHoverButtonActivateTooltip(rotateButton, _newTooltip, _newTooltipBckg, rotateTooltip);
+        hoverBool = true;
     }
 
     public override void OnPointerExit(PointerEventData data)
     {
+        hoverBool = false;
         TooltipManager.Instance.DeactivateTooltip(rotateButton, _newTooltip, _newTooltipBckg, rotateTooltip);
+    }
+
+    void OnPointerOver()
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(rotateButton, _newTooltip, _newTooltipBckg, rotateTooltip);
     }
 
 }

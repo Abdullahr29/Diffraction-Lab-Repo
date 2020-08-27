@@ -29,7 +29,7 @@ public class KeyboardInputManager : InputManager
             OnZoomInput?.Invoke(1f);
         }
 
-        // Rotate 
+        // Rotate horizontal 
         if (Input.GetKey(KeyCode.A)) {
             OnRotateXInput?.Invoke(1f);
         }
@@ -37,7 +37,7 @@ public class KeyboardInputManager : InputManager
             OnRotateXInput?.Invoke(-1f);
         }
 
-        // Rotate 
+        // Rotate vertical
         if (Input.GetKey(KeyCode.S)) {
             OnRotateYInput?.Invoke(-1f);
         }
@@ -46,10 +46,10 @@ public class KeyboardInputManager : InputManager
         }
 
         // Max Zoom
-        if (Input.GetKey(KeyCode.Q)) {
+        /*if (Input.GetKey(KeyCode.Q)) {
             OnZoomInput?.Invoke(-100f);
-        }
-        if (Input.GetKey(KeyCode.E)) {
+        }*/
+        if (Input.GetKey(KeyCode.O)) {
             OnZoomInput?.Invoke(100f);
         }
 

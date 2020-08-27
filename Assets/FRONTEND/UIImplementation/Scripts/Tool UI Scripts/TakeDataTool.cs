@@ -18,9 +18,14 @@ public class TakeDataTool : Tool
    
     void OnEnable()
     {
-        gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._takeDataSprite;
+        this.GetComponent<Image>().sprite = TooltrayController.Instance._takeDataSprite;
         detectorMeasure = GameObject.Find("v2 DETECTOR").GetComponentInChildren<DetectorMeasurementControl_LOCKED>();
         takeDataButton = this.GetComponent<Button>();
+    }
+
+    void Update()
+    {
+        if (hoverBool) this.OnPointerOver();
     }
 
     bool isBeingUsed = false;
@@ -50,18 +55,27 @@ public class TakeDataTool : Tool
         GameObject.Find("CameraFocus").GetComponent<CameraManager>().enabled = true;
         TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, false, activeName);
         UIController.Instance.emailManager.SetActive(false);
-        detectorMeasure.OnChange(false);
+        if (TooltrayController.Instance.dynamicTray.activeSelf == true)
+        {
+            detectorMeasure.OnChange(false);
+        }
         UIController.Instance.SwitchCams(false);      
     }
 
     public override void OnPointerEnter(PointerEventData data)
     {
-        TooltipManager.Instance.OnHoverButtonActivateTooltip(takeDataButton, _newTooltip, _newTooltipBckg, takeDataTooltip);
+        hoverBool = true;
     }
 
     public override void OnPointerExit(PointerEventData data)
     {
+        hoverBool = false;
         TooltipManager.Instance.DeactivateTooltip(takeDataButton, _newTooltip, _newTooltipBckg, takeDataTooltip);
+    }
+
+    void OnPointerOver()
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(takeDataButton, _newTooltip, _newTooltipBckg, takeDataTooltip);
     }
 
 }

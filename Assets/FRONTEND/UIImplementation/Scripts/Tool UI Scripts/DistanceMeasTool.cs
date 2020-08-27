@@ -26,6 +26,11 @@ public class DistanceMeasTool : Tool
         measureButton = this.GetComponent<Button>();
     }
 
+    void Update()
+    {
+        if (hoverBool) this.OnPointerOver();
+    }
+
     public override void ButtonInteract()
     {
         //Call initialisation method for the relevant tool
@@ -58,11 +63,17 @@ public class DistanceMeasTool : Tool
 
     public override void OnPointerEnter(PointerEventData data)
     {
-        TooltipManager.Instance.OnHoverButtonActivateTooltip(measureButton, _newTooltip, _newTooltipBckg, measureTooltip);
+        hoverBool = true;
     }
 
     public override void OnPointerExit(PointerEventData data)
     {
+        hoverBool = false;
         TooltipManager.Instance.DeactivateTooltip(measureButton, _newTooltip, _newTooltipBckg, measureTooltip);
+    }
+
+    void OnPointerOver()
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(measureButton, _newTooltip, _newTooltipBckg, measureTooltip);
     }
 }

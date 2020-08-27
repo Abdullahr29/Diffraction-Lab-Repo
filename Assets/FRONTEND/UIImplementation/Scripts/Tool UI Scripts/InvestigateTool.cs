@@ -17,10 +17,16 @@ public class InvestigateTool : Tool
     bool hoverBool;
     Button investigateButton;
     string investigateTooltip = "Investigate Tool";
+
     void OnEnable()
     {
         gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._investigateSprite;
         investigateButton = this.GetComponent<Button>();
+    }
+
+    void Update()
+    {
+        if (hoverBool) this.OnPointerOver();
     }
 
     public override void ButtonInteract()
@@ -35,11 +41,17 @@ public class InvestigateTool : Tool
 
     public override void OnPointerEnter(PointerEventData data)
     {
-        TooltipManager.Instance.OnHoverButtonActivateTooltip(investigateButton, _newTooltip, _newTooltipBckg, investigateTooltip);
+        hoverBool = true;
     }
 
     public override void OnPointerExit(PointerEventData data)
     {
+        hoverBool = false;
         TooltipManager.Instance.DeactivateTooltip(investigateButton, _newTooltip, _newTooltipBckg, investigateTooltip);
+    }
+
+    void OnPointerOver()
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(investigateButton, _newTooltip, _newTooltipBckg, investigateTooltip);
     }
 }

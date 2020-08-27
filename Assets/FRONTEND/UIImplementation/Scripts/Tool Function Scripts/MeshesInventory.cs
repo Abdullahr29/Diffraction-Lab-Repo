@@ -52,7 +52,7 @@ public class MeshesInventory : MonoBehaviour
     }
 
     [SerializeField]
-    private Transform _labMeshes;
+    public Transform _labMeshes;
 
     [SerializeField]
     private List<Mesh> availableMeshes = new List<Mesh>();
@@ -69,6 +69,7 @@ public class MeshesInventory : MonoBehaviour
             availableMeshesDict.Add(mesh.item, mesh.prefab);
         }
     }
+    
     private GameObject returnPrefabFromKey(MeshID item)
     {
         if (availableMeshesDict.ContainsKey(item) == false)
@@ -88,6 +89,7 @@ public class MeshesInventory : MonoBehaviour
             GameObject newMesh = Instantiate(prefab);
             newMesh.name = prefab.name;
             newMesh.transform.SetParent(_labMeshes, false);
+            newMesh.layer = 8;
             instantiatedMeshes.Add(item);
         }
     }

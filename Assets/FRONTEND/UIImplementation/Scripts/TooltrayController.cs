@@ -242,7 +242,10 @@ public class TooltrayController : MonoBehaviour
         }
         else if (active == false)
         {
-            activeSprite.gameObject.SetActive(false);
+            if (activeSprite != null)
+            {
+                activeSprite.gameObject.SetActive(false);
+            }
         }
     }
 

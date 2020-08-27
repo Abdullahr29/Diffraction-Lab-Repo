@@ -26,18 +26,19 @@ public class CameraManager : MonoBehaviour
     [Header("Move Controls")]
     public float upDownSpeed = 1f;
     public float leftRightSpeed = 1f;
-    public float rotateSpeed = 45f;
+    public float rotateXSpeed = 45f;
+    public float rotateYSpeed = 45f;
 
     [Header("Bounds")]
-    public Vector2 minMoveBounds = new Vector2(-50,-50);
+    public Vector2 minMoveBounds = new Vector2(-50, -50);
     public Vector2 maxMoveBounds = new Vector2(50, 50);
     public float minRotate = 0f;
-    public float maxRotate = 90.0f;
+    public float maxRotate = 80.0f;
 
     [Header("Zoom Controls")]
     public float zoomSpeed = 1f;
-    public float nearZoomLimit = 0.7f;
-    public float farZoomLimit = 5f;
+    public float nearZoomLimit = 0.2f;
+    public float farZoomLimit = 2f;
     public float startingZoom = 2f;
 
     IZoom zoom;
@@ -50,13 +51,28 @@ public class CameraManager : MonoBehaviour
     IZoom initialZoom;
     Camera cam;
 
+    Vector3 camPosition;
+    RaycastHit hit;
+    float rayLength = 0.1f;
+
+    public LayerMask IgnoreMe;
+    List<Vector3> allDirections;
+    List<Vector3> basicDirections;
+    List<Vector3> reverseDirections;
+
+
     private void Awake()
     {
         cam = GetComponentInChildren<Camera>();
-        cam.transform.localPosition = new Vector3(0f, Mathf.Abs(cameraOffset.y), -Mathf.Abs(cameraOffset.x));
+        cam.transform.localPosition = new Vector3(0f, 0f, -Mathf.Abs(cameraOffset.x));
+        Vector3 rot = transform.eulerAngles;
+        rot.x = 0.1f;
+        transform.eulerAngles = rot;
         zoom = (IZoom)new PerspectiveZoom(cam, cameraOffset, startingZoom);
+
+        addOtherDirections();
     }
-    
+
     private void OnEnable()
     {
         KeyboardInputManager.OnMoveInput += UpdateFrameMove;
@@ -105,6 +121,9 @@ public class CameraManager : MonoBehaviour
 
     private void LateUpdate()
     {
+        Vector3 oldPosition = transform.position;
+        Quaternion oldRotation = transform.rotation;
+
         if (homeClick != 0f)
         {
             ResetCamera();
@@ -115,68 +134,82 @@ public class CameraManager : MonoBehaviour
         {
             Vector3 speedModFrameMove = new Vector3(frameMove.x * leftRightSpeed, frameMove.y, frameMove.z);
             transform.position += transform.TransformDirection(speedModFrameMove) * Time.deltaTime;
-            LockPositionInBounds();
+
+            if (IsColliding() == true)
+            {
+                transform.position = oldPosition;
+            }
+
             frameMove = Vector3.zero;
         }
 
         if (frameRotateX != 0f)
         {
-            Debug.Log("rotatedX");
-            transform.Rotate(Vector3.up, frameRotateX * Time.deltaTime * rotateSpeed);
-            LockYRotationInBounds();
+            Vector3 rot = transform.eulerAngles;
+            rot.y += frameRotateX * Time.deltaTime * rotateXSpeed;
+            transform.eulerAngles = rot;
+            
+            if (IsColliding() == true)
+            {
+                rot.y -= frameRotateX * Time.deltaTime * rotateXSpeed;
+                transform.eulerAngles = rot;
+            }
+
             frameRotateX = 0f;
         }
 
         if (frameRotateY != 0f)
         {
-            transform.Rotate(Vector3.right, frameRotateY * Time.deltaTime * rotateSpeed);
-            Quaternion q = transform.rotation;
-            LockYRotationInBounds();
+            Vector3 rot = transform.eulerAngles;
+            float newRot = rot.x + frameRotateY * Time.deltaTime * rotateYSpeed;
+
+            if (newRot < 90 && newRot > 0)
+            {
+                rot.x += frameRotateY * Time.deltaTime * rotateYSpeed;
+                transform.eulerAngles = rot;
+
+                if (IsColliding() == true)
+                {
+                    rot.x -= frameRotateY * Time.deltaTime * rotateYSpeed;
+                    transform.eulerAngles = rot;
+                }
+            }
+
             frameRotateY = 0f;
         }
 
         if (frameZoom < 0f)
         {
             zoom.ZoomIn(cam, Time.deltaTime * Mathf.Abs(frameZoom) * zoomSpeed, nearZoomLimit);
+
+            if (IsColliding() == true)
+            {
+                zoom.ZoomOut(cam, -Time.deltaTime * -frameZoom * zoomSpeed, farZoomLimit);
+            }
+
             frameZoom = 0f;
-        } else if (frameZoom > 0f)
+        }
+        else if (frameZoom > 0f)
         {
             zoom.ZoomOut(cam, -Time.deltaTime * frameZoom * zoomSpeed, farZoomLimit);
             frameZoom = 0f;
-        } else if (frameZoom == -100f)
+        }
+
+        /*else if (frameZoom == -100f)
         {
             zoom.ZoomInMax(cam, nearZoomLimit);
-        } else if (frameZoom == -100f)
+
+            while (IsColliding() == true)
+            {
+                zoom.ZoomOut(cam, -Time.deltaTime * frameZoom * zoomSpeed, farZoomLimit);
+            }
+
+        }*/
+
+        else if (frameZoom == -100f)
         {
             zoom.ZoomOutMax(cam, farZoomLimit);
         }
-
-    }
-
-    private void LockPositionInBounds()
-    {
-        transform.position = new Vector3(
-            Mathf.Clamp(transform.position.x, -50, 50),
-            transform.position.y,
-            transform.position.z
-        );
-
-    }
-
-    private void LockYRotationInBounds()
-    {
-        Vector3 rot = transform.rotation.eulerAngles;
-        rot.x = ClampAngle(rot.x, minRotate, maxRotate);
-        rot.z = ClampAngle(rot.z, 0, 0);
-        transform.eulerAngles = rot;
-    }
-
-    float ClampAngle(float angle, float from, float to)
-    {
-        // accepts e.g. -80, 80
-        if (angle < 0f) angle = 360 + angle;
-        if (angle > 180f) return Mathf.Max(angle, 360+from);
-        return Mathf.Min(angle, to);
     }
 
     public void ResetCamera()
@@ -186,4 +219,53 @@ public class CameraManager : MonoBehaviour
         cam.transform.localPosition = new Vector3(0f, Mathf.Abs(cameraOffset.y), -Mathf.Abs(cameraOffset.x));
         zoom = (IZoom)new PerspectiveZoom(cam, cameraOffset, startingZoom);
     }
+
+
+    private bool IsColliding()
+    {
+        bool isHit = false;
+        camPosition = cam.transform.position;
+
+        foreach (Vector3 direction in allDirections)
+        {
+            Ray ray = new Ray(camPosition, direction);
+            Debug.DrawRay(camPosition, direction, Color.yellow);
+            if (Physics.Raycast(ray, out hit, rayLength, ~IgnoreMe))
+            {
+                isHit = true;
+            }
+        }
+
+        return isHit;
+    }
+
+    private void addOtherDirections()
+    {
+
+        basicDirections = new List<Vector3> { cam.transform.up, cam.transform.right, cam.transform.forward };
+
+        foreach(Vector3 direction in basicDirections.ToArray())
+        {
+            if (basicDirections.Contains(-direction) != true)
+            {
+                basicDirections.Add(-direction);
+            }
+        }
+
+        allDirections = basicDirections;
+        reverseDirections = basicDirections;
+        reverseDirections.Reverse();
+
+        foreach(Vector3 d1 in basicDirections.ToArray())
+        {
+            foreach(Vector3 d2 in reverseDirections.ToArray())
+            {
+                if (d1 != d2)
+                {
+                    allDirections.Add((d1 + d2).normalized);
+                }
+            }
+        }
+    }
 }
+

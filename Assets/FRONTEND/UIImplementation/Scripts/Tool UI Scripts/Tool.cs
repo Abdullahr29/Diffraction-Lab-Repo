@@ -46,6 +46,10 @@ public class Tool : MonoBehaviour, IButtonInteraction, IPointerEnterHandler, IPo
 
     }
 
+    public virtual void DeactivateInputManager()
+    {
+        UIController.Instance.isActiveInputManager(false);
+    }
 
 
 }

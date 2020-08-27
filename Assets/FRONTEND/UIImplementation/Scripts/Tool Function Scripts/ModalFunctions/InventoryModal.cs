@@ -30,8 +30,6 @@ public class MeshCard
 public class InventoryModal : Modal
 {
     // Add all relevant objects to the inspector - modal, buttons, locks etc.
-    [SerializeField]
-    private GameObject _inventoryModal;
 
     [SerializeField]
     private List<MeshCard> availableCards = new List<MeshCard>();
@@ -49,18 +47,41 @@ public class InventoryModal : Modal
     private GameObject tabSource, tabLenses, tabSlit, tabDet;
 
     public Category categorySelected;
-    private GameObject _activeBckg;
+
+    void Awake ()
+    {
+        // Define all of the variables required, inherited from parent Modal class
+        _modal = this.gameObject;
+        _modalOverlay = this.transform.GetChild(0).GetComponentInParent<Button>();
+        _closeModalBtn = this.transform.GetChild(1).GetChild(0).GetChild(1).GetComponentInParent<Button>();
+        _activeBckg = TooltrayController.Instance.dynamicTray.transform.GetChild(0).GetChild(0).gameObject;
+    }
 
     void Start()
     {
-        // Add close and optical board listeners, lock everything else
-        UIController.Instance.inputManager.SetActive(false);
-        TextMeshProUGUI sourcesText = sourcesBoards.GetComponent<TextMeshProUGUI>();
-        sourcesText.color = new Color32(17, 17, 17, 255);
+        // From parent class, remove input camera control
+        DeactivateInputManager();
+
+        // Lock all categories except sources and boards
         LockCategories();
-        _activeBckg = TooltrayController.Instance.dynamicTray.transform.GetChild(0).GetChild(0).gameObject;
-        CloseListeners(_inventoryModal, _activeBckg);
+
+        // Select first category
+        sourcesBoards.interactable = true;
+        sourcesBoards.Select();
+
+        // Add close modal and optical board instantiation listener
+        CloseListeners();
         ButtonFromKey(MeshID.board).onClick.AddListener(PlaceBoard);
+    }
+
+    void OnEnable()
+    {
+        if (CardFromKey(MeshID.laser).activeSelf == true)
+        {
+            // Select first category
+            SelectSourcesBoards();
+            RecolourSourcesBoards(true);
+        }
     }
 
     private void DictionaryMeshCards()
@@ -93,8 +114,8 @@ public class InventoryModal : Modal
 
     private void LockCategories()
     {
-        // Lock categories by making buttons non interactive for now
-        Button[] categories = new Button[] {sourcesBoards, lenses, slitsGratings, detectors};
+        // Lock categories by making other buttons non interactive for now
+        Button[] categories = new Button[] {lenses, slitsGratings, detectors};
         foreach(Button category in categories)
         {
             category.interactable = false;
@@ -106,7 +127,7 @@ public class InventoryModal : Modal
         // Functionality for instantiating prefabs, closing the inventory as it is 
         // introduced onto the scene
         MeshesInventory.Instance.InstantiateItem(item);
-        CloseModal(_inventoryModal, _activeBckg);
+        CloseModal();
         thisClick.interactable = false;
     }
 
@@ -115,7 +136,7 @@ public class InventoryModal : Modal
         // Functionality for instantiating prefabs, closing the inventory as it is 
         // introduced onto the scene
         MeshesInventory.Instance.InstantiateTwo(mesh, manager);
-        CloseModal(_inventoryModal, _activeBckg);
+        CloseModal();
         thisClick.interactable = false;
     }
 
@@ -146,6 +167,7 @@ public class InventoryModal : Modal
             TextMeshProUGUI categoryText = category.GetComponent<TextMeshProUGUI>();
             categoryText.color = new Color32(17, 17, 17, 255);
         }
+
     }
 
     private void ActivateButtons()
@@ -167,11 +189,14 @@ public class InventoryModal : Modal
                 tabSource.SetActive (true);
 
                 CardFromKey(MeshID.board).SetActive (true);
-                CardFromKey(MeshID.laser).SetActive (true);
-                ButtonFromKey(MeshID.laser).onClick.AddListener(delegate
+                if (ButtonFromKey(MeshID.board).interactable == false)
                 {
-                    SelectAndPlaceTwo(ButtonFromKey(MeshID.laser), MeshID.laser, MeshID.propagationSystem);
-                });
+                    CardFromKey(MeshID.laser).SetActive (true);
+                    ButtonFromKey(MeshID.laser).onClick.AddListener(delegate
+                    {
+                        SelectAndPlaceTwo(ButtonFromKey(MeshID.laser), MeshID.laser, MeshID.propagationSystem);
+                    });
+                }
 
             break;
 
@@ -241,30 +266,52 @@ public class InventoryModal : Modal
         SetActiveMeshes(categorySelected);
     }
 
+    private void RecolourSourcesBoards(bool sourcesTabActive)
+    {
+        // Bugs in Unity for selecting buttons dynamically through script, so have to force
+        // colour change each time
+        ColorBlock cb = sourcesBoards.colors;
+        if (sourcesTabActive == true)
+        {
+            cb.normalColor = new Color32(17, 17, 17, 255);
+            sourcesBoards.colors = cb;
+
+        } else {
+
+            cb.normalColor = new Color32(17, 17, 17, 64);
+            sourcesBoards.colors = cb;
+        }
+    }
+
     private void SelectLenses()
     {
+        RecolourSourcesBoards(false);
+
         categorySelected = Category.Lenses;
         SetActiveMeshes(categorySelected);
     }
 
     private void SelectSlitsGratings()
     {
+        RecolourSourcesBoards(false);
+
         categorySelected = Category.SlitsGratings;
         SetActiveMeshes(categorySelected);
     }
 
     private void SelectDetectors()
     {
+        RecolourSourcesBoards(false);
+
         categorySelected = Category.Detectors;
         SetActiveMeshes(categorySelected);
     }
 
-    public override void CloseModal(GameObject _modal, GameObject _activeBckg)
+    public override void CloseModal()
     {
         // Override abstract class method to add selection of first category as modal
         // is closed.
-        base.CloseModal(_modal, _activeBckg);
-        SelectSourcesBoards();
+        base.CloseModal();
     }
 
 }

@@ -12,9 +12,15 @@ public class HelpTool : Tool
     bool hoverBool;
     Button helpButton;
     string helpTooltip = "Help Tool";
+
     void OnEnable()
     {
         helpButton = this.GetComponent<Button>();
+    }
+
+    void Update()
+    {
+        if (hoverBool) this.OnPointerOver();
     }
 
     public override void ButtonInteract()
@@ -25,11 +31,17 @@ public class HelpTool : Tool
 
     public override void OnPointerEnter(PointerEventData data)
     {
-        TooltipManager.Instance.OnHoverButtonActivateTooltip(helpButton, _newTooltip, _newTooltipBckg, helpTooltip);
+        hoverBool = true;
     }
 
     public override void OnPointerExit(PointerEventData data)
     {
+        hoverBool = false;
         TooltipManager.Instance.DeactivateTooltip(helpButton, _newTooltip, _newTooltipBckg, helpTooltip);
+    }
+
+    void OnPointerOver()
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(helpButton, _newTooltip, _newTooltipBckg, helpTooltip);
     }
 }

@@ -20,6 +20,11 @@ public class InventoryTool : Tool
         inventoryButton = this.GetComponent<Button>();
     }
 
+    void Update()
+    {
+        if (hoverBool) this.OnPointerOver();
+    }
+
     bool isBeingUsed = false;
     public override void ButtonInteract()
     {
@@ -29,26 +34,30 @@ public class InventoryTool : Tool
         {
             TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, true, activeName);
             ModalManager.Instance.ActivateInventory();
+
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
             TooltrayController.Instance.activeTools.Add(this);
-            UIController.Instance.inputManager.SetActive(false);
-        }
 
-        else
-        {
-            TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, false, activeName);
+
+            DeactivateInputManager();
         }
     }
 
     public override void OnPointerEnter(PointerEventData data)
     {
-        TooltipManager.Instance.OnHoverButtonActivateTooltip(inventoryButton, _newTooltip, _newTooltipBckg, inventoryTooltip);
+        hoverBool = true;
     }
 
     public override void OnPointerExit(PointerEventData data)
     {
+        hoverBool = false;
         TooltipManager.Instance.DeactivateTooltip(inventoryButton, _newTooltip, _newTooltipBckg, inventoryTooltip);
+    }
+
+    void OnPointerOver()
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(inventoryButton, _newTooltip, _newTooltipBckg, inventoryTooltip);
     }
 }
 

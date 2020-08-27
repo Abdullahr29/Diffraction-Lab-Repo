@@ -16,7 +16,6 @@ public class QuitTool : Tool
     {
         quitButton = this.GetComponent<Image>();
     }
-    
 
     public override void ButtonInteract()
     {
@@ -33,5 +32,7 @@ public class QuitTool : Tool
     {
         quitButton.sprite = _originalSprite;
     }
+
+
 
 }

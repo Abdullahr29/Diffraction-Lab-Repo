@@ -16,7 +16,6 @@ public class FullScreenTool : Tool
     {
         quitButton = this.GetComponent<Image>();
     }
-    
 
     public override void ButtonInteract()
     {

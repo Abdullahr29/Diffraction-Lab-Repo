@@ -19,10 +19,16 @@ public class MoveTool : Tool
     bool hoverBool;
     Button moveButton;
     string moveTooltip = "Object Move Tool";
+
     void OnEnable()
     {
         this.GetComponent<Image>().sprite = TooltrayController.Instance._moveSprite;
         moveButton = this.GetComponent<Button>();
+    }
+
+    void Update()
+    {
+        if (hoverBool) this.OnPointerOver();
     }
 
 
@@ -64,11 +70,17 @@ public class MoveTool : Tool
 
     public override void OnPointerEnter(PointerEventData data)
     {
-        TooltipManager.Instance.OnHoverButtonActivateTooltip(moveButton, _newTooltip, _newTooltipBckg, moveTooltip);
+        hoverBool = true;
     }
 
     public override void OnPointerExit(PointerEventData data)
     {
+        hoverBool = false;
         TooltipManager.Instance.DeactivateTooltip(moveButton, _newTooltip, _newTooltipBckg, moveTooltip);
+    }
+
+    void OnPointerOver()
+    {
+        TooltipManager.Instance.OnHoverButtonActivateTooltip(moveButton, _newTooltip, _newTooltipBckg, moveTooltip);
     }
 }

@@ -60,7 +60,7 @@ public class UIController : MonoBehaviour
         screenCam.enabled = false;
 
         ModalManager.Instance.ActivateIntroductorySpiel();
-        calibrateClick();        //by default launch into this mode (change this for intro mode in the future)
+        //calibrateClick();        //by default launch into this mode (change this for intro mode in the future)
 
         calibrate.onClick.AddListener(calibrateClick);
         measure.onClick.AddListener(measureClick);
@@ -108,7 +108,16 @@ public class UIController : MonoBehaviour
         detectorBehaviour.LoadScreen();
     }
 
-    private void DeactivateTabs()
+    public void dataClickTutorial()
+    {
+        DeactivateTabs();
+        dataTab.SetActive(true);
+        currentMode = Mode.DataTake;
+        tooltray.SetTrayContents(currentMode);
+        Debug.Log("Data");
+    }
+
+        private void DeactivateTabs()
     {
         calibrateTab.SetActive(false);
         measureTab.SetActive(false);
@@ -125,6 +134,13 @@ public class UIController : MonoBehaviour
         {
             mainCam.GetComponentInParent<CameraManager>().ResetCamera();
         }
+    }
+
+
+
+    public void isActiveInputManager(bool isActive)
+    {
+        inputManager.SetActive(isActive);
     }
 
 }

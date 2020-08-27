@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using TMPro;
+
 public class TooltipManager : MonoBehaviour
 {
     // Make manager into singleton
@@ -29,8 +27,6 @@ public class TooltipManager : MonoBehaviour
     public Sprite tooltipSprite;
 
 
-
-
     public void OnHoverButtonActivateTooltip(Button _hoveredButton, GameObject _newTooltip, GameObject _newTooltipBckg, string buttonTooltip)
     {
         string tooltipText = buttonTooltip;
@@ -41,6 +37,7 @@ public class TooltipManager : MonoBehaviour
         Vector2 mp = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
         if (_tooltipChild != null) {
             _tooltipChild.gameObject.SetActive(true);
+            UpdateTooltipPosition(_tooltipChild.gameObject.GetComponent<RectTransform>());
         }
         else
         {
@@ -60,8 +57,6 @@ public class TooltipManager : MonoBehaviour
     }
 
 
-
-
     private void SetUpTooltip(Button _hoveredButton, GameObject _newTooltip, GameObject _newTooltipBckg, string tooltipText, string tooltipTextNoSpaces)
     {
         // Create newTooltip background in tooltipsParent object in UI layer
@@ -69,14 +64,18 @@ public class TooltipManager : MonoBehaviour
         _newTooltipBckg.transform.SetParent(tooltipsParent, false);
         _newTooltipBckg.name = tooltipTextNoSpaces;
         RectTransform tooltipBckgRT = _newTooltipBckg.AddComponent<RectTransform>();
+        tooltipBckgRT.pivot = new Vector2(0, 1);
+        tooltipBckgRT.anchorMin = new Vector2(0, 1);
+        tooltipBckgRT.anchorMax = new Vector2(0, 1);
         _newTooltipBckg.AddComponent<Image>().color = new Color(243, 242, 230, 255);
 
-        // Create text object with tooltip name in tooltip background, add TMPUGI to it
+        // Create text object with tooltip name in tooltip background
         _newTooltip = new GameObject();
         _newTooltip.transform.SetParent(_newTooltipBckg.transform, false);
         RectTransform tooltipRT = _newTooltip.AddComponent<RectTransform>();
         _newTooltip.name = tooltipTextNoSpaces + "Text";
 
+        // Add TMPUGI and change settings
         TextMeshProUGUI tooltipTMP = _newTooltip.AddComponent<TextMeshProUGUI>();
         tooltipTMP.text = tooltipText;
         tooltipTMP.color = new Color32(17, 17, 17, 255);
@@ -88,11 +87,18 @@ public class TooltipManager : MonoBehaviour
 
         // Calculate the size of the box depending on the text length
         tooltipBckgRT.sizeDelta = new Vector2(15, 15) + tooltipRT.sizeDelta;
+
+        // Change position and sprite of tooltip
+        UpdateTooltipPosition(tooltipBckgRT);
+        tooltipBckgRT.gameObject.GetComponent<Image>().sprite = tooltipSprite;
+    }
+
+    public void UpdateTooltipPosition(RectTransform tooltipRect)
+    {
         float mouseX = Input.mousePosition.x;
         float mouseY = Input.mousePosition.y;
 
-        tooltipBckgRT.position = new Vector3(mouseX + 50, mouseY -50, 0);
-        tooltipBckgRT.gameObject.GetComponent<Image>().sprite = tooltipSprite;
+        tooltipRect.position = new Vector3(mouseX + 10, mouseY - 10, 0);
     }
 
 }

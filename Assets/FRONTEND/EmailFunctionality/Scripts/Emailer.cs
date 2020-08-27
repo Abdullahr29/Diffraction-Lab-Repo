@@ -55,6 +55,9 @@ public class Emailer : MonoBehaviour
 
 
                 SendAnEmail(toAddress, ccAddress, subject, message);
+
+                // This will set up and send a separate email with all of the questions and answers.
+                EmailQuestionsAndAnswers(toAddress, ccAddress, "DLH Optics  Answers to Questions", QandAFunctionality.messageToSend);
             }
             else
             {
@@ -153,6 +156,45 @@ public class Emailer : MonoBehaviour
         else
         {
             Debug.Log("WWW Error: " + www.error);
+        }
+    }
+
+
+    // Email questions and answers in message of email, no attachments
+    private static void EmailQuestionsAndAnswers(MailAddress toAddress, MailAddress ccAddress, string subject, string message)
+    {
+        // Create mail
+        MailAddress fromAddress = new MailAddress(kSenderEmailAddress);
+        MailMessage mail = new MailMessage(fromAddress, toAddress);
+        mail.CC.Add(ccAddress);
+        mail.Subject = subject;
+        mail.Body = message;
+
+        // Setup server 
+        SmtpClient smtpServer = new SmtpClient("smtp.gmail.com");
+        smtpServer.Port = 587;
+        smtpServer.Credentials = new NetworkCredential(
+            kSenderEmailAddress, kSenderPassword) as ICredentialsByHost;
+        smtpServer.EnableSsl = true;
+        ServicePointManager.ServerCertificateValidationCallback =
+            delegate (object s, X509Certificate certificate,
+            X509Chain chain, SslPolicyErrors sslPolicyErrors) {
+                Debug.Log("Email success!");
+                return true;
+            };
+
+        // Send mail to server, print results
+        try
+        {
+            smtpServer.Send(mail);
+        }
+        catch (System.Exception e)
+        {
+            Debug.Log("Email error: " + e.Message);
+        }
+        finally
+        {
+            Debug.Log("FINISHED");
         }
     }
 }
