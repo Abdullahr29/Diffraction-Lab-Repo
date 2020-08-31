@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class ObjectManager : MonoBehaviour
@@ -210,7 +211,7 @@ public class ObjectManager : MonoBehaviour
         {
             if (_instance == null)
             {
-                Debug.LogError("ObjectManager is NULL.");
+                Debug.LogError("ObjectManager is NULL.");                
             }
 
             return _instance;
@@ -219,7 +220,7 @@ public class ObjectManager : MonoBehaviour
 
     private void Awake()
     {
-        _instance = this;
+        _instance = this;   
     }
 
 
@@ -244,7 +245,7 @@ public class ObjectManager : MonoBehaviour
 
     void UpdateActive(obj key, GameObject value)
     {
-        if (activeObjects.ContainsKey(key) ^ value == null)
+        if (activeObjects.ContainsKey(key) ^ value != null)
         {
             if (value == null)
             {
@@ -277,6 +278,7 @@ public class ObjectManager : MonoBehaviour
         int[] tempCountArray = { 0, 0, 0 };
         //int[] tempCountArray = { numCameras, numComponents, numManagers };
         numActive = 0;
+        activeObjects = null;
 
         //Loop through the elements of each temporary array above
         for (int i = 0; i < tempObj.Length; i++)

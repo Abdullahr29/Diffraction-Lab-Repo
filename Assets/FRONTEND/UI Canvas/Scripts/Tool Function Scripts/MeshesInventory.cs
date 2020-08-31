@@ -104,7 +104,7 @@ public class MeshesInventory : MonoBehaviour
             newMesh.transform.SetParent(_labMeshes, false);
             activeMeshes.Add(item, newMesh);
             newMesh.layer = 8;
-            instantiatedMeshes.Add(item);
+            //instantiatedMeshes.Add(item);
         }
     }
 

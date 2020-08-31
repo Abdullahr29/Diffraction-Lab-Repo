@@ -124,6 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30674dd96804d4f45b83830e7aacb847, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  propagation: {fileID: 0}
   laser: {fileID: 137421679836844816}
   intensity: 10
 --- !u!1 &137421680541802511
@@ -138,6 +139,7 @@ GameObject:
   - component: {fileID: 4708812335041364730}
   - component: {fileID: 4708812335041364731}
   - component: {fileID: 137421680541802509}
+  - component: {fileID: 444705191937359956}
   m_Layer: 0
   m_Name: v3 LASER
   m_TagString: Untagged
@@ -205,6 +207,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Propagation: {fileID: 2424651168891146681}
   BeamGenerator: {fileID: 137421679836844814}
+--- !u!114 &444705191937359956
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 137421680541802511}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7858bcfced78b8b4f82c476ad8d565a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectID: 3
 --- !u!1 &482877545855327230
 GameObject:
   m_ObjectHideFlags: 0

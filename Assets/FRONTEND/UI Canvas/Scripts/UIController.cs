@@ -54,9 +54,10 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
-        emailManager = GameObject.Find("v1 EmailManager");
+        emailManager = ObjectManager.Instance.EmailManager;
         emailManager.SetActive(false);
 
+        screenCam = ObjectManager.Instance.ScreenCam.GetComponent<Camera>();
         screenCam.enabled = false;
 
         ModalManager.Instance.ActivateIntroductorySpiel();

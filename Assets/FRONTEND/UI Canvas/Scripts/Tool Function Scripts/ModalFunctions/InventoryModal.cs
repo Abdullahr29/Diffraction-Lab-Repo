@@ -66,12 +66,12 @@ public class InventoryModal : Modal
         LockCategories();
         _activeBckg = TooltrayController.Instance.dynamicTray.transform.GetChild(0).GetChild(0).gameObject;
         CloseListeners(_inventoryModal, _activeBckg);
-        ButtonFromKey(MeshID.board).onClick.AddListener(PlaceBoard);
+        ButtonFromKey(obj.board).onClick.AddListener(PlaceBoard);
     }
 
     void OnEnable()
     {
-        if (CardFromKey(MeshID.laser).activeSelf == true)
+        if (CardFromKey(obj.laser).activeSelf == true)
         {
             // Select first category
             SelectSourcesBoards();
@@ -184,7 +184,7 @@ public class InventoryModal : Modal
                 tabSource.SetActive (true);
 
                 CardFromKey(obj.board).SetActive (true);
-                if (ButtonFromKey(MeshID.board).interactable == false)
+                if (ButtonFromKey(obj.board).interactable == false)
                 CardFromKey(obj.laser).SetActive (true);
                 ButtonFromKey(obj.laser).onClick.AddListener(delegate
                 {

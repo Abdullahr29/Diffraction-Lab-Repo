@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2169886854887747706}
   - component: {fileID: 2169886854887747709}
+  - component: {fileID: 3404083903940248373}
   m_Layer: 0
   m_Name: PropagationSystem
   m_TagString: Untagged
@@ -45,3 +46,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabLine: {fileID: 5156988906498593679, guid: 1c08dbe0532d2fe4aa0d74e2ce018f54,
     type: 3}
+--- !u!114 &3404083903940248373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2169886854887747708}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7858bcfced78b8b4f82c476ad8d565a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectID: 8

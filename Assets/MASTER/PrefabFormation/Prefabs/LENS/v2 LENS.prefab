@@ -720,6 +720,7 @@ GameObject:
   - component: {fileID: 7047082626365426010}
   - component: {fileID: 1360396017569014431}
   - component: {fileID: 6019214297449263424}
+  - component: {fileID: -9125484722935282246}
   m_Layer: 0
   m_Name: v2 LENS
   m_TagString: Untagged
@@ -785,3 +786,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31aa9f493c42b6b428d27d5103e60403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-9125484722935282246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8581995420646512319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7858bcfced78b8b4f82c476ad8d565a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectID: 4

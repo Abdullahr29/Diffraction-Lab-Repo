@@ -448,6 +448,7 @@ GameObject:
   - component: {fileID: 2353080549928072991}
   - component: {fileID: 8590832789486391423}
   - component: {fileID: 8338310020389999819}
+  - component: {fileID: -4338339135855999247}
   m_Layer: 0
   m_Name: v2 DETECTOR
   m_TagString: Untagged
@@ -485,12 +486,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grating: {fileID: 44201363973267719, guid: 769e674e9a0e4264390cc2b947ac8846, type: 3}
-  emailManager: {fileID: 3292865017895813132, guid: 7c16f03f8cbd0bf4db376a3f263f4d35,
-    type: 3}
+  CMOS: {fileID: 0}
   display: {fileID: 8614816139381560886}
   screen: {fileID: 6379592399765281265}
   IMG: {fileID: 6379592399494391443}
-  Wavelength: 0.00000067
 --- !u!54 &8590832789486391423
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -519,6 +518,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31aa9f493c42b6b428d27d5103e60403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-4338339135855999247
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6379592400221890796}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7858bcfced78b8b4f82c476ad8d565a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectID: 6
 --- !u!1 &6379592400379072304
 GameObject:
   m_ObjectHideFlags: 0

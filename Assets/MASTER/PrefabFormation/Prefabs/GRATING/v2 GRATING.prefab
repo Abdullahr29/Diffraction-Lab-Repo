@@ -119,6 +119,7 @@ GameObject:
   - component: {fileID: 44201363973267719}
   - component: {fileID: 8877687822942197086}
   - component: {fileID: 1856431144830299819}
+  - component: {fileID: 2579291312690566623}
   m_Layer: 0
   m_Name: v2 GRATING
   m_TagString: Untagged
@@ -162,8 +163,12 @@ MonoBehaviour:
   maxSlitDim: 0.006
   slitWidth: 0.00006
   slitHeight: 0.00006
+  slitSeperation: 0.00006
   resolution: 0
   resolutionPower: 9
+  distanceLensScreen: 0
+  distanceGratingLens: 0
+  focalLength: 0
   angle: 0
   slits: 1
   CMOS: {fileID: 0}
@@ -196,6 +201,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31aa9f493c42b6b428d27d5103e60403, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2579291312690566623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3460458700728214598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7858bcfced78b8b4f82c476ad8d565a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectID: 5
 --- !u!64 &1527079684
 MeshCollider:
   m_ObjectHideFlags: 0
