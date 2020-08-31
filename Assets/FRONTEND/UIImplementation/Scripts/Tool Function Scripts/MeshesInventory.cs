@@ -4,27 +4,16 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEditor;
+using System;
 
-[System.Serializable]
-public enum MeshID
-{
-    board,
-    laser,
-    propagationSystem,
-    lens,
-    grating,
-    screen,
-    cmosCamera,
-    emailManager
-}
 
 [System.Serializable]
 public class Mesh
 {
-    public MeshID item;
+    public obj item;
     public GameObject prefab;
 
-    public Mesh(MeshID item, GameObject prefab)
+    public Mesh(obj item, GameObject prefab)
     {
         this.item = item;
         this.prefab = prefab;
@@ -36,31 +25,45 @@ public class MeshesInventory : MonoBehaviour
     // Turn meshes manager into singleton
     private static MeshesInventory _instance;
     public static MeshesInventory Instance
-    {   get
-    {
+    {   
+        get
+        {
             if (_instance == null)
+            {
                 Debug.LogError("MeshesInventory is NULL.");
+            }                
 
             return _instance;
-
         }
-    }
-    
-    private void Awake()
-    {
-        _instance = this; 
     }
 
     [SerializeField]
     public Transform _labMeshes;
 
+
     [SerializeField]
     private List<Mesh> availableMeshes = new List<Mesh>();
-    private List<MeshID> instantiatedMeshes = new List<MeshID>();
+    private Dictionary<obj, GameObject> availableMeshesDict = new Dictionary<obj, GameObject>();
 
-    public Dictionary<MeshID, GameObject> availableMeshesDict = new Dictionary<MeshID, GameObject>();
+    private Dictionary<obj, GameObject> activeMeshes = new Dictionary<obj, GameObject>();
 
-    private GameObject board, laser, lens, slit, grating, screen, cmosCamera;
+
+
+    private void Awake()
+    {
+        _instance = this;
+        //Reupdate our records of active objects to ensure accuracy
+        DictionaryMeshes();
+        foreach (obj id in Enum.GetValues(typeof(obj)))
+        {
+            if (!(id == obj.camMain | id == obj.camScreen | id == obj.measure))
+            {                
+                SearchForActive(id);
+            }           
+        }        
+    }
+
+
 
     private void DictionaryMeshes()
     {
@@ -69,8 +72,7 @@ public class MeshesInventory : MonoBehaviour
             availableMeshesDict.Add(mesh.item, mesh.prefab);
         }
     }
-    
-    private GameObject returnPrefabFromKey(MeshID item)
+    public GameObject returnPrefabFromKey(obj item)
     {
         if (availableMeshesDict.ContainsKey(item) == false)
         {
@@ -80,32 +82,61 @@ public class MeshesInventory : MonoBehaviour
 
         return availableMeshesDict[item];
     }
-
-    public void InstantiateItem(MeshID item)
+    public GameObject ReturnActiveMeshFromKey(obj item)
     {
-        if (instantiatedMeshes.Contains(item) == false)
+        if (activeMeshes.ContainsKey(item) != false)
+        {
+            return availableMeshesDict[item];
+        }
+        else
+        {
+            return null;
+        }        
+    }
+
+    public void InstantiateItem(obj item)
+    {
+        if (activeMeshes.ContainsKey(item) == false)
         {
             GameObject prefab = returnPrefabFromKey(item);
             GameObject newMesh = Instantiate(prefab);
             newMesh.name = prefab.name;
             newMesh.transform.SetParent(_labMeshes, false);
+            activeMeshes.Add(item, newMesh);
             newMesh.layer = 8;
             instantiatedMeshes.Add(item);
         }
     }
 
-    public void InstantiateTwo(MeshID mesh, MeshID manager)
+    public void InstantiateTwo(obj mesh, obj manager)
     {
-        InstantiateItem(mesh);
-
-        if (instantiatedMeshes.Contains(manager) == false)
+        //Need manager instantiated before dependent objects
+        if (activeMeshes.ContainsKey(manager) == false)
         {
             GameObject managerPrefab = returnPrefabFromKey(manager);
             GameObject newManager = Instantiate(managerPrefab);
             newManager.name = managerPrefab.name;
-            instantiatedMeshes.Add(manager);
+            activeMeshes.Add(manager, newManager);
         }
 
+        InstantiateItem(mesh);
+    }
+
+    public void SearchForActive(obj item)
+    {
+        GameObject targetObject;
+        targetObject = GameObject.Find(availableMeshesDict[item].name);
+
+        //check whether prefab has been instantiated int the scene
+        if (targetObject != null)
+        {
+            activeMeshes[item] = targetObject;
+        }
+        else if(activeMeshes.ContainsKey(item))
+        {
+            //Remove old reference if present
+            activeMeshes.Remove(item);
+        }           
     }
 
 }

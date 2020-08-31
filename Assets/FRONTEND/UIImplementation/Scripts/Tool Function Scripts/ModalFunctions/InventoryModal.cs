@@ -17,10 +17,10 @@ public enum Category
 public class MeshCard
 {
     // Define MeshCards object to be connected into the inspector
-    public MeshID item;
+    public obj item;
     public GameObject meshCard;
 
-    public MeshCard(MeshID item, GameObject meshCard)
+    public MeshCard(obj item, GameObject meshCard)
     {
         this.item = item;
         this.meshCard = meshCard;
@@ -34,7 +34,7 @@ public class InventoryModal : Modal
     [SerializeField]
     private List<MeshCard> availableCards = new List<MeshCard>();
 
-    public Dictionary<MeshID, GameObject> availableCardsDict = new Dictionary<MeshID, GameObject>();
+    public Dictionary<obj, GameObject> availableCardsDict = new Dictionary<obj, GameObject>();
 
 
     [SerializeField]
@@ -64,13 +64,8 @@ public class InventoryModal : Modal
 
         // Lock all categories except sources and boards
         LockCategories();
-
-        // Select first category
-        sourcesBoards.interactable = true;
-        sourcesBoards.Select();
-
-        // Add close modal and optical board instantiation listener
-        CloseListeners();
+        _activeBckg = TooltrayController.Instance.dynamicTray.transform.GetChild(0).GetChild(0).gameObject;
+        CloseListeners(_inventoryModal, _activeBckg);
         ButtonFromKey(MeshID.board).onClick.AddListener(PlaceBoard);
     }
 
@@ -93,7 +88,7 @@ public class InventoryModal : Modal
         }
     }
 
-    private GameObject CardFromKey(MeshID item)
+    private GameObject CardFromKey(obj item)
     {
         // Retrieves the required card from the selection of MeshID as defined
         // in the inspector
@@ -106,7 +101,7 @@ public class InventoryModal : Modal
         return availableCardsDict[item];
     }
 
-    private Button ButtonFromKey(MeshID item)
+    private Button ButtonFromKey(obj item)
     {
         // Retrieves the required button from the card
         return CardFromKey(item).GetComponent<Button>();
@@ -122,7 +117,7 @@ public class InventoryModal : Modal
         }
     }
 
-    private void SelectAndPlaceItem(Button thisClick, MeshID item)
+    private void SelectAndPlaceItem(Button thisClick, obj item)
     {
         // Functionality for instantiating prefabs, closing the inventory as it is 
         // introduced onto the scene
@@ -131,7 +126,7 @@ public class InventoryModal : Modal
         thisClick.interactable = false;
     }
 
-    private void SelectAndPlaceTwo(Button thisClick, MeshID mesh, MeshID manager)
+    private void SelectAndPlaceTwo(Button thisClick, obj mesh, obj manager)
     {
         // Functionality for instantiating prefabs, closing the inventory as it is 
         // introduced onto the scene
@@ -143,7 +138,7 @@ public class InventoryModal : Modal
     private void PlaceBoard()
     {
         // Placing the board onto the scene unlocks all categories
-        SelectAndPlaceItem(ButtonFromKey(MeshID.board), MeshID.board);
+        SelectAndPlaceItem(ButtonFromKey(obj.board), obj.board);
         unlockCategories();
     }
 
@@ -188,15 +183,13 @@ public class InventoryModal : Modal
 
                 tabSource.SetActive (true);
 
-                CardFromKey(MeshID.board).SetActive (true);
+                CardFromKey(obj.board).SetActive (true);
                 if (ButtonFromKey(MeshID.board).interactable == false)
+                CardFromKey(obj.laser).SetActive (true);
+                ButtonFromKey(obj.laser).onClick.AddListener(delegate
                 {
-                    CardFromKey(MeshID.laser).SetActive (true);
-                    ButtonFromKey(MeshID.laser).onClick.AddListener(delegate
-                    {
-                        SelectAndPlaceTwo(ButtonFromKey(MeshID.laser), MeshID.laser, MeshID.propagationSystem);
-                    });
-                }
+                    SelectAndPlaceTwo(ButtonFromKey(obj.laser), obj.laser, obj.propagation);
+                });
 
             break;
 
@@ -204,10 +197,10 @@ public class InventoryModal : Modal
 
                 tabLenses.SetActive (true);
 
-                CardFromKey(MeshID.lens).SetActive (true);
-                ButtonFromKey(MeshID.lens).onClick.AddListener(delegate
+                CardFromKey(obj.lens).SetActive (true);
+                ButtonFromKey(obj.lens).onClick.AddListener(delegate
                 {
-                    SelectAndPlaceItem(ButtonFromKey(MeshID.lens), MeshID.lens);
+                    SelectAndPlaceItem(ButtonFromKey(obj.lens), obj.lens);
                 });
 
             break;
@@ -216,10 +209,10 @@ public class InventoryModal : Modal
 
                 tabSlit.SetActive (true);
 
-                CardFromKey(MeshID.grating).SetActive (true);
-                ButtonFromKey(MeshID.grating).onClick.AddListener(delegate
+                CardFromKey(obj.grating).SetActive (true);
+                ButtonFromKey(obj.grating).onClick.AddListener(delegate
                 {
-                    SelectAndPlaceItem(ButtonFromKey(MeshID.grating), MeshID.grating);
+                    SelectAndPlaceItem(ButtonFromKey(obj.grating), obj.grating);
                 });
             break;
 
@@ -227,10 +220,10 @@ public class InventoryModal : Modal
 
                 tabDet.SetActive (true);
 
-                CardFromKey(MeshID.cmosCamera).SetActive (true);
-                ButtonFromKey(MeshID.cmosCamera).onClick.AddListener(delegate
+                CardFromKey(obj.cmos).SetActive (true);
+                ButtonFromKey(obj.cmos).onClick.AddListener(delegate
                 {
-                    SelectAndPlaceItem(ButtonFromKey(MeshID.cmosCamera), MeshID.cmosCamera);
+                    SelectAndPlaceItem(ButtonFromKey(obj.cmos), obj.cmos);
                 });
             break;
         }
@@ -250,7 +243,7 @@ public class InventoryModal : Modal
         {
             ButtonFromKey(mesh.item).onClick.RemoveListener(delegate
                 {
-                    SelectAndPlaceItem(ButtonFromKey(MeshID.laser), MeshID.laser);
+                    SelectAndPlaceItem(ButtonFromKey(obj.laser), obj.laser);
                 });
         }
 

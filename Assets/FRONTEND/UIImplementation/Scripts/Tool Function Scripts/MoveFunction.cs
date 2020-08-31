@@ -32,7 +32,7 @@ public class MoveFunction : MonoBehaviour
     private void Start()
     {
         positionHistory = new List<Tuple<string, Vector3>>();
-        mainCam = Camera.main;
+        mainCam = ObjectManager.Instance.MainCam.GetComponent<Camera>();
         camManager = mainCam.transform.parent;
         camManagerOffset = camManager.position;
 

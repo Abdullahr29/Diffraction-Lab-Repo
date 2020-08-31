@@ -6,8 +6,6 @@ using UnityEngine.UI;
 
 public class DistanceMeasTool : Tool
 {
-
-
     GameObject measurementController;
     MeasurementControl measurementControl;
     bool isBeingUsed = false;
@@ -35,12 +33,18 @@ public class DistanceMeasTool : Tool
     {
         //Call initialisation method for the relevant tool
         isBeingUsed = !isBeingUsed;
-        if (measurementControl == null)
+        measurementController = ObjectManager.Instance.MeasureController;
+        if (measurementController == null)
         {
             measurementController = new GameObject("measurementController");
             measurementControl = measurementController.AddComponent<MeasurementControl>();
+            ObjectManager.Instance.MeasureController = measurementController;
         }
-        measurementController.SetActive(isBeingUsed); //if button is active then enable MoveFunction to listen for input
+        else
+        {
+            measurementControl = measurementController.GetComponent<MeasurementControl>();
+        }
+        measurementControl.OnChange(isBeingUsed); //if button is active then enable MoveFunction to listen for input
         Debug.Log(isBeingUsed);
 
         if (isBeingUsed)

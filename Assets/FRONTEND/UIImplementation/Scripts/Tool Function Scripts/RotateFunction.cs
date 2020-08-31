@@ -39,7 +39,7 @@ public class RotateFunction : MonoBehaviour
 		lastMousePos = 10000;
 
 		rotationHistory = new List<Tuple<string, Quaternion>>();
-		mainCam = Camera.main;
+		mainCam = ObjectManager.Instance.MainCam.GetComponent<Camera>();
 		camManager = mainCam.transform.parent;
         camManagerOffset = camManager.position;
 

@@ -53,6 +53,7 @@ public class MeasurementControl : MonoBehaviour
         clicks = 0;
         modeActive = false;
         line = this.GetComponent<LineRenderer>();
+        cam = ObjectManager.Instance.MainCam.GetComponent<Camera>();
     }
 
     public void OnChange(bool ticked)
