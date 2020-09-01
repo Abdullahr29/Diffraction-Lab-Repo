@@ -26,9 +26,10 @@ public class ObjectManager : MonoBehaviour
 
     //[Header("Managers")]
     [SerializeField]
-    private GameObject propagationManager, emailManager, measureController;
+    private GameObject propagationManager, emailManager, measureController, rotationController;
 
     //[Header("Object Lists")]
+    [SerializeField]
     private List<GameObject> cameraList, componentList, managerList;
     private Dictionary<obj, GameObject> activeObjects;
 
@@ -203,6 +204,22 @@ public class ObjectManager : MonoBehaviour
             }
         }
     }
+    public GameObject RotationController
+    {
+        get { return rotationController; }
+        set
+        {
+            bool isNewValue = CheckUpdateCounter(rotationController, value);
+            rotationController = value;
+            if (isNewValue)
+            {
+                managerList = new List<GameObject> { propagationManager, emailManager, measureController, rotationController };
+                obj key = obj.rotation;
+                UpdateActive(key, value);
+                UpdateCounters();                
+            }
+        }
+    }
 
     //Object manager as singleton
     public static ObjectManager Instance
@@ -229,7 +246,8 @@ public class ObjectManager : MonoBehaviour
     {
         cameraList = new List<GameObject> { mainCam, screenCam };
         componentList = new List<GameObject> { board, laser, lens, grating, screen, cmos };
-        managerList = new List<GameObject> { propagationManager, emailManager, measureController };
+        managerList = new List<GameObject> { propagationManager, emailManager, measureController, rotationController };
+        activeObjects = new Dictionary<obj, GameObject>();
 
         UpdateCounters();        
     }
@@ -278,7 +296,6 @@ public class ObjectManager : MonoBehaviour
         int[] tempCountArray = { 0, 0, 0 };
         //int[] tempCountArray = { numCameras, numComponents, numManagers };
         numActive = 0;
-        activeObjects = null;
 
         //Loop through the elements of each temporary array above
         for (int i = 0; i < tempObj.Length; i++)
@@ -287,7 +304,7 @@ public class ObjectManager : MonoBehaviour
 
             //loop through list of gameobjects tempObj[i], where item is a gameobject
             foreach (var item in tempObj[i])
-            {
+            {                
                 if (item != null)
                 {
                     tempCount += 1;

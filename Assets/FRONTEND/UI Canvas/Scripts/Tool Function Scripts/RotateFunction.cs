@@ -19,7 +19,7 @@ public class RotateFunction : MonoBehaviour
     Vector3 camManagerOffset;
 	float targetRot;   
 
-	public float force = 10f;
+	public float force = 1f;
 	public float maxSpeed = 360f;
 
 	GameObject confirmHolder, denyHolder;
@@ -103,7 +103,7 @@ public class RotateFunction : MonoBehaviour
 				denyHolder.SetActive(false);
 				targetRot =  Input.mousePosition.x - mainCam.WorldToScreenPoint(movableObject.pos).x - camManagerOffset.x;
 				enableMotion = true;
-				Debug.Log("moving");
+				//Debug.Log("moving");
                
 			}
 
@@ -136,10 +136,12 @@ public class RotateFunction : MonoBehaviour
                 //rb.AddTorque(0, mouseVel * force * Time.deltaTime, 0);
                 rb.centerOfMass = new Vector3(0, 0, 0);
 				rb.inertiaTensorRotation = Quaternion.identity;
-				rb.AddTorque(0, mouseVel * force * Time.deltaTime, 0);                
-                //movableObject.transform.localEulerAngles = new Vector3(0, 0, transform.localEulerAngles.z);
+				//rb.AddTorque(0, mouseVel * force / Time.deltaTime, 0);
+				Debug.Log(Input.GetAxis("Mouse X"));
+				rb.rotation = Quaternion.Euler(rb.rotation.eulerAngles + new Vector3(0f, force * Input.GetAxis("Mouse X"), 0f));
+				//movableObject.transform.localEulerAngles = new Vector3(0, 0, transform.localEulerAngles.z);
 
-            }
+			}
 			else
 			{
 				rb.angularVelocity = Vector3.zero;
@@ -205,7 +207,7 @@ public class RotateFunction : MonoBehaviour
 		}
         else
         {
-			mouseVel = (newMousePos - lastMousePos) / Time.deltaTime;
+			mouseVel = (newMousePos - lastMousePos);
 			lastMousePos = newMousePos;
 		}
 		

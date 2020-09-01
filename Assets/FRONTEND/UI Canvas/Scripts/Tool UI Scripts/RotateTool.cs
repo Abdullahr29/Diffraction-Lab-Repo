@@ -40,6 +40,7 @@ public class RotateTool : Tool
             Debug.Log("ROTATE CONTROLLER NULL");
             rotateController = new GameObject("rotateController");
             rotateFunction = rotateController.AddComponent<RotateFunction>();
+            ObjectManager.Instance.RotationController = rotateController;
         }
         rotateController.SetActive(isBeingUsed); //if button is active then enable rotateFunction to listen for input
         Debug.Log(isBeingUsed);
@@ -55,7 +56,7 @@ public class RotateTool : Tool
         else
         {
             Debug.Log("IS NOT BEING USED");
-            Destroy(rotateController);
+            //Destroy(rotateController);
             TooltrayController.Instance.ActiveToolBckg(_activeBckg, 2, false, activeName);
             DeactivateButton();
         }

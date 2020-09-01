@@ -65,7 +65,7 @@ public class InventoryModal : Modal
         // Lock all categories except sources and boards
         LockCategories();
         _activeBckg = TooltrayController.Instance.dynamicTray.transform.GetChild(0).GetChild(0).gameObject;
-        CloseListeners(_inventoryModal, _activeBckg);
+        //CloseListeners(_inventoryModal, _activeBckg);
         ButtonFromKey(obj.board).onClick.AddListener(PlaceBoard);
     }
 

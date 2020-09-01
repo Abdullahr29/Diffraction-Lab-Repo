@@ -14,5 +14,6 @@ public enum obj
     cmos,
     propagation,
     email,
-    measure
+    measure,
+    rotation
 }
