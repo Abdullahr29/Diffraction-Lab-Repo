@@ -15,5 +15,6 @@ public enum obj
     propagation,
     email,
     measure,
+    movement,
     rotation
 }

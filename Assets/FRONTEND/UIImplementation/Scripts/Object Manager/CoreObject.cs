@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class CoreObject : MonoBehaviour
 {
-    public obj objectID;
+    private obj objectID;
+    public obj ObjectID { set;  get; }
     void Start()
     {
         

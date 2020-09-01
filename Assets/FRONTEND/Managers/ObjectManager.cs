@@ -26,7 +26,7 @@ public class ObjectManager : MonoBehaviour
 
     //[Header("Managers")]
     [SerializeField]
-    private GameObject propagationManager, emailManager, measureController, rotationController;
+    private GameObject propagationManager, emailManager, measureController, movementController, rotationController;
 
     //[Header("Object Lists")]
     [SerializeField]
@@ -204,7 +204,8 @@ public class ObjectManager : MonoBehaviour
             }
         }
     }
-    public GameObject RotationController
+
+    public GameObject MovementController
     {
         get { return rotationController; }
         set
@@ -214,6 +215,22 @@ public class ObjectManager : MonoBehaviour
             if (isNewValue)
             {
                 managerList = new List<GameObject> { propagationManager, emailManager, measureController, rotationController };
+                obj key = obj.rotation;
+                UpdateActive(key, value);
+                UpdateCounters();
+            }
+        }
+    }
+    public GameObject RotationController
+    {
+        get { return rotationController; }
+        set
+        {
+            bool isNewValue = CheckUpdateCounter(rotationController, value);
+            rotationController = value;
+            if (isNewValue)
+            {
+                managerList = new List<GameObject> { propagationManager, emailManager, measureController, movementController, rotationController };
                 obj key = obj.rotation;
                 UpdateActive(key, value);
                 UpdateCounters();                
@@ -252,6 +269,50 @@ public class ObjectManager : MonoBehaviour
         UpdateCounters();        
     }
 
+    public void AddRef(obj objectID, GameObject value)
+    {
+        //Method to add reference to a gameobject by passing in the obj code, rather than using the property directly
+
+        GetRefFromCode(objectID) = value; 
+    }
+
+
+    public ref GameObject GetRefFromCode(obj objectID)
+    {
+        //Returns a reference to the private variable given an object shortcode
+        switch (objectID)
+        {
+            case obj.camMain:
+                return ref mainCam;
+            case obj.camScreen:
+                return ref screenCam;
+            case obj.board:
+                return ref board;
+            case obj.laser:
+                return ref laser;
+            case obj.lens:
+                return ref lens;
+            case obj.grating:
+                return ref grating;
+            case obj.screen:
+                return ref screen;
+            case obj.cmos:
+                return ref cmos;
+            case obj.propagation:
+                return ref propagationManager;
+            case obj.email:
+                return ref emailManager;
+            case obj.measure:
+                return ref measureController;
+            case obj.movement:
+                return ref movementController;
+            case obj.rotation:
+                return ref rotationController;
+            default:
+                return ref mainCam;
+        }
+    }
+
     void UpdateCameraRefs()
     {
         //Grabs the main camera through the Camera class - all others by name
@@ -260,6 +321,8 @@ public class ObjectManager : MonoBehaviour
 
         numCameras = 2;
     }
+
+    //METHODS BELOW RELATE TO CAMERAS, CURRENTLY BROKEN
 
     void UpdateActive(obj key, GameObject value)
     {

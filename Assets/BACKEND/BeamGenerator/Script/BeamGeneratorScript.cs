@@ -22,6 +22,7 @@ public class BeamGeneratorScript : MonoBehaviour
 
     void OnEnable()
     {
+        propagation = ObjectManager.Instance.PropagationManager.GetComponent<PropagationSystem>();
         _descreteBeams = new List<DiscreteBeam>();
         Id = Guid.NewGuid();
         propagation.AddLaser(laser);

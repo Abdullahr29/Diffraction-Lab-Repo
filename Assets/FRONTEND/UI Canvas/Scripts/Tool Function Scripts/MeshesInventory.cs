@@ -56,7 +56,7 @@ public class MeshesInventory : MonoBehaviour
         DictionaryMeshes();
         foreach (obj id in Enum.GetValues(typeof(obj)))
         {
-            if (!(id == obj.camMain | id == obj.camScreen | id == obj.measure | id == obj.rotation))
+            if (!(id == obj.camMain | id == obj.camScreen | id == obj.measure | id == obj.movement | id == obj.rotation))
             {                
                 SearchForActive(id);
             }           
@@ -104,6 +104,7 @@ public class MeshesInventory : MonoBehaviour
             newMesh.transform.SetParent(_labMeshes, false);
             activeMeshes.Add(item, newMesh);
             newMesh.layer = 8;
+            ObjectManager.Instance.AddRef(item, newMesh);
             //instantiatedMeshes.Add(item);
         }
     }
@@ -117,6 +118,8 @@ public class MeshesInventory : MonoBehaviour
             GameObject newManager = Instantiate(managerPrefab);
             newManager.name = managerPrefab.name;
             activeMeshes.Add(manager, newManager);
+            ObjectManager.Instance.AddRef(manager, newManager);
+
         }
 
         InstantiateItem(mesh);
