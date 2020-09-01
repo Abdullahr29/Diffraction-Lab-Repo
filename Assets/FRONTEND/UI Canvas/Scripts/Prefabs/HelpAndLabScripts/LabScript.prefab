@@ -2686,7 +2686,7 @@ MonoBehaviour:
     <indent=5%>2.</indent><indent=10%>Laser
     source
 
-    <indent=5%>3.</indent><indent=10%>Set of lenses
+    <indent=5%>3.</indent><indent=10%>Lens of focal length 0.5m
 
     <indent=5%>4.</indent><indent=10%>Set
     of slits and gratings
@@ -2766,10 +2766,10 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 35.71698}
   m_textInfo:
     textComponent: {fileID: 1717005544346393359}
-    characterCount: 104
+    characterCount: 116
     spriteCount: 0
-    spaceCount: 16
-    wordCount: 21
+    spaceCount: 18
+    wordCount: 24
     linkCount: 0
     lineCount: 7
     pageCount: 1
