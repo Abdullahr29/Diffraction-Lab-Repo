@@ -19,7 +19,7 @@ public class RotateFunction : MonoBehaviour
     Vector3 camManagerOffset;
 	float targetRot;   
 
-	public float force = 1f;
+	public float force = -1f;
 	public float maxSpeed = 360f;
 
 	GameObject confirmHolder, denyHolder;
