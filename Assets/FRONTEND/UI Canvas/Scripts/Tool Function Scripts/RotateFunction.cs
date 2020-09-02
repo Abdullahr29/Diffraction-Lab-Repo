@@ -121,7 +121,6 @@ public class RotateFunction : MonoBehaviour
 		{
 			confirmButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) + camManagerOffset + new Vector3(50, 0, 0);
 			denyButton.transform.position = mainCam.WorldToScreenPoint(movableObject.pos) + camManagerOffset - new Vector3(50, 0, 0);
-			GetMouseVelocity();
 		}
 	}
 
@@ -171,8 +170,9 @@ public class RotateFunction : MonoBehaviour
 
 	void SetUpButton(GameObject rootObject)
 	{
+		rootObject.transform.parent = FindObjectOfType<Canvas>().transform;
 		rootObject.transform.SetParent(TooltrayController.Instance.tempButtonsObject, false);
-		rootObject.AddComponent<RectTransform>().sizeDelta = new Vector2(20, 20);
+		rootObject.AddComponent<RectTransform>().sizeDelta = new Vector2(40, 40);
 		rootObject.AddComponent<Image>();
 		rootObject.SetActive(false);
 	}
@@ -196,22 +196,6 @@ public class RotateFunction : MonoBehaviour
 		movableObject.rigidBody.isKinematic = true;
 		rb.constraints = RigidbodyConstraints.None;
 	}
-
-	void GetMouseVelocity()
-    {
-		newMousePos = Input.mousePosition.x;
-		if (lastMousePos == 10000)
-        {
-			mouseVel = 0;
-			lastMousePos = newMousePos;			
-		}
-        else
-        {
-			mouseVel = (newMousePos - lastMousePos);
-			lastMousePos = newMousePos;
-		}
-		
-    }
 
 	public void AbruptEnd()
 	{

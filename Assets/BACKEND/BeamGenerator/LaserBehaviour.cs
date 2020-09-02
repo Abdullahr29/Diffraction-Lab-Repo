@@ -56,9 +56,10 @@ public class LaserBehaviour : MonoBehaviour
     {
         active = false;
 
-        newLaser = Instantiate(this.gameObject, this.transform.parent, true);
-        newLaser.name = this.name;
-        Destroy(this.gameObject);
+        newLaser = Instantiate(this.gameObject, this.transform.parent, true);        
+        newLaser.name = this.name;        
+        Destroy(this.gameObject);        
+        ObjectManager.Instance.Laser = newLaser;
         Debug.Log("LASER DEACTIVATED");
     }
 

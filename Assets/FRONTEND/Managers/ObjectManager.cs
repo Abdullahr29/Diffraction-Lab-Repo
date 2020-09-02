@@ -207,11 +207,11 @@ public class ObjectManager : MonoBehaviour
 
     public GameObject MovementController
     {
-        get { return rotationController; }
+        get { return movementController; }
         set
         {
-            bool isNewValue = CheckUpdateCounter(rotationController, value);
-            rotationController = value;
+            bool isNewValue = CheckUpdateCounter(movementController, value);
+            movementController = value;
             if (isNewValue)
             {
                 managerList = new List<GameObject> { propagationManager, emailManager, measureController, rotationController };

@@ -41,7 +41,7 @@ public class TakeDataTool : Tool
             TooltrayController.Instance.activeTools.Add(this);   
             UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = false;
             TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, true, activeName);      
-            //cam.transform.position = new Vector3(-499.9f, 488.04f, 49.6f);                
+            //cam.transform.position = new Vector3(-499.9f, 488.04f, 49.6f);
         }
 
         UIController.Instance.SwitchCams(isBeingUsed);

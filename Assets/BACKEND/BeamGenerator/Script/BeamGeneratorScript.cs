@@ -14,7 +14,7 @@ public class BeamGeneratorScript : MonoBehaviour
 
 
     private List<DiscreteBeam> _descreteBeams; // = new List<DiscreteBeam>();
-    private int resolution = 10;
+    private int resolution = 100;
 
     public GameObject laser;
     public double intensity;

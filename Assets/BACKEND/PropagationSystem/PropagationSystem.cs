@@ -566,10 +566,6 @@ public class PropagationSystem : MonoBehaviour
         return new float3(vector3.x, vector3.y, vector3.z);
     }
 
-    private void OnDestroy()
-    {
-        
-    }
 
 }
 

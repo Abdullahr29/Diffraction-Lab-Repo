@@ -208,6 +208,7 @@ public class MoveFunction : MonoBehaviour
             Debug.Log("starting");
             ConfirmPlacement();  //Save current half completed movement
             isSelected = false;
+            movableObject = null;
             Debug.Log("finished");
         }
     }

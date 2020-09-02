@@ -104,9 +104,17 @@ public class UIController : MonoBehaviour
         tooltray.SetTrayContents(currentMode);
         Debug.Log("Data");
 
-        DetectorBehaviour detectorBehaviour = GameObject.Find("v2 DETECTOR").GetComponent<DetectorBehaviour>();
-        detectorBehaviour.SetExternalRefs();
-        detectorBehaviour.LoadScreen();
+        DetectorBehaviour detectorBehaviour = ObjectManager.Instance.Screen.GetComponent<DetectorBehaviour>();
+        
+        if (ObjectManager.Instance.Grating != null & ObjectManager.Instance.Cmos != null)
+        {
+            detectorBehaviour.SetExternalRefs();
+            detectorBehaviour.LoadScreen();
+        }        
+        if (ObjectManager.Instance.Laser != null)
+        {
+            ObjectManager.Instance.Laser.GetComponent<LaserBehaviour>().ActivateLaser();
+        }        
     }
 
     public void dataClickTutorial()
@@ -124,6 +132,12 @@ public class UIController : MonoBehaviour
         measureTab.SetActive(false);
         exploreTab.SetActive(false);
         dataTab.SetActive(false);
+
+        if (ObjectManager.Instance.Laser != null)
+        {
+            ObjectManager.Instance.Laser.GetComponent<LaserBehaviour>().DeactivateLaser();
+        }
+        
     }
 
     public void SwitchCams(bool screenOn)

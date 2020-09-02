@@ -44,6 +44,8 @@ public class MoveTool : Tool
         moveController.SetActive(isBeingUsed); //if button is active then enable MoveFunction to listen for input
         Debug.Log(isBeingUsed);
 
+        ObjectManager.Instance.MovementController = moveController;
+
         if (isBeingUsed)
         {
             TooltrayController.Instance.newTool = this;

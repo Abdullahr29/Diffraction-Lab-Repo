@@ -113,7 +113,6 @@ public class MeasurementControl : MonoBehaviour
                         if (Input.GetMouseButtonDown(0))
                         {                            
                             clicks += 1;
-
                         }
                         break;
 
@@ -123,7 +122,7 @@ public class MeasurementControl : MonoBehaviour
                             StoreLine();
                             DisableMarkers();
                             clicks = 0;
-                            DrawLine(lineData[lineData.Count - 1]); //Local variables are cleared so reload line from storage without markers
+                            //DrawLine(lineData[lineData.Count - 1]); //Local variables are cleared so reload line from storage without markers
                             Debug.Log(GetDistance(lineData[lineData.Count - 1])); //Distance output - feel free to hook up to UI
                         }
                         break;
@@ -182,7 +181,7 @@ public class MeasurementControl : MonoBehaviour
         markerOne = Instantiate(markerPrefab);
         markerTwo = Instantiate(markerPrefab);
         line.enabled = false;
-        LoadLines();
+        //LoadLines();
     }
 
     private void EndTool()     //disable and destroy all objects, reset clicks to zero
@@ -197,13 +196,13 @@ public class MeasurementControl : MonoBehaviour
     void SetLineProperties(LineRenderer line)
     {
         line.positionCount = 2;
-        line.startWidth = 0.05f;
-        line.endWidth = 0.05f;
+        line.startWidth = 0.005f;
+        line.endWidth = 0.005f;
         line.generateLightingData = true;
         line.numCornerVertices = 10;
         line.material.color = Color.red;
         line.receiveShadows = false;
-        line.shadowBias = 100f;
+        line.shadowBias = 0f;
         Debug.Log(line.endWidth);
     }
 
@@ -313,6 +312,18 @@ public class MeasurementControl : MonoBehaviour
         Vector3 globalStart = lineData.StartLocation + FindGlobalPos(lineData.StartTag);
         Vector3 globalEnd = lineData.EndLocation + FindGlobalPos(lineData.EndTag);
         return (Vector3.Distance(globalStart, globalEnd));
-    }       
+    }
+
+    public void AbruptEnd()
+    {
+        if (clicks > 0)
+        {
+            Debug.Log("starting");
+            DisableMarkers();
+            clicks = 0;
+            ClearAllLines();
+            Debug.Log("finished");
+        }
+    }
 
 }

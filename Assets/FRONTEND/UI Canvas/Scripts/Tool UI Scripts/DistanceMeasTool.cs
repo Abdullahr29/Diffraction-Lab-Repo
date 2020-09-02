@@ -22,6 +22,7 @@ public class DistanceMeasTool : Tool
     {
         gameObject.GetComponent<Image>().sprite = TooltrayController.Instance._measureSprite;
         measureButton = this.GetComponent<Button>();
+        measurementController = ObjectManager.Instance.MeasureController;
     }
 
     void Update()
@@ -32,13 +33,10 @@ public class DistanceMeasTool : Tool
     public override void ButtonInteract()
     {
         //Call initialisation method for the relevant tool
-        isBeingUsed = !isBeingUsed;
-        measurementController = ObjectManager.Instance.MeasureController;
+        isBeingUsed = !isBeingUsed;        
         if (measurementController == null)
         {
-            measurementController = new GameObject("measurementController");
-            measurementControl = measurementController.AddComponent<MeasurementControl>();
-            ObjectManager.Instance.MeasureController = measurementController;
+            measurementControl = measurementController.AddComponent<MeasurementControl>();            
         }
         else
         {
@@ -46,6 +44,9 @@ public class DistanceMeasTool : Tool
         }
         measurementControl.OnChange(isBeingUsed); //if button is active then enable MoveFunction to listen for input
         Debug.Log(isBeingUsed);
+
+        ObjectManager.Instance.MeasureController = measurementController;
+
 
         if (isBeingUsed)
         {
@@ -62,6 +63,14 @@ public class DistanceMeasTool : Tool
 
     public override void DeactivateButton()
     {
+        if (measurementControl != null)
+        {
+            measurementControl.AbruptEnd();
+            measurementControl.OnChange(false);
+        }
+        
+        TooltrayController.Instance.ActiveToolBckg(_activeBckg, 1, false, activeName);
+        isBeingUsed = false;
         //TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, false, activeName);
     }
 

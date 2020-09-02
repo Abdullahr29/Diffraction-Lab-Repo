@@ -39,11 +39,11 @@ public class RotateTool : Tool
         {
             Debug.Log("ROTATE CONTROLLER NULL");
             rotateController = new GameObject("rotateController");
-            rotateFunction = rotateController.AddComponent<RotateFunction>();
-            ObjectManager.Instance.RotationController = rotateController;
+            rotateFunction = rotateController.AddComponent<RotateFunction>();            
         }
         rotateController.SetActive(isBeingUsed); //if button is active then enable rotateFunction to listen for input
         Debug.Log(isBeingUsed);
+        ObjectManager.Instance.RotationController = rotateController;
 
         if (isBeingUsed)
         {

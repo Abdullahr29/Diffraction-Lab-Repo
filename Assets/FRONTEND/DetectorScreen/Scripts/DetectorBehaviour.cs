@@ -178,8 +178,8 @@ public class DetectorBehaviour : MonoBehaviour
     public void SetExternalRefs()
         //Used as references to the prefabs were causing errors, instead we shall get the ext references from the current scene
     {
-        grating = GameObject.Find("v2 GRATING").GetComponent<GratingBehaviour>();
-        CMOS = GameObject.Find("v2 CAMERA");
+        grating = ObjectManager.Instance.Grating.GetComponent<GratingBehaviour>();
+        CMOS = ObjectManager.Instance.Cmos;
        // emailManager = GameObject.Find("v1 EmailManager (Initially Disabled)");
     }
 }
