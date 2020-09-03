@@ -27,6 +27,7 @@ public class HelpTool : Tool
     {
         TooltrayController.Instance.ActiveStaticToolBckg(_activeBckg, 1, true);
         ModalManager.Instance.ActivateHelpModal(UIController.Instance.currentMode);
+        DeactivateInputManager();
     }
 
     public override void OnPointerEnter(PointerEventData data)

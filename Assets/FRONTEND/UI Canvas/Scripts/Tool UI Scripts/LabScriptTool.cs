@@ -25,6 +25,7 @@ public class LabScriptTool : Tool
     {
         TooltrayController.Instance.ActiveStaticToolBckg(_activeBckg, 0, true);
         ModalManager.Instance.ActivateLabScript();
+        DeactivateInputManager();
     }
 
     public override void OnPointerEnter(PointerEventData data)
