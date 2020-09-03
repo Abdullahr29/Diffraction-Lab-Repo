@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using TMPro;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
@@ -26,7 +27,7 @@ public class MeasurementControl : MonoBehaviour
 {
     public Camera cam;
     LineRenderer line;
-    public GameObject markerPrefab;
+    public GameObject markerPrefab, uiText;
 
 
     GameObject markerOne; //Simple objects to mark the start and end of lines under construction
@@ -61,10 +62,14 @@ public class MeasurementControl : MonoBehaviour
     {
         modeActive = ticked;
 
+        uiText.GetComponent<TextMeshProUGUI>().text = ("Distance:");
+        uiText.SetActive(ticked);
+
         if (ticked)
         {
             CreateTool();
             SetLineProperties(line);
+            
             //need to get principle rotation
             //need to get the origin of the setup
         }
@@ -109,21 +114,26 @@ public class MeasurementControl : MonoBehaviour
                         markerOne.SetActive(true);
                         markerTwo.SetActive(true);
                         line.enabled = true;
+                        
 
                         if (Input.GetMouseButtonDown(0))
                         {                            
                             clicks += 1;
+                            StoreLine();
+                            float distance = GetDistance(lineData[lineData.Count - 1]);
+                            Debug.Log(distance);
+                            uiText.GetComponent<TextMeshProUGUI>().text = ("Distance: " + Round(distance,3));
                         }
                         break;
 
                     case 2:
                         if (Input.GetMouseButtonDown(0))
                         {
-                            StoreLine();
+                            
                             DisableMarkers();
                             clicks = 0;
                             //DrawLine(lineData[lineData.Count - 1]); //Local variables are cleared so reload line from storage without markers
-                            Debug.Log(GetDistance(lineData[lineData.Count - 1])); //Distance output - feel free to hook up to UI
+                             //Distance output - feel free to hook up to UI
                         }
                         break;
 
