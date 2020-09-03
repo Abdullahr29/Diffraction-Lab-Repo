@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using UnityEngine;
 using Random = UnityEngine.Random;
 using COMPLEX = FFT.COMPLEX;
 
@@ -60,18 +62,22 @@ public static class Convolve
         float lim = loc + (resolution / 2);//finding the highest point of intensity 
         int count = -1 * (resolution / 2);
 
-        float ampSkew = Data.param[slits, 0] * angle;//calling control parameters from the data matrix 
-        float ampOrig = Data.param[slits, 1] * angle;
-
-        for (int i = 0; i < (int)(lim + 1); i++) {
-            mult[i] = (float)(ampSkew * Math.Exp(0.02 * (count + i) + c));
-        }
-        for (int j = (int)(lim + 1); j < resolution; j++) {
-            mult[j] = (float)(ampSkew * Math.Exp(-1 * 0.02 * (count + j) - 1 * c));
-        }
-        for (int i = 0; i < resolution; i++) {
-            for (int j = 0; j < resolution; j++) {
-                output[i, j] = output[i, j] + (float)(output[i, j] * ampOrig) + (output[i, j] * mult[j]);
+        float ampSkew;
+        float ampOrig;
+        float amp = 1;
+        ampSkew = Data.param[slits, 0] * Math.Abs(angle);//calling control parameters from the data matrix 
+        ampOrig = Data.param[slits, 1] * Math.Abs(angle);
+        if ((angle <= 30f) && (angle >= -30f)) {
+            for (int i = 0; i < (int)(lim + 1); i++) {
+                mult[i] = (float)(ampSkew * Math.Exp(0.02 * (count + i) + c));
+            }
+            for (int j = (int)(lim + 1); j < resolution; j++) {
+                mult[j] = (float)(ampSkew * Math.Exp(-1 * 0.02 * (count + j) - 1 * c));
+            }
+            for (int i = 0; i < resolution; i++) {
+                for (int j = 0; j < resolution; j++) {
+                    output[i, j] = amp * output[i, j] + (float)(output[i, j] * ampOrig) + (output[i, j] * mult[j]);
+                }
             }
         }
 
@@ -105,7 +111,7 @@ public static class Convolve
     public static float[,] genNoise(float[,] mat, float distance, float focalLength, int slits) {//distance is from the lens, 0.5 is the focal length, max is 1,
         float min, max, factor; 
         distance = Math.Abs(distance - focalLength);
-        //float control = Data.param[slits, 3];; also noiseCont from Data matrix
+        //float control = Data.param[slits, 3]; also noiseCont from Data matrix
         //float distFact = distance * control;
         int size = mat.GetLength(0);
         //if(distance == 0) {
@@ -113,32 +119,40 @@ public static class Convolve
         //}
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
-                
-                if (mat[i, j] < 0.05f) {//may need to be parameterised and put into the data class 
+
+                if (mat[i, j] < 0.05f && mat[i, j] > 0.01) {//may need to be parameterised and put into the data class 
                     mat[i, j] = Random.Range(0, 0.07f);
                 }
-                else {
-                    factor = Data.param[slits, 2];                   
+                else if (mat[i, j] >= 0.05) {
+                    factor = Data.param[slits, 2];
                     max = mat[i, j] * factor;
                     min = -1f * max;
-                    mat[i, j] = mat[i,j] + Random.Range(min, max);
-                }             
-                
+                    mat[i, j] = mat[i, j] + Random.Range(min, max);
+                }
+
             }
         }
         return mat;
     }
 
     //creates dirac delta functions at specific seperation to be convolved with bitmap to create multiple slit bitmaps
-    public static int[,] genNSlits(int slits, int size, float slitSep, float maxSlitDim) {
+    public static int[,] genNSlits(int slits, int size, float slitSep, float maxSlitDim, float slitWidth, float slitHeight) {
         //multiple slits using dirac delta matrices
         int[,] result = new int[size,size];
-        double ts = size / 256;//thickness of dirac delta, needs to be somewthing resolvable, may be set to 1
+        double ts = (int)((slitWidth / maxSlitDim) * size);//thickness of dirac delta, needs to be somewthing resolvable, may be set to 1
         int tSW = (int)Math.Ceiling(ts); //the width of a single dirac-delta spike
-        int zsf = (int)(slitSep/maxSlitDim); //the "number of 0s" between spikes, slit seperation, need to see if width after conv makes noticeable difference
+        int zsf = (int)((slitSep/maxSlitDim)*size); //the "number of 0s" between spikes, slit seperation, need to see if width after conv makes noticeable difference
+        float beginSlitHeight = ((maxSlitDim - slitHeight) / 2) * (size / maxSlitDim) - 1;
+        float endSlitHeight = beginSlitHeight + (slitHeight * (size / maxSlitDim)) + 1;
+        if (beginSlitHeight < 0) {
+            beginSlitHeight = 0;
+        }
+        if (endSlitHeight > 1023) {
+            endSlitHeight = 1023;
+        }
         int count;
         int numZeros = (size - ((tSW * slits) + (zsf * (slits - 1))))/2;//the number of "0s" on the outsides of the dirac-delta spikes
-        for(int i = 0; i < size; i++) { 
+        for(int i = (int)beginSlitHeight; i < (int)endSlitHeight; i++) { 
             count = 0;
             for(int j = 0; j < numZeros-1; j++) {
                 result[i, count] = 0;
