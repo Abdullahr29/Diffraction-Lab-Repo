@@ -76,7 +76,7 @@ public class TooltrayController : MonoBehaviour
         if (toolsInMode != null)
         {
             foreach (var tool in toolsInMode) //tool here refers to the specific Tool script
-            {                
+            {
                 tool.DeactivateButton();
                 tool.gameObject.GetComponent<Button>().onClick.RemoveAllListeners();
                 tool.enabled = false;
@@ -147,6 +147,7 @@ public class TooltrayController : MonoBehaviour
             {
                 if (tool != newTool)
                 {
+                    Debug.Log("switching");
                     tool.DeactivateButton();
                 }
             }
@@ -244,6 +245,7 @@ public class TooltrayController : MonoBehaviour
         {
             if (activeSprite != null)
             {
+                Debug.Log("tooltray here?");
                 activeSprite.gameObject.SetActive(false);
             }
         }

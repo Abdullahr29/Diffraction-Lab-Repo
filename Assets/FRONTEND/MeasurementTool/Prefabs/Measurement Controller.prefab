@@ -47,6 +47,7 @@ MonoBehaviour:
   cam: {fileID: 0}
   markerPrefab: {fileID: 6865147377290018170, guid: b17ba0db55d60924fa3ade96be8e8920,
     type: 3}
+  uiText: {fileID: 0}
   digits: 2
   currentLayer: 0
   lineObjects: []
@@ -94,7 +95,7 @@ LineRenderer:
   - {x: 0, y: 0, z: 0}
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 1
+    widthMultiplier: 0.02
     widthCurve:
       serializedVersion: 2
       m_Curve:

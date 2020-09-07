@@ -60,6 +60,9 @@ public class CameraManager : MonoBehaviour
     List<Vector3> basicDirections;
     List<Vector3> reverseDirections;
 
+    public Vector3 lastPos, lastLocal;
+    public Quaternion lastRot;
+
 
     private void Awake()
     {
@@ -212,12 +215,30 @@ public class CameraManager : MonoBehaviour
         }
     }
 
-    public void ResetCamera()
+    public void ResetCamera(bool loadLast = false)
     {
-        transform.position = new Vector3(0f, 0f, 0f);
-        transform.rotation = Quaternion.identity;
-        cam.transform.localPosition = new Vector3(0f, Mathf.Abs(cameraOffset.y), -Mathf.Abs(cameraOffset.x));
-        zoom = (IZoom)new PerspectiveZoom(cam, cameraOffset, startingZoom);
+        //loadLast to be used if we wish to restore some previously stored camera position
+        if (loadLast && lastPos != null)
+        {
+            transform.position = lastPos;
+            transform.rotation = lastRot;
+            cam.transform.localPosition = lastLocal;
+        }
+        else
+        {
+            transform.position = new Vector3(0f, 0f, 0f);
+            transform.rotation = Quaternion.identity;
+            cam.transform.localPosition = new Vector3(0f, Mathf.Abs(cameraOffset.y), -Mathf.Abs(cameraOffset.x));
+            zoom = (IZoom)new PerspectiveZoom(cam, cameraOffset, startingZoom);
+        }        
+    }
+
+    public void OnDataEnter()
+    {
+        lastPos = this.transform.position;
+        lastRot = this.transform.rotation;
+        lastLocal = cam.transform.localPosition;
+        ResetCamera();
     }
 
 

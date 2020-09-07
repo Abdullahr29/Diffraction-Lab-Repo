@@ -206,14 +206,13 @@ public class MeasurementControl : MonoBehaviour
     void SetLineProperties(LineRenderer line)
     {
         line.positionCount = 2;
-        line.startWidth = 0.005f;
-        line.endWidth = 0.005f;
+        line.startWidth = 0.001f;
+        line.endWidth = 0.001f;
         line.generateLightingData = true;
         line.numCornerVertices = 10;
         line.material.color = Color.red;
         line.receiveShadows = false;
         line.shadowBias = 0f;
-        Debug.Log(line.endWidth);
     }
 
     public void OnLayerChange(int newLayer)

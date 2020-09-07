@@ -71,7 +71,7 @@ public class DistanceMeasTool : Tool
         
         TooltrayController.Instance.ActiveToolBckg(_activeBckg, 1, false, activeName);
         isBeingUsed = false;
-        //TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, false, activeName);
+        TooltrayController.Instance.ActiveToolBckg(_activeBckg, 0, false, activeName);
     }
 
     public override void OnPointerEnter(PointerEventData data)

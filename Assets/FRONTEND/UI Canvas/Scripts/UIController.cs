@@ -40,7 +40,8 @@ public class UIController : MonoBehaviour
     public Button explore;
     public Button data;
     public Camera mainCam, screenCam;
-    public GameObject inputManager;
+    public GameObject inputManager, cameraManager;
+
 
     [Header("Mode Tabs")]
     [SerializeField]
@@ -98,10 +99,12 @@ public class UIController : MonoBehaviour
 
     public void dataClick()
     {
+        cameraManager.GetComponent<CameraManager>().OnDataEnter();
         DeactivateTabs();
         dataTab.SetActive(true);
         currentMode = Mode.DataTake;
         tooltray.SetTrayContents(currentMode);
+        isActiveInputManager(false);
         Debug.Log("Data");
 
         DetectorBehaviour detectorBehaviour = ObjectManager.Instance.Screen.GetComponent<DetectorBehaviour>();
@@ -113,6 +116,7 @@ public class UIController : MonoBehaviour
         }        
         if (ObjectManager.Instance.Laser != null)
         {
+            ObjectManager.Instance.PropagationManager.SetActive(true);
             ObjectManager.Instance.Laser.GetComponent<LaserBehaviour>().ActivateLaser();
         }        
     }
@@ -132,10 +136,16 @@ public class UIController : MonoBehaviour
         measureTab.SetActive(false);
         exploreTab.SetActive(false);
         dataTab.SetActive(false);
+        isActiveInputManager(true);
 
-        if (ObjectManager.Instance.Laser != null)
+        if (ObjectManager.Instance.Laser != null && currentMode == Mode.DataTake)
         {
             ObjectManager.Instance.Laser.GetComponent<LaserBehaviour>().DeactivateLaser();
+        }
+
+        if (currentMode == Mode.DataTake)
+        {
+            cameraManager.GetComponent<CameraManager>().ResetCamera(true);  //If we a switching out of take data mode then revert to last saved camera transform
         }
         
     }
@@ -144,11 +154,6 @@ public class UIController : MonoBehaviour
     {
         mainCam.enabled = !screenOn;
         screenCam.enabled = screenOn;
-
-        if (!screenOn)
-        {
-            mainCam.GetComponentInParent<CameraManager>().ResetCamera();
-        }
     }
 
 
