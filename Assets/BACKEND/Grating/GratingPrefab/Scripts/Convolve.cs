@@ -74,13 +74,12 @@ public static class Convolve
         else {
             ampSkew = Data.param[slits, 0] * Math.Abs(angle);//calling control parameters from the data matrix 
             ampOrig = Data.param[slits, 1] * Math.Abs(angle);
-        }
-
-        for (int i = 0; i < (int)(lim + 1); i++) {
-            mult[i] = (float)(ampSkew * Math.Exp(0.02 * (count + i) + c));
-        }
-        for (int j = (int)(lim + 1); j < resolution; j++) {
-            mult[j] = (float)(ampSkew * Math.Exp(-1 * 0.02 * (count + j) - 1 * c));
+            for (int i = 0; i < (int)(lim + 1); i++) {
+                mult[i] = (float)(ampSkew * Math.Exp(0.02 * (count + i) + c));
+            }
+            for (int j = (int)(lim + 1); j < resolution; j++) {
+                mult[j] = (float)(ampSkew * Math.Exp(-1 * 0.02 * (count + j) - 1 * c));
+            }
         }
         for (int i = 0; i < resolution; i++) {
             for (int j = 0; j < resolution; j++) {
