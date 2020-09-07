@@ -63,6 +63,7 @@ public class DetectorBehaviour : MonoBehaviour
         Debug.Log(InputMatrix.GetLength(0));
         //convertedMatrix = ConvertToRealSpace(InputMatrix, projectedScreenSize);//needs to be fixed
         //convertedMatrix = inputMatrix;
+        convertedMatrix = InputMatrix;//temporary
 
         // 3. Display the rgbMatrix to the screen
         display.Display(InputMatrix, IMG);//should be converted matrix eventually

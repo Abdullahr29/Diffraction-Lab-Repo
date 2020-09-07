@@ -2,8 +2,7 @@ using System;
 using System.IO;
 using UnityEngine;
 
-public class GratingBehaviour : MonoBehaviour
-{
+public class GratingBehaviour : MonoBehaviour {
 
     public DetectorBehaviour detector;
 
@@ -11,7 +10,7 @@ public class GratingBehaviour : MonoBehaviour
     public Transform anchor;
 
     [Header("Grating Parameters")]
-    [SerializeField] string file = "Assets/FRONTEND/DetectorScreen/img.txt";
+    [SerializeField] string file;
 
     [Header("PARAMETERS")]
     public float Wavelength = 670e-9f;
@@ -51,15 +50,17 @@ public class GratingBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        resolutionPower = 10;
+        file = Application.dataPath + "/img.txt";
         detectorObject = GameObject.Find("v2 DETECTOR");
         pos = anchor.position;
-        resolution = Mathf.RoundToInt(Mathf.Pow(2, resolutionPower)); 
         //positionObject();
-        bitmap = new int[resolution, resolution];
     }
 
     public void GetMatrix(out float projectedScreenSize, out float[,] output)
     {
+        resolution = Mathf.RoundToInt(Mathf.Pow(2, resolutionPower));
+        bitmap = new int[resolution, resolution];
         getParameters();
         pos = anchor.position;
         //make slit bitmap
@@ -95,8 +96,9 @@ public class GratingBehaviour : MonoBehaviour
         output = bitMapFFT.FFTLog;
 
         //lens skew 
-        output = Convolve.biasSkew(output, angle, resolution, slits);
-
+        if ((angle > 2) || (angle < -2)) {
+            output = Convolve.biasSkew(output, angle, resolution, slits);
+        }
         //detector side stuff here
         // 1. From known wavelength, slit parameters + screen distance, calculate theoretical position of first maximum
 
@@ -198,7 +200,6 @@ public class GratingBehaviour : MonoBehaviour
         beginSlitHeight = ((maxSlitDim - slitHeight) / 2) * (resolution / maxSlitDim) - 1;
         endSlitHeight = beginSlitHeight + (slitHeight * (resolution / maxSlitDim)) + 1;
 
-
         for (int i = (int)beginSlitHeight; i < (int)endSlitHeight; i++)
         {
             for (int j = (int)beginSlitWidth; j < (int)endSlitWidth; j++)
@@ -209,7 +210,6 @@ public class GratingBehaviour : MonoBehaviour
     }
 
     private void getParameters() {
-        GameObject boardObject = ObjectManager.Instance.Board;
         GameObject gratingObject = ObjectManager.Instance.Grating;
         GameObject lensObject = ObjectManager.Instance.Lens;
         GameObject cmosObject = ObjectManager.Instance.Cmos;
@@ -228,10 +228,9 @@ public class GratingBehaviour : MonoBehaviour
 
         distanceGratingScreen = distanceGratingLens + distanceLensScreen;
 
-        angle = lensTransform.rotation.y;
+        angle = lensTransform.eulerAngles.y;
         angle = Math.Abs(angle);
         angle = angle - 90;
-        Debug.Log("Angle: " + angle);
     }
 
     // Function that counts the number of pixels between the center of the matrix and the first maximum
@@ -293,7 +292,7 @@ public class GratingBehaviour : MonoBehaviour
     //text outputs
     private void print(float[,] output)
     {
-        using (TextWriter tw = new StreamWriter(file))
+        using (TextWriter tw = new StreamWriter(file, false))
         {
             for (int i = 0; i < output.GetLength(0); i++)
             {

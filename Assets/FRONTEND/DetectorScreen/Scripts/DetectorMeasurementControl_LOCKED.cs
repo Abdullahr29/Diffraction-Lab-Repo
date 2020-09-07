@@ -52,10 +52,11 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
     //screen parameters + data
     private float screenWidth, screenHeight, screenResolution, matrixResolution, offset;
     private float[,] matrix;
-    [SerializeField] string file = "Assets/FRONTEND/DetectorScreen/img_reduced.txt";
+    [SerializeField] string file;
 
     private void Start()
     {
+        file = Application.dataPath + "/img_reduced.txt";
         cam = UIController.Instance.screenCam;
         clicks = 0;
         modeActive = false;
@@ -277,7 +278,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                     }
                     else
                     {
-                        intensity = matrix[j_transformed, i_transformed]; //flipped i,j
+                        intensity = matrix[j_transformed, i_transformed];//flipped i,j
                     }
 
                     tw.Write(position_x.ToString("#.00000") + "\t" + position_y.ToString("#.00000") + "\t" +  intensity.ToString("#.00000"));

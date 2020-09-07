@@ -65,22 +65,28 @@ public static class Convolve
         float ampSkew;
         float ampOrig;
         float amp = 1;
-        ampSkew = Data.param[slits, 0] * Math.Abs(angle);//calling control parameters from the data matrix 
-        ampOrig = Data.param[slits, 1] * Math.Abs(angle);
-        if ((angle <= 30f) && (angle >= -30f)) {
-            for (int i = 0; i < (int)(lim + 1); i++) {
-                mult[i] = (float)(ampSkew * Math.Exp(0.02 * (count + i) + c));
-            }
-            for (int j = (int)(lim + 1); j < resolution; j++) {
-                mult[j] = (float)(ampSkew * Math.Exp(-1 * 0.02 * (count + j) - 1 * c));
-            }
-            for (int i = 0; i < resolution; i++) {
-                for (int j = 0; j < resolution; j++) {
-                    output[i, j] = amp * output[i, j] + (float)(output[i, j] * ampOrig) + (output[i, j] * mult[j]);
-                }
-            }
+
+        if (angle > 30 || angle < -30) {
+            ampSkew = 0;
+            ampOrig = 0;
+            amp = 0;
+        }
+        else {
+            ampSkew = Data.param[slits, 0] * Math.Abs(angle);//calling control parameters from the data matrix 
+            ampOrig = Data.param[slits, 1] * Math.Abs(angle);
         }
 
+        for (int i = 0; i < (int)(lim + 1); i++) {
+            mult[i] = (float)(ampSkew * Math.Exp(0.02 * (count + i) + c));
+        }
+        for (int j = (int)(lim + 1); j < resolution; j++) {
+            mult[j] = (float)(ampSkew * Math.Exp(-1 * 0.02 * (count + j) - 1 * c));
+        }
+        for (int i = 0; i < resolution; i++) {
+            for (int j = 0; j < resolution; j++) {
+                output[i, j] = amp * output[i, j] + (float)(output[i, j] * ampOrig) + (output[i, j] * mult[j]);
+            }
+        } 
         return output;
     }
 
@@ -147,8 +153,8 @@ public static class Convolve
         if (beginSlitHeight < 0) {
             beginSlitHeight = 0;
         }
-        if (endSlitHeight > 1023) {
-            endSlitHeight = 1023;
+        if (endSlitHeight > size - 1) {
+            endSlitHeight = size - 1;
         }
         int count;
         int numZeros = (size - ((tSW * slits) + (zsf * (slits - 1))))/2;//the number of "0s" on the outsides of the dirac-delta spikes
