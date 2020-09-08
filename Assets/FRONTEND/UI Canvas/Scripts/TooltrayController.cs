@@ -17,7 +17,7 @@ public class TooltrayController : MonoBehaviour
 
     [Header("Dynamic Tool Sprites")]
     public Sprite _inventorySprite;
-    public Sprite _moveSprite, _rotateSprite, _measureSprite, _angleSprite, _investigateSprite, _takeDataSprite;
+    public Sprite _moveSprite, _rotateSprite, _measureSprite, _angleSprite, _investigateSprite, _takeDataSprite, _exportSprite;
     public Sprite _inventorySpriteActive, _moveSpriteActive, _rotateSpriteActive, _measureSpriteActive, _angleSpriteActive, _investigateSpriteActive, _takeDataSpriteActive, _labScriptSpriteActive, _helpSpriteActive;
 
     [Header("Dynamic Tool Sprites")]
@@ -67,8 +67,8 @@ public class TooltrayController : MonoBehaviour
             tempButton.transform.localScale = new Vector3(1, 1, 1);
             dynamicButtons.Add(tempButton);
         }
-        
-        tooltrayRect = gameObject.GetComponent<RectTransform>();            
+
+        tooltrayRect = gameObject.GetComponent<RectTransform>();
     }
 
     public void SetTrayContents(Mode desiredMode)
@@ -82,18 +82,18 @@ public class TooltrayController : MonoBehaviour
                 tool.enabled = false;
             }
             toolsInMode.Clear();
-        }        
+        }
 
         switch (desiredMode)
-        {     
+        {
             //Depending on the current mode different tools are created/enabled
 
-            case Mode.Calibrate:                
+            case Mode.Calibrate:
                 extraButtons = 3;
 
                 CreateTool<InventoryTool>(dynamicButtons[0]);
                 CreateTool<MoveTool>(dynamicButtons[1]);
-                CreateTool<RotateTool>(dynamicButtons[2]);                
+                CreateTool<RotateTool>(dynamicButtons[2]);
                 break;
 
             case Mode.Measure:
@@ -101,7 +101,7 @@ public class TooltrayController : MonoBehaviour
 
                 CreateTool<DistanceMeasTool>(dynamicButtons[0]);
                 CreateTool<AngleMeasTool>(dynamicButtons[1]);
-                dynamicButtons[2].SetActive(false); 
+                dynamicButtons[2].SetActive(false);
                 break;
 
             case Mode.Explore:
@@ -113,11 +113,13 @@ public class TooltrayController : MonoBehaviour
                 break;
 
             case Mode.DataTake:
-                extraButtons = 1;
+                extraButtons = 2;
 
                 CreateTool<TakeDataTool>(dynamicButtons[0]);
-                dynamicButtons[1].SetActive(false);
+                CreateTool<ExportTool>(dynamicButtons[1]);
                 dynamicButtons[2].SetActive(false);
+
+                dynamicButtons[1].SetActive(false); //hide export tool until a point of our choosing
                 break;
         }
         tooltrayRect.sizeDelta = new Vector2(tooltrayRect.sizeDelta.x, minheight + (extraButtons * buttonUnitheight));
@@ -140,19 +142,19 @@ public class TooltrayController : MonoBehaviour
     }
 
     public void SwitchTool()
-    {        
+    {
         if (activeTools != null)
         {
             foreach (var tool in activeTools)
             {
-                if (tool != newTool)
+                if (tool != newTool && tool.GetComponent<TakeDataTool>() == null)
                 {
                     Debug.Log("switching");
                     tool.DeactivateButton();
                 }
             }
             activeTools.Clear();
-        }                          
+        }
     }
 
     private void SetUpDynamicActiveTool(GameObject _activeBckg, int n, string nameActive)
@@ -161,15 +163,15 @@ public class TooltrayController : MonoBehaviour
         _activeBckg.transform.SetParent(dynamicTray.transform.GetChild(n), false);
 
         _activeBckg.AddComponent<RectTransform>().sizeDelta = new Vector2(55, 55);
-        _activeBckg.AddComponent<Image>();   
+        _activeBckg.AddComponent<Image>();
 
         switch (UIController.Instance.currentMode)
-        {    
+        {
 
-            case Mode.Calibrate: 
+            case Mode.Calibrate:
                 if (n == 0)
                 {
-                    Debug.Log("inventorySprite");
+                    //Debug.Log("inventorySprite");
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._inventorySpriteActive;
                     _activeBckg.name = nameActive;
                 }
@@ -216,7 +218,7 @@ public class TooltrayController : MonoBehaviour
                 }
                 break;
 
-            case Mode.DataTake: 
+            case Mode.DataTake:
                 if (n == 0)
                 {
                     _activeBckg.GetComponent<Image>().sprite = TooltrayController.Instance._takeDataSpriteActive;
@@ -258,17 +260,17 @@ public class TooltrayController : MonoBehaviour
             mainTooltray.GetChild(n).GetChild(0).gameObject.SetActive(false);
         }
 
-        if(mainTooltray.GetChild(n).childCount > 0)
+        if (mainTooltray.GetChild(n).childCount > 0)
         {
             mainTooltray.GetChild(n).GetChild(0).gameObject.SetActive(true);
         }
-        else if(mainTooltray.GetChild(n).childCount == 0)
+        else if (mainTooltray.GetChild(n).childCount == 0)
         {
             _activeBckg = new GameObject();
             _activeBckg.transform.SetParent(mainTooltray.GetChild(n), false);
 
             _activeBckg.AddComponent<RectTransform>().sizeDelta = new Vector2(55, 55);
-            _activeBckg.AddComponent<Image>();  
+            _activeBckg.AddComponent<Image>();
 
             if (n == 0)
             {
@@ -282,3 +284,4 @@ public class TooltrayController : MonoBehaviour
         }
     }
 }
+  

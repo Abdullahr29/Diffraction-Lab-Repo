@@ -56,7 +56,7 @@ public class MeshesInventory : MonoBehaviour
         DictionaryMeshes();
         foreach (obj id in Enum.GetValues(typeof(obj)))
         {
-            if (!(id == obj.camMain | id == obj.camScreen | id == obj.measure | id == obj.movement | id == obj.rotation))
+            if (!(id == obj.camMain | id == obj.camScreen | id == obj.measure | id == obj.movement | id == obj.rotation | id == obj.input))
             {                
                 SearchForActive(id);
             }           

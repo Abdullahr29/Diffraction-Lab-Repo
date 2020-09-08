@@ -12,6 +12,13 @@ public class ExportTool : Tool
     }*/
 
     bool isBeingUsed = false;
+    Button exportButton;
+
+    void OnEnable()
+    {
+        this.GetComponent<Image>().sprite = TooltrayController.Instance._exportSprite;
+        exportButton = this.GetComponent<Button>();
+    }
 
     public override void ButtonInteract()
     {
@@ -21,12 +28,13 @@ public class ExportTool : Tool
         {
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
-            TooltrayController.Instance.activeTools.Add(this);
-            UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = false;
+            TooltrayController.Instance.activeTools.Add(this);            
         }
         else
         {
-            UIController.Instance.mainCam.GetComponentInParent<CameraManager>().enabled = true;
+            
         }
+
+        ObjectManager.Instance.EmailManager.transform.Find("Canvas").gameObject.SetActive(isBeingUsed);
     }
 }

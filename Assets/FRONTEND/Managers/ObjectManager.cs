@@ -26,7 +26,7 @@ public class ObjectManager : MonoBehaviour
 
     //[Header("Managers")]
     [SerializeField]
-    private GameObject propagationManager, emailManager, measureController, movementController, rotationController;
+    private GameObject propagationManager, emailManager, measureController, movementController, rotationController, inputManager;
 
     //[Header("Object Lists")]
     [SerializeField]
@@ -230,10 +230,26 @@ public class ObjectManager : MonoBehaviour
             rotationController = value;
             if (isNewValue)
             {
-                managerList = new List<GameObject> { propagationManager, emailManager, measureController, movementController, rotationController };
+                managerList = new List<GameObject> { propagationManager, emailManager, measureController, movementController, rotationController, inputManager };
                 obj key = obj.rotation;
                 UpdateActive(key, value);
                 UpdateCounters();                
+            }
+        }
+    }
+
+    public GameObject InputManager
+    {
+        get { return inputManager; }
+        set
+        {
+            bool isNewValue = CheckUpdateCounter(InputManager, value);
+            inputManager = value;
+            if (isNewValue)
+            {
+                obj key = obj.email;
+                UpdateActive(key, value);
+                UpdateCounters();
             }
         }
     }
@@ -263,7 +279,7 @@ public class ObjectManager : MonoBehaviour
     {
         cameraList = new List<GameObject> { mainCam, screenCam };
         componentList = new List<GameObject> { board, laser, lens, grating, screen, cmos };
-        managerList = new List<GameObject> { propagationManager, emailManager, measureController, rotationController };
+        managerList = new List<GameObject> { propagationManager, emailManager, measureController, rotationController, movementController, inputManager };
         activeObjects = new Dictionary<obj, GameObject>();
 
         UpdateCounters();        
@@ -308,6 +324,8 @@ public class ObjectManager : MonoBehaviour
                 return ref movementController;
             case obj.rotation:
                 return ref rotationController;
+            case obj.input:
+                return ref inputManager;
             default:
                 return ref mainCam;
         }
@@ -390,7 +408,6 @@ public class ObjectManager : MonoBehaviour
     public void CheckRequiredComponents()
     {
         bool flag = true;
-        Debug.Log("live");
         foreach (var item in new GameObject[4] {cmos, lens, grating, laser })
         {
             if (item == null)

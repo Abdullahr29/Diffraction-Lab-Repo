@@ -386,6 +386,7 @@ MonoBehaviour:
   _angleSprite: {fileID: 21300000, guid: a0e28504b24dc4e4fa55355e7602785f, type: 3}
   _investigateSprite: {fileID: 21300000, guid: da198dd57b75a45bdbd57e4a89fe9fbc, type: 3}
   _takeDataSprite: {fileID: 21300000, guid: 06d2380467ba3425d9bb6e7aa706c3fd, type: 3}
+  _exportSprite: {fileID: 21300000, guid: 0d4f87243ad774448a1d4c4cb74048ac, type: 3}
   _inventorySpriteActive: {fileID: 21300000, guid: f50f9450127d04be49488106accdbbf7,
     type: 3}
   _moveSpriteActive: {fileID: 21300000, guid: ec96492362ef44463a926fe609257e76, type: 3}
@@ -548,7 +549,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_BackGroundColor: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -561,7 +562,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: 0.01
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -589,7 +590,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 536715281}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 570354253}
@@ -625,18 +626,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraOffset: {x: 1, y: 0}
-  upDownSpeed: 0.01
-  leftRightSpeed: 0.01
-  rotateXSpeed: 45
-  rotateYSpeed: 45
-  minMoveBounds: {x: -50, y: -50}
-  maxMoveBounds: {x: 50, y: 50}
+  upDownSpeed: 0.1
+  leftRightSpeed: 0.1
+  rotateXSpeed: 0
+  rotateYSpeed: 0
+  minMoveBounds: {x: -500.2, y: 499.8}
+  maxMoveBounds: {x: -499.8, y: 500.2}
   minRotate: 0
-  maxRotate: 90
-  zoomSpeed: 1
-  nearZoomLimit: 0.4
-  farZoomLimit: 4
-  startingZoom: 2
+  maxRotate: 0
+  zoomSpeed: 0.1
+  nearZoomLimit: 0
+  farZoomLimit: 0.3
+  startingZoom: 0.25
+  rayLength: 0.02
   IgnoreMe:
     serializedVersion: 2
     m_Bits: 32
@@ -651,7 +653,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 570354251}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -499.841, y: 500.0755, z: -0.324}
+  m_LocalPosition: {x: -500, y: 500.1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 536715284}
@@ -1747,7 +1749,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1844287702}
@@ -2385,6 +2387,7 @@ MonoBehaviour:
   measureController: {fileID: 8887970828043794706}
   movementController: {fileID: 0}
   rotationController: {fileID: 0}
+  inputManager: {fileID: 1222349905}
   cameraList: []
   componentList: []
   managerList: []
@@ -3606,6 +3609,7 @@ MonoBehaviour:
   nearZoomLimit: 0.4
   farZoomLimit: 4
   startingZoom: 2
+  rayLength: 0.1
   IgnoreMe:
     serializedVersion: 2
     m_Bits: 32
@@ -4464,7 +4468,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d120b556e77d5d94fb9cabab482b7a17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  markerPrefab: {fileID: 6865147377290018170, guid: 96df3f99f33047240901617e87e2252a,
+  markerPrefab: {fileID: 2612553142618826208, guid: af7f29abcf8b0c143acacb8de553cffc,
     type: 3}
   detector: {fileID: 5904615931507880481}
   screenOrigin: {fileID: 3016962943464532155}
@@ -6136,7 +6140,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4761195837525828542
 RectTransform:
   m_ObjectHideFlags: 0

@@ -16,5 +16,6 @@ public enum obj
     email,
     measure,
     movement,
-    rotation
+    rotation,
+    input
 }

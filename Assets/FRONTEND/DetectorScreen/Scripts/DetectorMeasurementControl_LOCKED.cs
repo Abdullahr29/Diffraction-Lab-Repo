@@ -93,6 +93,8 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                 {
                     case 0:
                         // first marker
+                        TooltrayController.Instance.dynamicButtons[1].SetActive(false);
+                        ObjectManager.Instance.EmailManager.transform.Find("Canvas").gameObject.SetActive(false);
                         startPoint = RoundVector(hit.point, digits); //round position of position marker to arbritrary precision
                         markerOne.transform.position = startPoint;
                         line.SetPosition(0, startPoint);
@@ -151,6 +153,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                             Debug.Log(distance);
                             Debug.Log("LINE END: " + endPoint);
                             GenerateData();
+                            TooltrayController.Instance.dynamicButtons[1].SetActive(true);
                         }
                         break;
 
@@ -164,7 +167,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                             DisableMarkers();
                             clicks = 0;
                             //DrawLine(lineData[lineData.Count - 1]); //Local variables are cleared so reload line from storage without markers
-                            
+
                             //Debug.Log("DISTANCE: " + GetDistance(lineData[lineData.Count - 1])); //Distance output - feel free to hook up to UI
                         }
                         break;

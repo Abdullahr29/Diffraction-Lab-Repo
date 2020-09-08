@@ -48,6 +48,7 @@ public class TakeDataTool : Tool
 
         UIController.Instance.emailManager.SetActive(isBeingUsed);
         detectorMeasure.OnChange(isBeingUsed);
+        ObjectManager.Instance.InputManager.SetActive(isBeingUsed);
     }
 
     public override void DeactivateButton()
@@ -77,5 +78,7 @@ public class TakeDataTool : Tool
     {
         TooltipManager.Instance.OnHoverButtonActivateTooltip(takeDataButton, _newTooltip, _newTooltipBckg, takeDataTooltip);
     }
+
+    
 
 }

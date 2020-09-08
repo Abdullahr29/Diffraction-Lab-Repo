@@ -54,6 +54,7 @@ public class CameraManager : MonoBehaviour
 
     Vector3 camPosition;
     RaycastHit hit;
+    [SerializeField]
     float rayLength = 0.1f;
 
     public LayerMask IgnoreMe;
@@ -63,6 +64,7 @@ public class CameraManager : MonoBehaviour
 
     public Vector3 lastPos, lastLocal;
     public Quaternion lastRot;
+
 
 
     private void Awake()
@@ -229,6 +231,9 @@ public class CameraManager : MonoBehaviour
         //loadLast to be used if we wish to restore some previously stored camera position
         if (loadLast && lastPos != null)
         {
+            Debug.Log(lastPos);
+            Debug.Log(lastRot);
+            Debug.Log(lastLocal);
             transform.position = lastPos;
             transform.rotation = lastRot;
             cam.transform.localPosition = lastLocal;
@@ -247,6 +252,7 @@ public class CameraManager : MonoBehaviour
         lastPos = this.transform.position;
         lastRot = this.transform.rotation;
         lastLocal = cam.transform.localPosition;
+        Debug.Log(lastLocal);
         ResetCamera();
     }
 

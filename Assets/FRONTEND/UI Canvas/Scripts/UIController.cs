@@ -110,6 +110,7 @@ public class UIController : MonoBehaviour
         Debug.Log("Data");
 
         DetectorBehaviour detectorBehaviour = ObjectManager.Instance.Screen.GetComponent<DetectorBehaviour>();
+        CollideWithLaser(false);
 
         if (ObjectManager.Instance.Grating != null & ObjectManager.Instance.Cmos != null)
         {
@@ -143,9 +144,10 @@ public class UIController : MonoBehaviour
         if (ObjectManager.Instance.Laser != null && currentMode == Mode.DataTake)
         {
             ObjectManager.Instance.Laser.GetComponent<LaserBehaviour>().DeactivateLaser();
+            CollideWithLaser(true);
         }
 
-        if (currentMode == Mode.DataTake)
+        if (currentMode == Mode.DataTake && ObjectManager.Instance.Board != null) //SHAKEY FIX - Used to check if we are in tutorial, replace with narative manager ref
         {
             cameraManager.GetComponent<CameraManager>().ResetCamera(true);  //If we a switching out of take data mode then revert to last saved camera transform
         }
@@ -165,4 +167,9 @@ public class UIController : MonoBehaviour
         inputManager.SetActive(isActive);
     }
 
+    void CollideWithLaser(bool status)
+    {
+        ObjectManager.Instance.Grating.transform.Find("DiffrMountSimplified").Find("DiffrMount").GetComponent<MeshCollider>().enabled = status;
+        ObjectManager.Instance.Lens.transform.Find("LensMountSimplified").Find("LensMount").GetComponent<MeshCollider>().enabled = status;
+    }
 }
