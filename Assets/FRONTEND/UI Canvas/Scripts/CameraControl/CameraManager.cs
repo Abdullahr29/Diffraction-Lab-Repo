@@ -21,28 +21,29 @@ public class CameraManager : MonoBehaviour
     */
 
     [Header("Camera Positioning")]
-    public Vector2 cameraOffset = new Vector2(3f, 0f);
+    public Vector2 cameraOffset = new Vector2(1f, 0f);
 
     [Header("Move Controls")]
-    public float upDownSpeed = 1f;
-    public float leftRightSpeed = 1f;
-    public float rotateXSpeed = 45f;
-    public float rotateYSpeed = 45f;
+    public float upDownSpeed = 0.1f;
+    public float leftRightSpeed = 0.1f;
+    public float rotateXSpeed = 30f;
+    public float rotateYSpeed = 30f;
 
     [Header("Bounds")]
     public Vector2 minMoveBounds = new Vector2(-50, -50);
     public Vector2 maxMoveBounds = new Vector2(50, 50);
     public float minRotate = 0f;
-    public float maxRotate = 80.0f;
+    public float maxRotate = 90.0f;
 
     [Header("Zoom Controls")]
     public float zoomSpeed = 1f;
-    public float nearZoomLimit = 0.2f;
-    public float farZoomLimit = 2f;
+    public float nearZoomLimit = 0.4f;
+    public float farZoomLimit = 4f;
     public float startingZoom = 2f;
 
     IZoom zoom;
-    Vector3 frameMove;
+    Vector3 frameMoveX;
+    Vector3 frameMoveY;
     float frameRotateX;
     float frameRotateY;
     float frameZoom;
@@ -78,7 +79,8 @@ public class CameraManager : MonoBehaviour
 
     private void OnEnable()
     {
-        KeyboardInputManager.OnMoveInput += UpdateFrameMove;
+        KeyboardInputManager.OnMoveXInput += UpdateFrameMoveX;
+        KeyboardInputManager.OnMoveYInput += UpdateFrameMoveY;
         KeyboardInputManager.OnRotateXInput += UpdateFrameRotateX;
         KeyboardInputManager.OnRotateYInput += UpdateFrameRotateY;
         KeyboardInputManager.OnZoomInput += UpdateFrameZoom;
@@ -90,7 +92,8 @@ public class CameraManager : MonoBehaviour
     }
     private void OnDisable()
     {
-        KeyboardInputManager.OnMoveInput -= UpdateFrameMove;
+        KeyboardInputManager.OnMoveXInput -= UpdateFrameMoveX;
+        KeyboardInputManager.OnMoveYInput -= UpdateFrameMoveY;
         KeyboardInputManager.OnRotateXInput -= UpdateFrameRotateX;
         KeyboardInputManager.OnRotateYInput -= UpdateFrameRotateY;
         KeyboardInputManager.OnZoomInput -= UpdateFrameZoom;
@@ -101,9 +104,13 @@ public class CameraManager : MonoBehaviour
 
     }
 
-    private void UpdateFrameMove(Vector3 moveVector)
+    private void UpdateFrameMoveX(Vector3 moveVector)
     {
-        frameMove += moveVector;
+        frameMoveX += moveVector;
+    }
+    private void UpdateFrameMoveY(Vector3 moveVector)
+    {
+        frameMoveY += moveVector;
     }
     private void UpdateFrameRotateX(float rotateXAmount)
     {
@@ -133,9 +140,9 @@ public class CameraManager : MonoBehaviour
             homeClick = 0f;
         }
 
-        if (frameMove != Vector3.zero)
+        if (frameMoveX != Vector3.zero)
         {
-            Vector3 speedModFrameMove = new Vector3(frameMove.x * leftRightSpeed, frameMove.y, frameMove.z);
+            Vector3 speedModFrameMove = new Vector3(frameMoveX.x * leftRightSpeed, frameMoveX.y, frameMoveX.z);
             transform.position += transform.TransformDirection(speedModFrameMove) * Time.deltaTime;
 
             if (IsColliding() == true)
@@ -143,7 +150,20 @@ public class CameraManager : MonoBehaviour
                 transform.position = oldPosition;
             }
 
-            frameMove = Vector3.zero;
+            frameMoveX = Vector3.zero;
+        }
+
+        if (frameMoveY != Vector3.zero)
+        {
+            Vector3 speedModFrameMove = new Vector3(frameMoveY.x, frameMoveY.y * upDownSpeed, frameMoveY.z);
+            transform.position += transform.TransformDirection(speedModFrameMove) * Time.deltaTime;
+
+            if (IsColliding() == true)
+            {
+                transform.position = oldPosition;
+            }
+
+            frameMoveY = Vector3.zero;
         }
 
         if (frameRotateX != 0f)
@@ -198,17 +218,6 @@ public class CameraManager : MonoBehaviour
             frameZoom = 0f;
         }
 
-        /*else if (frameZoom == -100f)
-        {
-            zoom.ZoomInMax(cam, nearZoomLimit);
-
-            while (IsColliding() == true)
-            {
-                zoom.ZoomOut(cam, -Time.deltaTime * frameZoom * zoomSpeed, farZoomLimit);
-            }
-
-        }*/
-
         else if (frameZoom == -100f)
         {
             zoom.ZoomOutMax(cam, farZoomLimit);
@@ -240,7 +249,6 @@ public class CameraManager : MonoBehaviour
         lastLocal = cam.transform.localPosition;
         ResetCamera();
     }
-
 
     private bool IsColliding()
     {

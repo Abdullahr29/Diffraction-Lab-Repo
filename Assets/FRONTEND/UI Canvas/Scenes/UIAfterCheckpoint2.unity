@@ -624,22 +624,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca0239974e64c404f95f5e28cd1400bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraOffset: {x: 0, y: 0}
-  upDownSpeed: 1
-  leftRightSpeed: 1
-  rotateXSpeed: 0
-  rotateYSpeed: 0
-  minMoveBounds: {x: -501, y: 599}
-  maxMoveBounds: {x: -499, y: 501}
+  cameraOffset: {x: 1, y: 0}
+  upDownSpeed: 0.01
+  leftRightSpeed: 0.01
+  rotateXSpeed: 45
+  rotateYSpeed: 45
+  minMoveBounds: {x: -50, y: -50}
+  maxMoveBounds: {x: 50, y: 50}
   minRotate: 0
-  maxRotate: 80
+  maxRotate: 90
   zoomSpeed: 1
-  nearZoomLimit: 0.2
-  farZoomLimit: 2
+  nearZoomLimit: 0.4
+  farZoomLimit: 4
   startingZoom: 2
   IgnoreMe:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 32
   lastPos: {x: 0, y: 0, z: 0}
   lastLocal: {x: 0, y: 0, z: 0}
   lastRot: {x: 0, y: 0, z: 0, w: 0}
@@ -3593,15 +3593,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraOffset: {x: 1, y: 0}
-  upDownSpeed: 1
-  leftRightSpeed: 1
-  rotateXSpeed: 45
-  rotateYSpeed: 45
+  upDownSpeed: 0.2
+  leftRightSpeed: 0.2
+  rotateXSpeed: 30
+  rotateYSpeed: 30
   minMoveBounds: {x: -50, y: -50}
   maxMoveBounds: {x: 50, y: 50}
   minRotate: 0
   maxRotate: 90
-  zoomSpeed: 1
+  zoomSpeed: 0.8
   nearZoomLimit: 0.4
   farZoomLimit: 4
   startingZoom: 2

@@ -7,7 +7,8 @@ public class MouseInputManager : InputManager
     Vector2Int screen;
     float mouseXStart;
     float mouseYStart;
-    public static event MoveInputHandler OnMoveInput;
+    public static event MoveXInputHandler OnMoveXInput;
+    public static event MoveYInputHandler OnMoveYInput;
     public static event RotateXInputHandler OnRotateXInput;
     public static event RotateYInputHandler OnRotateYInput;
     public static event ZoomInputHandler OnZoomInput;

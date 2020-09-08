@@ -4,7 +4,8 @@ using UnityEngine;
 
 public class KeyboardInputManager : InputManager
 {
-    public static event MoveInputHandler OnMoveInput;
+    public static event MoveXInputHandler OnMoveXInput;
+    public static event MoveYInputHandler OnMoveYInput;
     public static event RotateXInputHandler OnRotateXInput;
     public static event RotateYInputHandler OnRotateYInput;
     public static event ZoomInputHandler OnZoomInput;
@@ -12,36 +13,46 @@ public class KeyboardInputManager : InputManager
 
     void Update()
     {
-        // Move
+        // Move X
 
-        if (Input.GetKey(KeyCode.LeftArrow)) {
-            OnMoveInput?.Invoke(-Vector3.right);
+        if (Input.GetKey(KeyCode.A)) {
+            OnMoveXInput?.Invoke(Vector3.left);
         }
-        if (Input.GetKey(KeyCode.RightArrow)) {
-            OnMoveInput?.Invoke(Vector3.right);
+        if (Input.GetKey(KeyCode.D)) {
+            OnMoveXInput?.Invoke(Vector3.right);
+        }
+
+        // Move Y
+        if (Input.GetKey(KeyCode.Q))
+        {
+            OnMoveYInput?.Invoke(Vector3.up);
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            OnMoveYInput?.Invoke(Vector3.down);
         }
 
         // Move/Zoom into Z axis
-        if (Input.GetKey(KeyCode.UpArrow)) {
+        if (Input.GetKey(KeyCode.W)) {
             OnZoomInput?.Invoke(-1f);
         }
-        if (Input.GetKey(KeyCode.DownArrow)) {
+        if (Input.GetKey(KeyCode.S)) {
             OnZoomInput?.Invoke(1f);
         }
 
         // Rotate horizontal 
-        if (Input.GetKey(KeyCode.A)) {
+        if (Input.GetKey(KeyCode.LeftArrow)) {
             OnRotateXInput?.Invoke(1f);
         }
-        if (Input.GetKey(KeyCode.D)) {
+        if (Input.GetKey(KeyCode.RightArrow)) {
             OnRotateXInput?.Invoke(-1f);
         }
 
         // Rotate vertical
-        if (Input.GetKey(KeyCode.S)) {
+        if (Input.GetKey(KeyCode.DownArrow)) {
             OnRotateYInput?.Invoke(-1f);
         }
-        if (Input.GetKey(KeyCode.W)) {
+        if (Input.GetKey(KeyCode.UpArrow)) {
             OnRotateYInput?.Invoke(1f);
         }
 

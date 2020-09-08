@@ -304,6 +304,7 @@ public class InventoryModal : Modal
     {
         // Override abstract class method to add selection of first category as modal
         // is closed.
+        SelectSourcesBoards();
         base.CloseModal();
     }
 
