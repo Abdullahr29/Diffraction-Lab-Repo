@@ -146,7 +146,11 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                         if (Input.GetMouseButtonDown(0))
                         {                            
                             clicks += 1;
+                            StoreLine();
+                            float distance = GetDistance(lineData[lineData.Count - 1]);
+                            Debug.Log(distance);
                             Debug.Log("LINE END: " + endPoint);
+                            GenerateData();
                         }
                         break;
 
@@ -154,16 +158,14 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
                         // set line and output length
                         if (Input.GetMouseButtonDown(0))
                         {
-                            // first fetch the appropriate row/column of data and write to text file
-                            GenerateData();
-
+                            // first fetch the appropriate row/column of data and write to text file                    
                             // then deal with the line
-                            StoreLine();
+                            //StoreLine();
                             DisableMarkers();
                             clicks = 0;
-                            DrawLine(lineData[lineData.Count - 1]); //Local variables are cleared so reload line from storage without markers
+                            //DrawLine(lineData[lineData.Count - 1]); //Local variables are cleared so reload line from storage without markers
                             
-                            Debug.Log("DISTANCE: " + GetDistance(lineData[lineData.Count - 1])); //Distance output - feel free to hook up to UI
+                            //Debug.Log("DISTANCE: " + GetDistance(lineData[lineData.Count - 1])); //Distance output - feel free to hook up to UI
                         }
                         break;
 
@@ -322,7 +324,7 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
         markerOne = Instantiate(markerPrefab);
         markerTwo = Instantiate(markerPrefab);
         line.enabled = false;
-        LoadLines();
+        //LoadLines();
     }
 
     private void EndTool()     //disable and destroy all objects, reset clicks to zero
