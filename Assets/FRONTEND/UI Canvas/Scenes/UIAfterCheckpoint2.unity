@@ -2804,7 +2804,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0.24759057, y: 0.86200005}
-  m_AnchoredPosition: {x: 1.7001953, y: 3.5}
+  m_AnchoredPosition: {x: 1.6992188, y: 3.5}
   m_SizeDelta: {x: 0.34570312, y: -7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1491061871
@@ -3446,8 +3446,9 @@ MonoBehaviour:
       m_Calls: []
   m_text: 'Distance: '
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: d9b0dc96dd53e12458983e3caecbde85, type: 2}
+  m_sharedMaterial: {fileID: -9032242935681952992, guid: d9b0dc96dd53e12458983e3caecbde85,
+    type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3472,14 +3473,14 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 36
-  m_fontSizeBase: 36
+  m_fontSize: 30
+  m_fontSizeBase: 30
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_textAlignment: 257
+  m_textAlignment: 260
   m_characterSpacing: 0
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -3510,7 +3511,7 @@ MonoBehaviour:
   m_firstVisibleCharacter: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: -0.00856354, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 1764526823}
     characterCount: 10
@@ -3558,10 +3559,10 @@ RectTransform:
   m_Father: {fileID: 729693519}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 498, y: 296}
-  m_SizeDelta: {x: 200, y: 50}
+  m_AnchorMin: {x: 1, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
+  m_AnchoredPosition: {x: -235.6, y: 50}
+  m_SizeDelta: {x: 310, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1844287700
 GameObject:
@@ -4292,7 +4293,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.74136066, y: 0.13775863}
   m_AnchorMax: {x: 1, y: 0.86200005}
-  m_AnchoredPosition: {x: -0.69970703, y: -1}
+  m_AnchoredPosition: {x: -0.69921875, y: -1}
   m_SizeDelta: {x: 0.56481934, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &207476082530144757
@@ -6386,7 +6387,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 0}
-  markerPrefab: {fileID: 2612553142618826208, guid: af7f29abcf8b0c143acacb8de553cffc,
+  markerPrefab: {fileID: 4496642911515956432, guid: f24ef00b35d7d4761aee72dfab491035,
     type: 3}
   uiText: {fileID: 1764526822}
   digits: 2
