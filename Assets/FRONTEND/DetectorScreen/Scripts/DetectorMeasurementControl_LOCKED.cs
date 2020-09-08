@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using UnityEngine.EventSystems;
 
 
 // LOCKED VERSION OF LUKE'S SCRIPT WHICH CONSTRAINS THE LINE TO BE HORIZONTAL OR VERTICAL
@@ -54,6 +55,8 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
     private float[,] matrix;
     [SerializeField] string file;
 
+    bool isCursorOverButton;
+
     private void Start()
     {
         file = Application.dataPath + "/img_reduced.txt";
@@ -83,112 +86,116 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
     {
         if (modeActive)
         {
+            isCursorOverButton = EventSystem.current.IsPointerOverGameObject();
             Ray ray = cam.ScreenPointToRay(Input.mousePosition); //Get user input based on click from camera in game view
             RaycastHit hit;                                    //Currently calling this every frame for debugging purposes
             //Debug.DrawRay(ray.origin, ray.direction * 20, Color.yellow);
-
-            if (Physics.Raycast(ray, out hit))
+            if (!isCursorOverButton)
             {
-                switch (clicks)
+                if (Physics.Raycast(ray, out hit))
                 {
-                    case 0:
-                        // first marker
-                        TooltrayController.Instance.dynamicButtons[1].SetActive(false);
-                        ObjectManager.Instance.EmailManager.transform.Find("Canvas").gameObject.SetActive(false);
-                        startPoint = RoundVector(hit.point, digits); //round position of position marker to arbritrary precision
-                        markerOne.transform.position = startPoint;
-                        line.SetPosition(0, startPoint);
-                        startTag = hit.collider.name;
+                    switch (clicks)
+                    {
+                        case 0:
+                            // first marker
+                            TooltrayController.Instance.dynamicButtons[1].SetActive(false);
+                            ObjectManager.Instance.EmailManager.transform.Find("Canvas").gameObject.SetActive(false);
+                            startPoint = RoundVector(hit.point, digits); //round position of position marker to arbritrary precision
+                            markerOne.transform.position = startPoint;
+                            line.SetPosition(0, startPoint);
+                            startTag = hit.collider.name;
 
-                        markerOne.SetActive(true);
+                            markerOne.SetActive(true);
 
-                        if (Input.GetMouseButtonDown(0)) //if left click whilst over mesh collided
-                        {
-                            clicks += 1;
-                            Debug.Log("LINE START: " + startPoint);
-                        }
-                        break;
+                            if (Input.GetMouseButtonDown(0)) //if left click whilst over mesh collided
+                            {
+                                clicks += 1;
+                                Debug.Log("LINE START: " + startPoint);
+                            }
+                            break;
 
-                    case 1:
-                        // second marker
-                        endPoint = RoundVector(hit.point, digits);
-
-
-                        // for the detector - the second point must be horizontal/vertical relative to the first point
-
-                        // direction from first point to current mouse position
-                        Vector3 dir = endPoint - startPoint;
-                        // normalised projections along the x/y axes
-                        float x_proj = Vector3.Dot(dir, new Vector3(1, 0));
-                        float y_proj = Vector3.Dot(dir, new Vector3(0, 1));
-
-                        //HORIZONTAL OR VERTICAL LOCKING
-                        if (Mathf.Abs(x_proj) > Mathf.Abs(y_proj))
-                        {
-                            //greater projection along the horizontal axis - so lock horizontally
-                            endPoint.x = x_proj + startPoint.x;
-                            endPoint.y = startPoint.y;
-                        }
-                        else
-                        {
-                            //greater projection along the vertical axis - so lock vertically
-                            endPoint.x = startPoint.x;
-                            endPoint.y = y_proj + startPoint.y;
-                        }
+                        case 1:
+                            // second marker
+                            endPoint = RoundVector(hit.point, digits);
 
 
-                        markerTwo.transform.position = endPoint;
-                        line.SetPosition(1, endPoint);
-                        endTag = hit.collider.name;
+                            // for the detector - the second point must be horizontal/vertical relative to the first point
 
-                        markerOne.SetActive(true);
-                        markerTwo.SetActive(true);
-                        line.enabled = true;
+                            // direction from first point to current mouse position
+                            Vector3 dir = endPoint - startPoint;
+                            // normalised projections along the x/y axes
+                            float x_proj = Vector3.Dot(dir, new Vector3(1, 0));
+                            float y_proj = Vector3.Dot(dir, new Vector3(0, 1));
 
-                        if (Input.GetMouseButtonDown(0))
-                        {                            
-                            clicks += 1;
-                            StoreLine();
-                            float distance = GetDistance(lineData[lineData.Count - 1]);
-                            Debug.Log(distance);
-                            Debug.Log("LINE END: " + endPoint);
-                            GenerateData();
-                            TooltrayController.Instance.dynamicButtons[1].SetActive(true);
-                        }
-                        break;
+                            //HORIZONTAL OR VERTICAL LOCKING
+                            if (Mathf.Abs(x_proj) > Mathf.Abs(y_proj))
+                            {
+                                //greater projection along the horizontal axis - so lock horizontally
+                                endPoint.x = x_proj + startPoint.x;
+                                endPoint.y = startPoint.y;
+                            }
+                            else
+                            {
+                                //greater projection along the vertical axis - so lock vertically
+                                endPoint.x = startPoint.x;
+                                endPoint.y = y_proj + startPoint.y;
+                            }
 
-                    case 2:
-                        // set line and output length
-                        if (Input.GetMouseButtonDown(0))
-                        {
-                            // first fetch the appropriate row/column of data and write to text file                    
-                            // then deal with the line
-                            //StoreLine();
-                            DisableMarkers();
+
+                            markerTwo.transform.position = endPoint;
+                            line.SetPosition(1, endPoint);
+                            endTag = hit.collider.name;
+
+                            markerOne.SetActive(true);
+                            markerTwo.SetActive(true);
+                            line.enabled = true;
+
+                            if (Input.GetMouseButtonDown(0))
+                            {
+                                clicks += 1;
+                                StoreLine();
+                                float distance = GetDistance(lineData[lineData.Count - 1]);
+                                Debug.Log(distance);
+                                Debug.Log("LINE END: " + endPoint);
+                                GenerateData();
+                                TooltrayController.Instance.dynamicButtons[1].SetActive(true);
+                            }
+                            break;
+
+                        case 2:
+                            // set line and output length
+                            if (Input.GetMouseButtonDown(0))
+                            {
+                                // first fetch the appropriate row/column of data and write to text file                    
+                                // then deal with the line
+                                //StoreLine();
+                                DisableMarkers();
+                                clicks = 0;
+                                //DrawLine(lineData[lineData.Count - 1]); //Local variables are cleared so reload line from storage without markers
+
+                                //Debug.Log("DISTANCE: " + GetDistance(lineData[lineData.Count - 1])); //Distance output - feel free to hook up to UI
+                            }
+                            break;
+
+                        default:
+                            //catchall for any edge cases
                             clicks = 0;
-                            //DrawLine(lineData[lineData.Count - 1]); //Local variables are cleared so reload line from storage without markers
+                            break;
+                    }
+                }
+                else if (clicks < 2)
+                {
+                    DisableMarkers(); //Make lines and markers not visable if we hover away from objects, unless we have a complete line
+                }
 
-                            //Debug.Log("DISTANCE: " + GetDistance(lineData[lineData.Count - 1])); //Distance output - feel free to hook up to UI
-                        }
-                        break;
-
-                    default:
-                        //catchall for any edge cases
-                        clicks = 0; 
-                        break;
+                if (Input.GetMouseButtonDown(1)) //right click resets measurement
+                {
+                    DisableMarkers();
+                    clicks = 0;
                 }
             }
-            else if (clicks < 2)
-            {
-                DisableMarkers(); //Make lines and markers not visable if we hover away from objects, unless we have a complete line
-            }
-
-            if (Input.GetMouseButtonDown(1)) //right click resets measurement
-            {
-                DisableMarkers();
-                clicks = 0;
-            }
-        }      
+        }
+            
                         
     }
 

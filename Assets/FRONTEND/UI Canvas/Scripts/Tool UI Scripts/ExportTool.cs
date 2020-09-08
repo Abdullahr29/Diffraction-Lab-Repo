@@ -28,7 +28,8 @@ public class ExportTool : Tool
         {
             TooltrayController.Instance.newTool = this;
             TooltrayController.Instance.SwitchTool();
-            TooltrayController.Instance.activeTools.Add(this);            
+            TooltrayController.Instance.activeTools.Add(this);
+            
         }
         else
         {
@@ -36,5 +37,6 @@ public class ExportTool : Tool
         }
 
         ObjectManager.Instance.EmailManager.transform.Find("Canvas").gameObject.SetActive(isBeingUsed);
+        ObjectManager.Instance.InputManager.SetActive(!isBeingUsed);
     }
 }
