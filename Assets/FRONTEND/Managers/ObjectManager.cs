@@ -311,6 +311,7 @@ public class ObjectManager : MonoBehaviour
             default:
                 return ref mainCam;
         }
+
     }
 
     void UpdateCameraRefs()
@@ -384,5 +385,24 @@ public class ObjectManager : MonoBehaviour
         numCameras = tempCountArray[0];
         numComponents = tempCountArray[1];
         numManagers = tempCountArray[2];
-    }    
+    }
+
+    public void CheckRequiredComponents()
+    {
+        bool flag = true;
+        Debug.Log("live");
+        foreach (var item in new GameObject[4] {cmos, lens, grating, laser })
+        {
+            if (item == null)
+            {
+                flag = false;
+                break;
+            }
+        }
+        
+        if (flag)
+        {
+            UIController.Instance.data.gameObject.SetActive(true);
+        }
+    }
 }

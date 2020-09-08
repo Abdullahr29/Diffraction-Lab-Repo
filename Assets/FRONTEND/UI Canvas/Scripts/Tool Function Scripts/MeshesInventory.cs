@@ -105,6 +105,7 @@ public class MeshesInventory : MonoBehaviour
             activeMeshes.Add(item, newMesh);
             newMesh.layer = 8;
             ObjectManager.Instance.AddRef(item, newMesh);
+            ObjectManager.Instance.CheckRequiredComponents();
             //instantiatedMeshes.Add(item);
         }
     }

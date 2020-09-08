@@ -55,6 +55,8 @@ public class UIController : MonoBehaviour
 
     void Start()
     {
+        data.gameObject.SetActive(false);
+
         emailManager = ObjectManager.Instance.EmailManager;
         emailManager.SetActive(false);
 
@@ -98,7 +100,7 @@ public class UIController : MonoBehaviour
     }
 
     public void dataClick()
-    {
+    {        
         cameraManager.GetComponent<CameraManager>().OnDataEnter();
         DeactivateTabs();
         dataTab.SetActive(true);
@@ -108,17 +110,17 @@ public class UIController : MonoBehaviour
         Debug.Log("Data");
 
         DetectorBehaviour detectorBehaviour = ObjectManager.Instance.Screen.GetComponent<DetectorBehaviour>();
-        
+
         if (ObjectManager.Instance.Grating != null & ObjectManager.Instance.Cmos != null)
         {
             detectorBehaviour.SetExternalRefs();
             detectorBehaviour.LoadScreen();
-        }        
+        }
         if (ObjectManager.Instance.Laser != null)
         {
             ObjectManager.Instance.PropagationManager.SetActive(true);
             ObjectManager.Instance.Laser.GetComponent<LaserBehaviour>().ActivateLaser();
-        }        
+        }                        
     }
 
     public void dataClickTutorial()
