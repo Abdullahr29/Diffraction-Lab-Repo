@@ -33,8 +33,9 @@ public class GratingBehaviour : MonoBehaviour {
     float distanceGratingLens;//need to get, 0.25 - 0.5
     float distanceGratingScreen;
     float focalLength = 0.5f;//need to get 
-    float angle;//need to get, -30 - 30 
+    float lensAngle;//need to get, -30 - 30 
     [Range(0, 5)] public int slits;//need to get
+    public bool ignoreCompTransform;
 
     private int[,] bitmap;
     private float[,] output;//matrix with 2DFFT
@@ -50,6 +51,7 @@ public class GratingBehaviour : MonoBehaviour {
     // Start is called before the first frame update
     void Start()
     {
+        ignoreCompTransform = false;
         resolutionPower = 10;
         file = Application.dataPath + "/img.txt";
         detectorObject = GameObject.Find("v2 DETECTOR");
@@ -61,7 +63,6 @@ public class GratingBehaviour : MonoBehaviour {
     {
         resolution = Mathf.RoundToInt(Mathf.Pow(2, resolutionPower));
         bitmap = new int[resolution, resolution];
-        getParameters();
         pos = anchor.position;
         //make slit bitmap
         //convolve with n slit dirac-delta
@@ -75,79 +76,87 @@ public class GratingBehaviour : MonoBehaviour {
 
         //slit bitmap
         ///slitCalc();not necessary for now
-        if (slits == 0) {
-            slitHeight = 0.00006f;
+        if (getParameters()) {
+            if (slits == 0) {
+                slitHeight = 0.00006f;
+            }
+            else {
+                slitHeight = 0.0005f;
+            }
+
+            if (slits > 1) {
+                //generating more slits   
+                bitmap = Convolve.genNSlits(slits, resolution, slitSeperation, maxSlitDim, slitWidth, slitHeight);
+            }
+            else {
+                //filling matrix otherwise
+                fill();
+            }
+            //doing FFT
+            FFT bitMapFFT = new FFT(MatrixCalc.convertToFloat(bitmap));
+            bitMapFFT.ForwardFFT();
+            output = bitMapFFT.FFTLog;
+
+            //lens skew 
+            if ((lensAngle > 2) || (lensAngle < -2)) {
+                Debug.Log("Lens in");
+                output = Convolve.biasSkew(output, lensAngle, resolution, slits);
+            }
+            //detector side stuff here
+            // 1. From known wavelength, slit parameters + screen distance, calculate theoretical position of first maximum
+
+            // -- to be fetched from backend
+            float wavelength = Wavelength;
+            //float a = (float)60e-06;
+            float a = this.SlitWidth;
+
+            // -- find distance to screen D
+
+            CMOS = detectorObject.GetComponent<DetectorBehaviour>().CMOS.transform;
+            Vector3 gratingToScreen = CMOS.position - this.Pos; //CHANGE THIS TRANSFORM TO THAT OF THE CMOS
+            gratingToScreen.y = 0;
+
+            float D = gratingToScreen.magnitude; //screenDistance
+                                                 //Debug.Log("Distance to Screen: " + D);
+
+            // -- find predicted displacement to 1st maximum (n=1)
+            float X = DistanceToNthMaxima(1f, wavelength, a, D);
+            //Debug.Log("distance to 1st maximum: " + X);
+
+            // 2. From the InputMatrix, calculate the pixel count between the central maximum and first maximum
+            int pixelCount = PixelCountToFirstMaxima(output);
+            //Debug.Log("pixel count to 1st maximum: " + pixelCount);
+
+            // 3. The theoretical distance should correspond to said pixel count.
+            float distancePerPixel = X / (float)pixelCount;
+            //Debug.Log("Distance per pixel: " + distancePerPixel);
+
+            projectedScreenSize = distancePerPixel * resolution;
+            //Debug.Log("Projected Screen Size: " + projectedScreenSize);
+
+            //_________________________
+            //noise
+            noiseLoops(output);
+
+            //normalise
+            output = normalise(output);
+
+            //output data
+            print(output);
+
+            //inverse square
+            ///distanceGratingScreen = distanceGratingLens + distanceLensScreen;
+            ///output = Convolve.inverseSquare(output, distanceGratingScreen, resolution);
+
+            //display
+            ///output = plotIntensity(output, (resolution/2), resolution);
+            ///output = zoom(output, resolution/2, resolution, resolution);//need to implelemnt for 2,3,4,5 slits using Data class
         }
         else {
-            slitHeight = 0.0005f;
+            output = MatrixCalc.convertToFloat(bitmap);
+            projectedScreenSize = 0;
+            Debug.Log("Components not aligned or oriented properly");
         }
-
-        if (slits > 1) {
-            //generating more slits   
-            bitmap = Convolve.genNSlits(slits, resolution, slitSeperation, maxSlitDim, slitWidth, slitHeight);
-        }
-        else {
-            //filling matrix otherwise
-            fill();
-        }
-        //doing FFT
-        FFT bitMapFFT = new FFT(MatrixCalc.convertToFloat(bitmap));
-        bitMapFFT.ForwardFFT();
-        output = bitMapFFT.FFTLog;
-
-        //lens skew 
-        if ((angle > 2) || (angle < -2)) {
-            output = Convolve.biasSkew(output, angle, resolution, slits);
-        }
-        //detector side stuff here
-        // 1. From known wavelength, slit parameters + screen distance, calculate theoretical position of first maximum
-
-        // -- to be fetched from backend
-        float wavelength = Wavelength;
-        //float a = (float)60e-06;
-        float a = this.SlitWidth;
-
-        // -- find distance to screen D
-        
-        CMOS = detectorObject.GetComponent<DetectorBehaviour>().CMOS.transform;
-        Vector3 gratingToScreen = CMOS.position - this.Pos; //CHANGE THIS TRANSFORM TO THAT OF THE CMOS
-        gratingToScreen.y = 0;
-
-        float D = gratingToScreen.magnitude; //screenDistance
-        //Debug.Log("Distance to Screen: " + D);
-
-        // -- find predicted displacement to 1st maximum (n=1)
-        float X = DistanceToNthMaxima(1f, wavelength, a, D);
-        //Debug.Log("distance to 1st maximum: " + X);
-
-        // 2. From the InputMatrix, calculate the pixel count between the central maximum and first maximum
-        int pixelCount = PixelCountToFirstMaxima(output);
-        //Debug.Log("pixel count to 1st maximum: " + pixelCount);
-
-        // 3. The theoretical distance should correspond to said pixel count.
-        float distancePerPixel = X / (float)pixelCount;
-        //Debug.Log("Distance per pixel: " + distancePerPixel);
-
-        projectedScreenSize = distancePerPixel * resolution;
-        //Debug.Log("Projected Screen Size: " + projectedScreenSize);
-
-        //_________________________
-        //noise
-        noiseLoops(output);
-
-        //normalise
-        output = normalise(output);
-
-        //output data
-        print(output);
-
-        //inverse square
-        ///distanceGratingScreen = distanceGratingLens + distanceLensScreen;
-        ///output = Convolve.inverseSquare(output, distanceGratingScreen, resolution);
-
-        //display
-        ///output = plotIntensity(output, (resolution/2), resolution);
-        ///output = zoom(output, resolution/2, resolution, resolution);//need to implelemnt for 2,3,4,5 slits using Data class
 
     }
 
@@ -209,28 +218,102 @@ public class GratingBehaviour : MonoBehaviour {
         }
     }
 
-    private void getParameters() {
+    private bool getParameters() {
+        Debug.Log("Break start");
+        if (ignoreCompTransform) {
+            lensAngle = 0;
+            return true;
+        }
+        GameObject laserObject = ObjectManager.Instance.Laser;
         GameObject gratingObject = ObjectManager.Instance.Grating;
         GameObject lensObject = ObjectManager.Instance.Lens;
         GameObject cmosObject = ObjectManager.Instance.Cmos;
 
+        Transform laserTransform = laserObject.transform;
         Transform gratingTransform = gratingObject.transform;
         Transform lensTransform = lensObject.transform;
         Transform cmosTransform = cmosObject.transform;
 
-        Vector3 gratingToLens = lensTransform.position - gratingTransform.position;
+        Debug.Log("Break order");
+        //order is laser grating lens cmos
+        if ((laserTransform.localPosition.x >= gratingTransform.localPosition.x) || (gratingTransform.localPosition.x >= lensTransform.localPosition.x) || (lensTransform.localPosition.x >= cmosTransform.localPosition.x)){
+            return false;
+        }
+
+        Debug.Log("Break height");
+        //checking every component is grounded
+        float bound = 0.001f;
+        if (laserTransform.localPosition.y > bound || gratingTransform.localPosition.y > bound || lensTransform.localPosition.y > bound || cmosTransform.localPosition.y > bound) {
+            return false;
+        }
+
+        Vector3 gratingToLens = lensTransform.localPosition - gratingTransform.localPosition;
         gratingToLens.y = 0;
         distanceGratingLens = gratingToLens.magnitude;//takes account of differences in z-axis(across the board) as well not just x-axis(along the board)
 
-        Vector3 lensToScreen = cmosTransform.position - lensTransform.position;
+        Vector3 lensToScreen = cmosTransform.localPosition - lensTransform.localPosition;
         lensToScreen.y = 0;
         distanceLensScreen = lensToScreen.magnitude;//takes account of differences in z-axis(across the board) as well not just x-axis(along the board)
 
         distanceGratingScreen = distanceGratingLens + distanceLensScreen;
 
-        angle = lensTransform.eulerAngles.y;
+        Debug.Log("Break laser angle");
+        //checking all orientations
+        if (angle(laserTransform) > 10 || angle(laserTransform) < -10) {
+            return false;
+        }
+        Debug.Log("Break grat angle");
+        if (angle(gratingTransform) > 10 || angle(gratingTransform) < -10) {
+            return false;
+        }
+        Debug.Log("Break cmos angle");
+        if ((angle(cmosTransform) + 90) > 10 || (angle(cmosTransform) + 90) < -10) {
+            return false;
+        }
+        Debug.Log("Break lens angle");
+        lensAngle = angle(lensTransform);
+        if (lensAngle > 30 || lensAngle < -30) {
+            return false;
+        }
+
+        //checking alignment 
+        bound = 0.015f;
+        float laserPos;
+        if (laserTransform.eulerAngles.y - 180 < 0) {
+            laserPos = (float)(laserTransform.localPosition.z - 0.04);
+        }
+        else {
+            laserPos = (float)(laserTransform.localPosition.z + 0.04);
+        }
+        float gratingPos = (float)(gratingTransform.localPosition.z);
+        Debug.Log("Break align laser-grat");
+        if ((gratingPos < laserPos - bound) || (gratingPos > laserPos + bound)) {
+            return false;
+        }
+        Debug.Log("Break align grat-lens");
+        float lensPos = (float)(lensTransform.localPosition.z);
+        if ((lensPos < gratingPos - bound) || (lensPos > gratingPos + bound)) {
+            return false;
+        }
+        bound = 0.025f;
+        Debug.Log("Break align lens-cmos");
+        float cmosPos = (float)(cmosTransform.localPosition.z);
+        if ((cmosPos < lensPos - bound) || (cmosPos > lensPos + bound)) {
+            return false;
+        }
+
+        Debug.Log("Break final");
+        return true;
+    }
+
+    private float angle(Transform tran) {
+
+        float angle = tran.eulerAngles.y;
         angle = Math.Abs(angle);
+        angle = angle % 180;
         angle = angle - 90;
+
+        return angle;
     }
 
     // Function that counts the number of pixels between the center of the matrix and the first maximum

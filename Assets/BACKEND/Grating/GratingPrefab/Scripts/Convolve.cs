@@ -62,30 +62,19 @@ public static class Convolve
         float lim = loc + (resolution / 2);//finding the highest point of intensity 
         int count = -1 * (resolution / 2);
 
-        float ampSkew;
-        float ampOrig;
-        float amp = 1;
-
-        if (angle > 30 || angle < -30) {
-            ampSkew = 0;
-            ampOrig = 0;
-            amp = 0;
+        float ampSkew = Data.param[slits, 0] * Math.Abs(angle);//calling control parameters from the data matrix 
+        float ampOrig = Data.param[slits, 1] * Math.Abs(angle);
+        for (int i = 0; i < (int)(lim + 1); i++) {
+            mult[i] = (float)(ampSkew * Math.Exp(0.02 * (count + i) + c));
         }
-        else {
-            ampSkew = Data.param[slits, 0] * Math.Abs(angle);//calling control parameters from the data matrix 
-            ampOrig = Data.param[slits, 1] * Math.Abs(angle);
-            for (int i = 0; i < (int)(lim + 1); i++) {
-                mult[i] = (float)(ampSkew * Math.Exp(0.02 * (count + i) + c));
-            }
-            for (int j = (int)(lim + 1); j < resolution; j++) {
-                mult[j] = (float)(ampSkew * Math.Exp(-1 * 0.02 * (count + j) - 1 * c));
-            }
+        for (int j = (int)(lim + 1); j < resolution; j++) {
+            mult[j] = (float)(ampSkew * Math.Exp(-1 * 0.02 * (count + j) - 1 * c));
         }
         for (int i = 0; i < resolution; i++) {
             for (int j = 0; j < resolution; j++) {
-                output[i, j] = amp * output[i, j] + (float)(output[i, j] * ampOrig) + (output[i, j] * mult[j]);
+                output[i, j] = output[i, j] + (float)(output[i, j] * ampOrig) + (output[i, j] * mult[j]);
             }
-        } 
+        }    
         return output;
     }
 
