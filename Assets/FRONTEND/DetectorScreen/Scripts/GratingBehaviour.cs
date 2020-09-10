@@ -275,7 +275,7 @@ public class GratingBehaviour : MonoBehaviour {
 
         distanceGratingScreen = distanceGratingLens + distanceLensScreen;
 
-        Debug.Log("Break laser angle " + laserTransform.eulerAngles.y + "/" + laserTransform.localEulerAngles.y);
+        Debug.Log("Break laser angle");
         //checking all orientations
         if(laserTransform.localPosition.x < 0 && ((laserTransform.eulerAngles.y < 80) || (laserTransform.eulerAngles.y > 100))){
             return false;
@@ -287,7 +287,7 @@ public class GratingBehaviour : MonoBehaviour {
         if (angle(gratingTransform) > 10 || angle(gratingTransform) < -10) {
             return false;
         }
-        Debug.Log("Break cmos angle" + cmosTransform.eulerAngles.y + "/" + cmosTransform.localEulerAngles.y);
+        Debug.Log("Break cmos angle");
         if (cmosTransform.localPosition.x < 0 && ((cmosTransform.eulerAngles.y < 170) || (cmosTransform.eulerAngles.y > 190))) {
             return false;
         }
