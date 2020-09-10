@@ -30,8 +30,8 @@ public class CameraManager : MonoBehaviour
     public float rotateYSpeed = 30f;
 
     [Header("Bounds")]
-    public Vector2 minMoveBounds = new Vector2(-50, -50);
-    public Vector2 maxMoveBounds = new Vector2(50, 50);
+    public Vector2 minMoveBounds;
+    public Vector2 maxMoveBounds;
     public float minRotate = 0f;
     public float maxRotate = 90.0f;
 
@@ -147,7 +147,7 @@ public class CameraManager : MonoBehaviour
             Vector3 speedModFrameMove = new Vector3(frameMoveX.x * leftRightSpeed, frameMoveX.y, frameMoveX.z);
             transform.position += transform.TransformDirection(speedModFrameMove) * Time.deltaTime;
 
-            if (IsColliding() == true)
+            if (IsColliding() == true || transform.position.x < minMoveBounds.x || transform.position.x > maxMoveBounds.x)
             {
                 transform.position = oldPosition;
             }
@@ -160,7 +160,7 @@ public class CameraManager : MonoBehaviour
             Vector3 speedModFrameMove = new Vector3(frameMoveY.x, frameMoveY.y * upDownSpeed, frameMoveY.z);
             transform.position += transform.TransformDirection(speedModFrameMove) * Time.deltaTime;
 
-            if (IsColliding() == true)
+            if (IsColliding() == true || transform.position.y < minMoveBounds.y || transform.position.y > maxMoveBounds.y)
             {
                 transform.position = oldPosition;
             }

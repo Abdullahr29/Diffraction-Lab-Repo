@@ -340,6 +340,8 @@ public class DetectorMeasurementControl_LOCKED : MonoBehaviour
     private void EndTool()     //disable and destroy all objects, reset clicks to zero
     { 
         clicks = 0;
+        TooltrayController.Instance.dynamicButtons[1].SetActive(false);
+        ObjectManager.Instance.EmailManager.transform.Find("Canvas").gameObject.SetActive(false);
         GameObject.Destroy(markerOne);
         GameObject.Destroy(markerTwo);
         line.enabled = false;

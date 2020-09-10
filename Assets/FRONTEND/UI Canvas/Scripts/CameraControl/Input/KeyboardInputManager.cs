@@ -65,8 +65,9 @@ public class KeyboardInputManager : InputManager
         }
 
         //Home position -- need to finish this
-        if (Input.GetKey(KeyCode.H)) {
-            OnHomeInput?.Invoke(1f);
-        }
+        // LM 10/09/20 - Currently breaking the screen cam unless we create a different camera controller script
+        //if (Input.GetKey(KeyCode.H)) {
+        //    OnHomeInput?.Invoke(1f);
+        //}
     }
 }

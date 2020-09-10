@@ -15,12 +15,17 @@ public class TakeDataTool : Tool
     bool hoverBool;
     Button takeDataButton;
     string takeDataTooltip = "Take Data Tool";
+
+    GameObject screenCamControl;
    
     void OnEnable()
     {
         this.GetComponent<Image>().sprite = TooltrayController.Instance._takeDataSprite;
         detectorMeasure = GameObject.Find("v2 DETECTOR").GetComponentInChildren<DetectorMeasurementControl_LOCKED>();
         takeDataButton = this.GetComponent<Button>();
+        screenCamControl = ObjectManager.Instance.ScreenCam.transform.parent.gameObject;
+        screenCamControl.SetActive(false);
+
     }
 
     void Update()
@@ -49,6 +54,7 @@ public class TakeDataTool : Tool
         UIController.Instance.emailManager.SetActive(isBeingUsed);
         detectorMeasure.OnChange(isBeingUsed);
         ObjectManager.Instance.InputManager.SetActive(isBeingUsed);
+        screenCamControl.SetActive(isBeingUsed);
     }
 
     public override void DeactivateButton()

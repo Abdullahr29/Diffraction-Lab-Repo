@@ -122,7 +122,7 @@ public class MeasurementControl : MonoBehaviour
                             StoreLine();
                             float distance = GetDistance(lineData[lineData.Count - 1]);
                             Debug.Log(distance);
-                            uiText.GetComponent<TextMeshProUGUI>().text = ("Distance: " + Round(distance,3) + " mm");
+                            uiText.GetComponent<TextMeshProUGUI>().text = ("Distance: " + Round(distance,3) + "m");
                         }
                         break;
 
