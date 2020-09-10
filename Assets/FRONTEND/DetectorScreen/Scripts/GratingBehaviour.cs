@@ -234,10 +234,28 @@ public class GratingBehaviour : MonoBehaviour {
         Transform lensTransform = lensObject.transform;
         Transform cmosTransform = cmosObject.transform;
 
+        GameObject laserHead = ObjectManager.Instance.Laser.transform.Find("Laser").Find("BeamOrientationController").gameObject;
+        GameObject gratingHead = ObjectManager.Instance.Grating.transform.Find("DiffrMountSimplified").Find("DiffrMount").gameObject;
+        GameObject lensHead = ObjectManager.Instance.Lens.transform.Find("LensMountSimplified").Find("LensMount").gameObject;
+        GameObject cmosHead = ObjectManager.Instance.Cmos.transform.Find("CMOSMesh").Find("CMOS").Find("Glass").gameObject;
+
+        float laserPos = laserHead.transform.position.z;
+        float gratingPos = gratingHead.transform.position.z;
+        float lensPos = lensHead.transform.position.z;
+        float cmosPos = cmosHead.transform.position.z;
+
+
         Debug.Log("Break order");
-        //order is laser grating lens cmos
-        if ((laserTransform.localPosition.x >= gratingTransform.localPosition.x) || (gratingTransform.localPosition.x >= lensTransform.localPosition.x) || (lensTransform.localPosition.x >= cmosTransform.localPosition.x)){
-            return false;
+        //order is laser grating lens cmos, or the opposite
+        if (laserTransform.localPosition.x < cmosTransform.localPosition.x && laserTransform.localPosition.x < 0) {
+            if ((laserTransform.localPosition.x >= gratingTransform.localPosition.x) || (gratingTransform.localPosition.x >= lensTransform.localPosition.x) || (lensTransform.localPosition.x >= cmosTransform.localPosition.x)) {
+                return false;
+            }
+        }
+        else {
+            if ((laserTransform.localPosition.x <= gratingTransform.localPosition.x) || (gratingTransform.localPosition.x <= lensTransform.localPosition.x) || (lensTransform.localPosition.x <= cmosTransform.localPosition.x)) {
+                return false;
+            }
         }
 
         Debug.Log("Break height");
@@ -257,17 +275,23 @@ public class GratingBehaviour : MonoBehaviour {
 
         distanceGratingScreen = distanceGratingLens + distanceLensScreen;
 
-        Debug.Log("Break laser angle");
+        Debug.Log("Break laser angle " + laserTransform.eulerAngles.y + "/" + laserTransform.localEulerAngles.y);
         //checking all orientations
-        if (angle(laserTransform) > 10 || angle(laserTransform) < -10) {
+        if(laserTransform.localPosition.x < 0 && ((laserTransform.eulerAngles.y < 80) || (laserTransform.eulerAngles.y > 100))){
             return false;
         }
-        Debug.Log("Break grat angle");
+        if (laserTransform.localPosition.x > 0 && ((laserTransform.eulerAngles.y > 280) || (laserTransform.eulerAngles.y < 260))) {
+            return false;
+        }
+        Debug.Log("Break grating angle");
         if (angle(gratingTransform) > 10 || angle(gratingTransform) < -10) {
             return false;
         }
-        Debug.Log("Break cmos angle");
-        if ((angle(cmosTransform) + 90) > 10 || (angle(cmosTransform) + 90) < -10) {
+        Debug.Log("Break cmos angle" + cmosTransform.eulerAngles.y + "/" + cmosTransform.localEulerAngles.y);
+        if (cmosTransform.localPosition.x < 0 && ((cmosTransform.eulerAngles.y < 170) || (cmosTransform.eulerAngles.y > 190))) {
+            return false;
+        }
+        if (cmosTransform.localPosition.x > 0 && ((cmosTransform.eulerAngles.y > 10) && (cmosTransform.eulerAngles.y < 350))) {
             return false;
         }
         Debug.Log("Break lens angle");
@@ -277,27 +301,17 @@ public class GratingBehaviour : MonoBehaviour {
         }
 
         //checking alignment 
-        bound = 0.015f;
-        float laserPos;
-        if (laserTransform.eulerAngles.y - 180 < 0) {
-            laserPos = (float)(laserTransform.localPosition.z - 0.04);
-        }
-        else {
-            laserPos = (float)(laserTransform.localPosition.z + 0.04);
-        }
-        float gratingPos = (float)(gratingTransform.localPosition.z);
+        bound = 0.02f;
         Debug.Log("Break align laser-grat");
         if ((gratingPos < laserPos - bound) || (gratingPos > laserPos + bound)) {
             return false;
         }
         Debug.Log("Break align grat-lens");
-        float lensPos = (float)(lensTransform.localPosition.z);
         if ((lensPos < gratingPos - bound) || (lensPos > gratingPos + bound)) {
             return false;
         }
-        bound = 0.025f;
+        bound = 0.03f;
         Debug.Log("Break align lens-cmos");
-        float cmosPos = (float)(cmosTransform.localPosition.z);
         if ((cmosPos < lensPos - bound) || (cmosPos > lensPos + bound)) {
             return false;
         }
@@ -308,7 +322,7 @@ public class GratingBehaviour : MonoBehaviour {
 
     private float angle(Transform tran) {
 
-        float angle = tran.eulerAngles.y;
+        float angle = tran.localEulerAngles.y;
         angle = Math.Abs(angle);
         angle = angle % 180;
         angle = angle - 90;
